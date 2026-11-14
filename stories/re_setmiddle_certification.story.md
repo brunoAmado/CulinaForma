@@ -1,7 +1,7 @@
 # Certified End-to-End User Story & Time-Lapse KPI Contract: InsightBake (`SetMiddle Insight™`)
 
 - **Historical Continuity Verified**: `2022–2026` (Legacy Repo Docs + OpenAI ChatGPT + Gemini Web + Antigravity IDE + Git Commits)
-- **Ingested Project-Root Documentation (`CA-ERR-07` Zero-AI-Chat Fallback)**: `4` file(s) in `C:/Users/bruno/PycharmProjects/InsightBake`
+- **Ingested Project-Root Documentation (`CA-ERR-07` Zero-AI-Chat Fallback)**: `6` file(s) in `C:/Users/bruno/PycharmProjects/InsightBake`
 - **Supervised & Corrected By**: `ChronicleRAG (:8765)` + `Context-Assistant (:8090)`
 - **Service Port & Co-Hosted Demo**: Port `:4030` · `/projects/insight-bake`
 - **Primary Hero KPI**: `3D PARAMETRIC + CONTROLNET CAKE ENGINE` (`0 HALLUCINATION`)
@@ -13,6 +13,8 @@
 **So that** I receive human-readable Data Science insights, while the DevOps Time-Lapse KPI Engine automatically logs `timestamp_iso`, `elapsed_ms`, queue state, and a `SHA-256` audit receipt.
 
 ## Ingested Legacy & Project-Root Documentation Grounding
+- `AGENTS.md`
+- `GEMINI.md`
 - `README.md`
 - `docs/ARCHITECTURE.md`
 - `wiki/Home.md`
