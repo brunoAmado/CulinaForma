@@ -1,0 +1,13 @@
+[package]
+name = "insight_bake_rs"
+version = "1.2.0"
+edition = "2021"
+description = "Memory-safe Rust structural dowel load, slenderness stability & Arrhenius Q10 fermentation kernel for SetMiddle Insight™ · Bake (:4030)"
+
+[lib]
+name = "insight_bake_rs"
+path = "src/lib.rs"
+
+[[bin]]
+name = "insight_bake_cli"
+path = "src/main.rs"
