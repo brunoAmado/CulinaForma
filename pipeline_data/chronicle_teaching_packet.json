@@ -1,27 +1,52 @@
 {
   "status": "ok",
-  "taught_by": "ChronicleRAG Golden Cortex (v2.8)",
-  "synced_at": "2026-11-13T23:46:47Z",
+  "taught_by": "ChronicleRAG Golden Cortex (UX Engine 2.8 · PG17 Unified)",
+  "synced_at": "2026-11-15T17:24:33Z",
   "service_name": "InsightBake",
-  "cluster_id": "InsightBake_and_InsightPastelaria",
-  "specialty": "Industrial Bakery Arrhenius/Monod Sourdough Fermentation, Baker's % Scaling & Bi-Temporal HACCP (:4030)",
+  "workspace_path": "C:/Users/bruno/PycharmProjects/InsightBake",
+  "cluster_id": "InsightBake_and_InsightFresco",
+  "specialty": "Industrial Bakery Arrhenius/Monod Sourdough Fermentation, Baker's % Scaling, ASAE Allergens & Bi-Temporal HACCP (:4030)",
+  "corpus_snapshot": {
+    "total_books_compiled": 12546,
+    "master_books_compiled": 50,
+    "distilled_compact_skills": 58,
+    "storage_engine": "Unified PostgreSQL 17 (pgvector + Apache AGE + TimescaleDB on :5432/:5433)",
+    "ux_engine_version": "2.8"
+  },
   "autonomous_parallel_execution_when_chronicle_busy": true,
   "drip_and_retry_policy": {
     "drip_interval_sec": 15.0,
     "fast_retry_delay_sec": 30.0,
     "deferred_retry_delay_sec": 3600.0
   },
+  "domain_teaching_curriculum": {
+    "master_books": [
+      "Book_Lit_Master_00_Golden_Cortex.md",
+      "Book_Lit_Master_Familia_Insights_and_SetMiddle_Ecosystem.md",
+      "Book_Lit_Master_SetMiddle_Specialty_Queue_and_Unapplied_Algorithms.md",
+      "Book_Lit_Master_Sovereign_Agent_Failure_Ledger.md",
+      "Book_Lit_Master_fintech_finance.md",
+      "Book_Lit_Master_SaaS_Security_Database_and_Production_Engineering.md"
+    ],
+    "recent_domain_books": [
+      "Book_Lit_01-Fichas-Tecnicas-ASAE-e-Alergenios.md",
+      "Book_Lit_ASAE_FICHAS_TECNICAS_DOSSIER.md"
+    ],
+    "architectural_guidance": [
+      "Enforce ASAE technical sheets, EU Reg. 1169/2011 14-allergen matrix declarations, Reg. (CE) 852/2004 HACCP cold-chain logs, and SAF-T (PT) v1.04_01 invoicing."
+    ]
+  },
   "enforced_rules": [
-    "RULE-11 (PT/EU Statutory Governance: CNPD Lei 58/2019, EU AI Act 2024/1689, DL 82/2022 WCAG 2.2 AA, NIS2/CRA)",
-    "RULE-12 (Compact <10KB Payloads & Token-Budget Guard)",
-    "RULE-13 (ChronicleRAG-First Retrieval & 4-Tier Zero-Paid-Token LLM Failover)",
-    "RULE-14 (SetMiddle Specialty Delegation & Parallel Execution When ChronicleRAG Is Occupied)",
-    "RULE-15 (Slow Drip-Pace Execution & Automatic 1-Hour Retry Queue on Upstream Failure)",
-    "RULE-CA-08 (Full 38-Repo SetMiddle & InsightCore Catalog Coverage + DEMO/DEV Branch Parity)",
-    "RULE-CA-09 (Centralized BiTemporalPointInTimeEngine via InsightTimeline :8095 + 1-Line InsightCore Facade)",
-    "RULE-CA-10 (InsightCode 5-Layer PostgreSQL/pgvector/Apache AGE DDL & BDD Scenario AST Cartography)",
-    "RULE-CA-11 (Universal ChronicleRAG Teacher-Student Packet Synchronization Across All Specialties)",
-    "RULE-17 (Mandatory Patent, Prior-Art, Trademark & Zero-Leak RDAP Delegation to InsightPatent v2.0 + Antigravity Second-Eyes Audit)"
+    "RULE-10 (Non-Blocking Async Background Execution & Valid Chrome MV3 Host Patterns)",
+    "RULE-11 (PT/EU Statutory Governance: CNPD Lei 58/2019, EU AI Act 2024/1689, DL 82/2022 WCAG 2.2 AA/AAA, NIS2/CRA, AT SAF-T/CIRC)",
+    "RULE-12 (Compact <10KB MCP Payloads & <9KB Distilled Skill Token-Budget Guard)",
+    "RULE-13 (ChronicleRAG-First Retrieval Gate, Continue-on-Missing Fallback & 4-Tier Zero-Paid-Token LLM Failover)",
+    "RULE-14 (SetMiddle Specialty Delegation, Busy-Lock Parallel Execution & Explicit Antigravity Second-Eyes Takeover Notice)",
+    "RULE-15 (Slow Drip-Pace Execution, 1-Hour Retry Queue & Strict Ring-3 Zero-Code Boundary)",
+    "RULE-16 (Zero Runtime ChromaDB — Unified PostgreSQL 17 pgvector + Apache AGE + TimescaleDB Invariant)",
+    "RULE-17 (Mandatory Patent, Prior-Art, Trademark & Zero-Leak RDAP Delegation to InsightPatent v2.0 + Antigravity Second-Eyes Audit)",
+    "RULE-18 (Sovereign Product Identity — Zero Competitor or Third-Party Inspiration Naming Across UI, Prompts & Docs)",
+    "RULE-CA-08..11 (Full Active SetMiddle Catalog Coverage, Bi-Temporal Delegation, 5-Layer DB/BDD AST Cartography & Teacher-Student Sync)"
   ],
   "bitemporal_engine_delegate": "insight_core_io.BiTemporalPointInTimeEngine -> insight_timeline.engine (:8095)",
   "ast_cartographer_delegate": "insight_code.engine.extract_polyglot_ast_map (:4013)",

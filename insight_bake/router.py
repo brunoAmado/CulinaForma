@@ -1363,6 +1363,35 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
             },
         )
 
+    @router.post("/ficha-asae/docx")
+    def download_cake_asae_ficha_whitelabel_docx(payload: Dict[str, Any] = Body(default={})) -> Response:
+        import sys as _sys
+
+        fresco_dir = str(Path(__file__).resolve().parent.parent.parent / "InsightPastelaria")
+        if fresco_dir not in _sys.path and Path(fresco_dir).exists():
+            _sys.path.insert(0, fresco_dir)
+        from insight_fresco.word_ficha_template import (
+            _slugify_filename_pt,
+            build_whitelabel_asae_ficha_docx_from_ficha,
+        )
+        from insight_fresco.asae_ficha_tecnica import load_establishment_profile
+
+        bundle = engine.export_asae_ficha_artifacts(payload or {})
+        if not bundle.get("ok"):
+            return JSONResponse(status_code=400, content=bundle)
+        ficha = bundle["ficha"]
+        est = load_establishment_profile(engine.establishment_profile_path)
+        docx_bytes = build_whitelabel_asae_ficha_docx_from_ficha(ficha, establishment=est, doc_index=1)
+        fname = f"FT_01_{_slugify_filename_pt(ficha.product_name)}.docx"
+        return Response(
+            content=docx_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={
+                "Content-Disposition": f'attachment; filename="{fname}"',
+                "Cache-Control": "no-store",
+            },
+        )
+
     @router.post("/reserve-fresco")
     @router.post("/reserve-pastelaria")
     def reserve_custom_cake_in_pastelaria(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:

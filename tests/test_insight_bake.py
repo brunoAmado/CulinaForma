@@ -612,6 +612,29 @@ class TestInsightBake(unittest.TestCase):
         self.assertEqual(r_app.status_code, 200)
         self.assertTrue(r_app.json()["quote"]["fresco_kds_sync"]["synced"])
 
+    def test_16_bake_existing_fichas_whitelabel_docx_and_human_readability_gate(self) -> None:
+        import sys as _sys
+
+        fresco_dir = str(Path(__file__).resolve().parent.parent.parent / "InsightPastelaria")
+        if fresco_dir not in _sys.path and Path(fresco_dir).exists():
+            _sys.path.insert(0, fresco_dir)
+        from insight_fresco.word_ficha_template import audit_docx_human_readability_and_whitelabel
+
+        # 1. Export 3D Multi-Tier Cake (ROUND + hex colors) & Gluten-Free HEART Cake & Sourdough Fermentation via /api/bake/ficha-asae/docx
+        for payload in (
+            {"shape": "ROUND", "sponge_key": "red_velvet", "filling_key": "brigadeiro_gourmet", "topper_text": "Clássico Red Velvet"},
+            {"shape": "HEART", "sponge_key": "amendoa_sem_gluten", "filling_key": "curd_limao_frutos_vermelhos", "topper_text": "Amêndoa Sem Glúten"},
+            {"action": "fermentation", "flour_mass_g": 5000.0, "dough_temp_c": 26.0, "hydration_pct": 72.0, "starter_pct": 20.0},
+        ):
+            r_docx = self.client.post("/api/bake/ficha-asae/docx", json=payload)
+            self.assertEqual(r_docx.status_code, 200)
+            self.assertIn("wordprocessingml.document", r_docx.headers.get("content-type", ""))
+            audit = audit_docx_human_readability_and_whitelabel(r_docx.content)
+            self.assertTrue(audit["ok"], f"Bake .docx human-readability failure: {audit['issues']}")
+            self.assertGreaterEqual(audit["metrics"]["min_font_size_pt"], 8.5)
+            self.assertGreaterEqual(audit["metrics"]["min_wcag_contrast_ratio"], 7.5)
+            self.assertLessEqual(audit["metrics"]["max_table_width_cm"], audit["metrics"]["printable_width_cm"] + 0.05)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -14,3 +14,4 @@ rust_core/target/
 pipeline_data/fichas_tecnicas_asae/*.pdf
 pipeline_data/bake_unified_ledger.json
 templates/word/*.docx
+templates/word/**/*.docx

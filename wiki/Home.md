@@ -30,3 +30,4 @@
 | `templates/word/*.docx` | 4 White-Label Editable Microsoft Word (`.docx`) ASAE, 14-Allergen & Event Cake Technical Sheets (zero platform branding) |
 | `POST /api/bake/reserve-fresco` (legacy: `/reserve-pastelaria`) | Dispatches 24h custom cake order + HTML/PDF ASAE Ficha into `InsightFresco` (`:4029 /api/fresco`) |
 | `POST /api/bake/scrub` | CNPD / GDPR (`Lei n.º 58/2019`) PII & Portuguese NIF scrubber |
+| `POST /api/bake/ficha-asae/docx` | Exporta Ficha Técnica ASAE 100% White-Label em Microsoft Word (`.docx`) validada para leitura humana |

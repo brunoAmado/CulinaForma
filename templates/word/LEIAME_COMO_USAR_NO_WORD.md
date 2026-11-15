@@ -1,26 +1,21 @@
-# Modelos Editáveis Microsoft Word (`.docx`) — Fichas Técnicas ASAE, HACCP & 14 Alergénios (100% White-Label / Sem Marca)
+# Modelos & Fichas Técnicas Já Criadas em Microsoft Word (`.docx`) — 100% White-Label e Legíveis para Humanos
 
-Estes 4 ficheiros `.docx` foram desenhados para serem enviados diretamente aos seus clientes e editados no **Microsoft Word**, **LibreOffice Writer** ou **Google Docs**, **sem qualquer referência a software ou marcas não registadas** (nem no texto visível, nem nos cabeçalhos/rodapés, nem nas propriedades internas do ficheiro Word).
+Todos os ficheiros `.docx` desta pasta (e da subpasta `fichas_criadas/`) foram gerados **100% sem marca de software** (zero referências nos cabeçalhos, rodapés, texto ou propriedades internas do Word) e validados por **10 testes automáticos de formatação e legibilidade humana** (grelhas A4 fixas sem colunas esmagadas, fonte mínima `8,5 pt` em A4 Vertical / `8,0 pt` na Matriz Horizontal, contraste WCAG AAA `≥ 8,1:1`, títulos protegidos contra quebra órfã e linhas protegidas contra corte a meio de página).
 
-## Ficheiros Incluídos
+## A. 4 Modelos Base Editáveis (`templates/word/`)
 1. **`01_Modelo_Ficha_Tecnica_Fabrico_Proprio_ASAE_Editavel.docx`** *(A4 Vertical — Modelo em Branco)*
-   - Secção 1: Identificação do Estabelecimento, NIF, CAE, Licença RJACSR e espaço para Logótipo do Cliente.
-   - Secção 2: Rendimento do lote, peso bruto/líquido, quebra térmica, tempo/temperatura de forno, centro térmico (`≥ +75 °C` / `≥ +85 °C`) e prazos de validade.
-   - Secção 3: Capitação quantitativa agrupada (Massa, Recheio, Cobertura, Embalagem), custo/kg e rastreabilidade de lotes (`Reg. CE n.º 178/2002`).
-   - Secção 4: Grelha completa dos **14 Alergénios Obrigatórios** (`Reg. UE n.º 1169/2011 Anexo II` + `DL n.º 26/2016`) com caixas `☐` editáveis para `Contém` e `Vestígios`, mais caixa pronta de texto de balcão.
-   - Secções 5–7: Modo de preparação, Boas Práticas de Higiene (`BPH`), Matriz **HACCP (`PCC 1..4` — `Reg. CE n.º 852/2004`)**, Critérios Organoléticos, Microbiológicos (`Reg. CE n.º 2073/2005`) e Declaração Nutricional (`Por 100 g` e `Por Dose`).
-   - Secção 8: Apuramento interno de Custo, Food Cost (%) e IVA (incluindo nota para empresários **Isentos ao abrigo do Art. 53.º do CIVA** contabilizarem matérias-primas com IVA incluído) — secção opcional que o cliente pode apagar antes de imprimir para a pasta da cozinha.
-   - Secção 9: Quadro de assinatura e revisão anual.
+2. **`02_Exemplo_Preenchido_Ficha_Tecnica_ASAE_Pastel_de_Nata.docx`** *(A4 Vertical — Exemplo Guia)*
+3. **`03_Modelo_Quadro_14_Alergenios_Balcao_ASAE_Landscape_Editavel.docx`** *(A4 Horizontal — Quadro em Branco)*
+4. **`04_Modelo_Ficha_Tecnica_Encomenda_Bolos_Design_e_Eventos_Editavel.docx`** *(A4 Vertical — Encomendas & Eventos)*
 
-2. **`02_Exemplo_Preenchido_Ficha_Tecnica_ASAE_Pastel_de_Nata.docx`** *(A4 Vertical — Exemplo Real Preenchido)*
-   - Guia de referência pronto (com *Pastel de Nata Artesanal*, incluindo o alerta clássico da lecitina de soja `E322` na margarina de folhar) para o cliente perceber imediatamente como preencher cada campo.
-
-3. **`03_Modelo_Quadro_14_Alergenios_Balcao_ASAE_Landscape_Editavel.docx`** *(A4 Horizontal — Afixação Obrigatória no Balcão)*
-   - Matriz geral de produtos vs. 14 alergénios (`●` Contém / `V` Vestígios / `—` Isento) exigida na venda não pré-embalada pelo `Decreto-Lei n.º 26/2016`.
-
-4. **`04_Modelo_Ficha_Tecnica_Encomenda_Bolos_Design_e_Eventos_Editavel.docx`** *(A4 Vertical — Bolos por Encomenda & Eventos)*
-   - Ficha específica para cake design, casamentos e aniversários: arquitetura por andares, aviso de estacas/suportes internos não comestíveis, 14 alergénios, transporte refrigerado (`+1 °C a +4 °C`), sinal/saldo e termo de conformidade assinado no levantamento.
-
-## Dica Rápida para os Clientes no Microsoft Word
-- **Preencher os dados da empresa uma só vez**: Abrir o ficheiro `01_Modelo_...docx`, inserir o logótipo e preencher a **Secção 1**, gravar como `Base_Empresa.docx` e duplicar esse ficheiro para cada receita nova.
-- **Marcar caixas `☐`**: Basta substituir `☐` por `☑` (ou por `[X]`).
+## B. 10 Documentos Já Preenchidos com as Fichas Técnicas Criadas (`templates/word/fichas_criadas/`)
+0. **`00_Quadro_14_Alergenios_Balcao_Preenchido_Catalogo_Atual.docx`** *(A4 Horizontal — Preenchido com os 9 Produtos)*
+1. **`FT_01_Hamburgao_Assado_de_Pastelaria_com_Queijo_Fiambre_Requeijao_e_Sesamo.docx`**
+2. **`FT_02_Cookie_Artesanal_Duplo_Chocolate_com_Flor_de_Sal.docx`**
+3. **`FT_03_Massa_Basica_Escaldada_para_Salgados_Coxinha.docx`**
+4. **`FT_04_Coxinha_de_Frango_Modelada.docx`**
+5. **`FT_05_Bolo_Celebrativo_3D_3_Andares_Classico_Red_Velvet.docx`**
+6. **`FT_06_Bolo_Celebrativo_3D_3_Andares_Belga_70_Praline.docx`**
+7. **`FT_07_Bolo_Celebrativo_3D_3_Andares_Amendoa_Sem_Gluten.docx`**
+8. **`FT_08_Bolo_Celebrativo_3D_3_Andares_Noz_Porto_Pistacio.docx`**
+9. **`FT_09_Pao_de_Fermentacao_Natural.docx`**
