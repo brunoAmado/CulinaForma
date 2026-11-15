@@ -13,7 +13,7 @@
    - **Prevents Structural Collapse**: Automatically rejects top-heavy inverted tiers (`INVERTED_UNSTABLE_TIER`) and computes the exact number and cut-height (`cm`) of internal polypropylene support dowels + center skewer.
 2. **Zero-Hallucination `ComfyUI` ControlNet Photorealistic Studio Prompt**:
    - Locks the `Three.js` 3D Z-depth and Canny edges (`controlnet_depth_strength=0.88`) so `Flux.1-dev` / `SDXL` wraps photorealistic icing, Lambeth piping, and sugar flowers onto the **exact physical geometry** the baker can build.
-3. **Gram-Exact Recipe Scaling, `EU Reg. 1169/2011` Allergens & `AT` Deposit Invoicing**:
-   - Calculates exact ingredient weights (`g`), mandatory ASAE allergen warnings (`GLUTEN`, `EGGS`, `MILK`, `NUTS`, `SOY`), baker labor hours, and the 50% `ATCUD` deposit invoice (`€`).
+3. **Gram-Exact Recipe Scaling, `MOD-FT-ASAE-DGAV-ACIP-v2.0` Vector A4 PDFs, `EU Reg. 1169/2011` Allergens & `AT` Deposit Invoicing**:
+   - Calculates exact ingredient weights (`g`), all 14 statutory Annex II allergens + Horizontal A4 Counter Allergen Matrix PDF (`GET /api/bake/fichas-tecnicas/caderno-alergenios.pdf`), native Vector A4 Fichas Técnicas for both 3D Multi-Tier Cakes and Arrhenius $Q_{10}$ Sourdough batches (`GET/POST /api/bake/ficha-asae/pdf`), shared Economic Operator Modulo-11 NIF stamping (`GET/PUT /api/bake/estabelecimento`), baker labor hours, and the 50% `ATCUD` deposit invoice (`€`).
 4. **Refrigerated Van Logistics & ASAE HACCP Cold-Chain Handover (`InsightFleet :4026` + `InsightSensor :4025`)**:
    - Computes required cake box dimensions (`cm`), `+2 °C to +5 °C` refrigerated transport target, and `<= 0.35 g` cornering vibration limits.

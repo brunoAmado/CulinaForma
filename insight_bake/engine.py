@@ -26,9 +26,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-_INSIGHT_CORE_DIR = Path("C:/Users/bruno/PycharmProjects/InsightCore")
-if _INSIGHT_CORE_DIR.exists() and str(_INSIGHT_CORE_DIR) not in sys.path:
-    sys.path.insert(0, str(_INSIGHT_CORE_DIR))
+_PROJECTS_ROOT = Path(__file__).resolve().parent.parent.parent
+for _sibling in ("InsightCore", "InsightPastelaria", "InsightActivity", "InsightBackup"):
+    _cand_dir = _PROJECTS_ROOT / _sibling
+    if _cand_dir.exists() and str(_cand_dir) not in sys.path:
+        sys.path.insert(0, str(_cand_dir))
 
 try:
     from insight_core_io import (
@@ -153,46 +155,56 @@ SPONGE_RECIPES: Dict[str, Dict[str, Any]] = {
         "name": "Pão de Ló Tradicional Português",
         "density_g_per_cm3": 0.42,
         "cost_eur_per_kg": 6.80,
+        "sponge_color_hex": "#FDE68A",
         "allergens": ["GLUTEN", "EGGS"],
         "baking_temp_c": 175.0,
         "baking_time_minutes": 32,
         "ratios": {"eggs_g": 0.45, "sugar_g": 0.30, "wheat_flour_g": 0.25},
+        "nutrition_per_100g": {"fat_g": 5.2, "saturates_g": 1.6, "carbs_g": 49.5, "sugars_g": 30.2, "protein_g": 8.4, "salt_g": 0.32},
     },
     "red_velvet": {
         "name": "Red Velvet Artisanal (Buttermilk & Cocoa)",
         "density_g_per_cm3": 0.54,
         "cost_eur_per_kg": 8.50,
+        "sponge_color_hex": "#9F1239",
         "allergens": ["GLUTEN", "EGGS", "MILK"],
         "baking_temp_c": 170.0,
         "baking_time_minutes": 35,
         "ratios": {"wheat_flour_g": 0.30, "sugar_g": 0.28, "buttermilk_g": 0.20, "eggs_g": 0.12, "butter_g": 0.10},
+        "nutrition_per_100g": {"fat_g": 11.4, "saturates_g": 6.8, "carbs_g": 51.0, "sugars_g": 29.0, "protein_g": 5.8, "salt_g": 0.48},
     },
     "chocolate_belga_70": {
         "name": "Bolo Húmido de Chocolate Belga 70%",
         "density_g_per_cm3": 0.58,
         "cost_eur_per_kg": 10.20,
+        "sponge_color_hex": "#3F2318",
         "allergens": ["GLUTEN", "EGGS", "MILK", "SOY"],
         "baking_temp_c": 170.0,
         "baking_time_minutes": 38,
         "ratios": {"wheat_flour_g": 0.24, "sugar_g": 0.26, "dark_chocolate_70_g": 0.20, "eggs_g": 0.15, "butter_g": 0.15},
+        "nutrition_per_100g": {"fat_g": 21.6, "saturates_g": 13.1, "carbs_g": 46.8, "sugars_g": 31.5, "protein_g": 6.9, "salt_g": 0.38},
     },
     "amendoa_sem_gluten": {
         "name": "Bolo de Amêndoa & Limão (Sem Glúten)",
         "density_g_per_cm3": 0.52,
         "cost_eur_per_kg": 12.40,
+        "sponge_color_hex": "#FEF08A",
         "allergens": ["EGGS", "NUTS"],
         "baking_temp_c": 165.0,
         "baking_time_minutes": 34,
         "ratios": {"almond_flour_g": 0.45, "sugar_g": 0.30, "eggs_g": 0.25},
+        "nutrition_per_100g": {"fat_g": 24.8, "saturates_g": 2.4, "carbs_g": 34.2, "sugars_g": 30.8, "protein_g": 12.6, "salt_g": 0.24},
     },
     "nozes_vinho_porto": {
         "name": "Bolo Nobre de Noz & Redução de Vinho do Porto",
         "density_g_per_cm3": 0.56,
         "cost_eur_per_kg": 13.20,
+        "sponge_color_hex": "#78492A",
         "allergens": ["GLUTEN", "EGGS", "MILK", "NUTS", "SULPHITES"],
         "baking_temp_c": 170.0,
         "baking_time_minutes": 36,
         "ratios": {"wheat_flour_g": 0.26, "sugar_g": 0.24, "walnut_meal_g": 0.20, "eggs_g": 0.18, "butter_g": 0.08, "port_wine_reduction_g": 0.04},
+        "nutrition_per_100g": {"fat_g": 20.4, "saturates_g": 5.9, "carbs_g": 44.5, "sugars_g": 26.2, "protein_g": 8.1, "salt_g": 0.35},
     },
 }
 
@@ -200,32 +212,42 @@ FILLING_RECIPES: Dict[str, Dict[str, Any]] = {
     "brigadeiro_gourmet": {
         "name": "Brigadeiro Gourmet de Chocolate Nobre",
         "cost_eur_per_kg": 11.50,
+        "filling_color_hex": "#4A2511",
         "allergens": ["MILK", "SOY"],
         "requires_refrigeration_4c": True,
+        "nutrition_per_100g": {"fat_g": 16.5, "saturates_g": 10.2, "carbs_g": 52.0, "sugars_g": 47.5, "protein_g": 6.2, "salt_g": 0.28},
     },
     "ovos_moles_doces_conventuais": {
         "name": "Doce de Ovos Conventual Português",
         "cost_eur_per_kg": 10.80,
+        "filling_color_hex": "#F59E0B",
         "allergens": ["EGGS"],
         "requires_refrigeration_4c": True,
+        "nutrition_per_100g": {"fat_g": 11.8, "saturates_g": 3.6, "carbs_g": 56.4, "sugars_g": 55.0, "protein_g": 6.8, "salt_g": 0.15},
     },
     "curd_limao_frutos_vermelhos": {
         "name": "Lemon Curd & Compota de Frutos Vermelhos",
         "cost_eur_per_kg": 12.00,
+        "filling_color_hex": "#E11D48",
         "allergens": ["EGGS", "MILK"],
         "requires_refrigeration_4c": True,
+        "nutrition_per_100g": {"fat_g": 10.4, "saturates_g": 6.1, "carbs_g": 46.2, "sugars_g": 42.8, "protein_g": 3.4, "salt_g": 0.18},
     },
     "praline_avela_crocante": {
         "name": "Ganache & Praliné de Avelã Piemontesa",
         "cost_eur_per_kg": 15.50,
+        "filling_color_hex": "#92400E",
         "allergens": ["MILK", "NUTS", "SOY"],
         "requires_refrigeration_4c": True,
+        "nutrition_per_100g": {"fat_g": 31.2, "saturates_g": 11.8, "carbs_g": 42.5, "sugars_g": 38.0, "protein_g": 7.6, "salt_g": 0.22},
     },
     "pistacio_tahini_crocante": {
         "name": "Creme de Pistácio Siciliano & Crocante de Sésamo",
         "cost_eur_per_kg": 16.90,
+        "filling_color_hex": "#65A30D",
         "allergens": ["MILK", "NUTS", "SESAME", "SOY"],
         "requires_refrigeration_4c": True,
+        "nutrition_per_100g": {"fat_g": 33.4, "saturates_g": 9.4, "carbs_g": 39.8, "sugars_g": 34.0, "protein_g": 9.8, "salt_g": 0.26},
     },
 }
 
@@ -235,20 +257,77 @@ FROSTING_RECIPES: Dict[str, Dict[str, Any]] = {
         "cost_eur_per_kg": 9.80,
         "allergens": ["EGGS", "MILK"],
         "max_ambient_temp_c": 23.0,
+        "nutrition_per_100g": {"fat_g": 42.0, "saturates_g": 26.5, "carbs_g": 38.0, "sugars_g": 38.0, "protein_g": 2.4, "salt_g": 0.25},
     },
     "ganache_blindagem_fondant": {
         "name": "Blindagem em Ganache + Pasta de Açúcar (Fondant)",
         "cost_eur_per_kg": 12.50,
         "allergens": ["MILK", "SOY"],
         "max_ambient_temp_c": 28.0,
+        "nutrition_per_100g": {"fat_g": 19.5, "saturates_g": 12.0, "carbs_g": 68.5, "sugars_g": 64.0, "protein_g": 2.1, "salt_g": 0.16},
     },
     "semi_naked_rustico": {
         "name": "Semi-Naked Rústico com Flores Naturais",
         "cost_eur_per_kg": 8.90,
         "allergens": ["EGGS", "MILK"],
         "max_ambient_temp_c": 22.0,
+        "nutrition_per_100g": {"fat_g": 36.0, "saturates_g": 22.8, "carbs_g": 36.5, "sugars_g": 36.0, "protein_g": 2.6, "salt_g": 0.22},
     },
 }
+
+
+def format_multibanco_ref_mod97(entity_5digits: str, order_seed_7digits: int, amount_cents: int) -> str:
+    """
+    Generates a deterministic Portuguese SIBS Multibanco 9-digit reference (`XXX XXX XXX`)
+    using ISO 7064 Modulo 97-10 check digits over `entity(5) + seed(7) + amount_cents(8)`.
+    """
+    ent = "".join(ch for ch in str(entity_5digits or "21403") if ch.isdigit())[:5].zfill(5)
+    seed7 = int(order_seed_7digits) % 10_000_000
+    cents8 = max(0, int(amount_cents)) % 100_000_000
+    payload_str = f"{ent}{seed7:07d}{cents8:08d}00"
+    rem = int(payload_str) % 97
+    check = (98 - rem) % 100
+    ref9 = f"{seed7:07d}{check:02d}"
+    return f"{ref9[:3]} {ref9[3:6]} {ref9[6:9]}"
+
+
+def compute_eu_1169_nutritional_declaration(
+    weighted_components: List[tuple[float, Dict[str, float]]],
+    portions_count: int = 1,
+    portion_label_pt: str = "Fatia Casamento (2,5×5 cm)",
+) -> Dict[str, Any]:
+    """
+    Computes the statutory EU Regulation No. 1169/2011 Art. 30.º & Annex XIV Nutritional Table
+    (`per_100g` and `per_portion`: kJ = 37*fat + 17*carbs + 17*protein; kcal = 9*fat + 4*carbs + 4*protein).
+    """
+    total_g = max(1.0, sum(max(0.0, w) for w, _ in weighted_components))
+    keys = ("fat_g", "saturates_g", "carbs_g", "sugars_g", "protein_g", "salt_g")
+    per100: Dict[str, float] = {}
+    for k in keys:
+        per100[k] = round(sum(max(0.0, w) * float(nut.get(k, 0.0)) for w, nut in weighted_components) / total_g, 2)
+
+    energy_kj_100 = round(37.0 * per100["fat_g"] + 17.0 * per100["carbs_g"] + 17.0 * per100["protein_g"], 1)
+    energy_kcal_100 = round(9.0 * per100["fat_g"] + 4.0 * per100["carbs_g"] + 4.0 * per100["protein_g"], 1)
+
+    portions = max(1, int(portions_count))
+    portion_weight_g = round(total_g / portions, 1)
+    scale = portion_weight_g / 100.0
+
+    return {
+        "regulation": "Regulamento (UE) n.º 1169/2011 Art. 30.º & Anexo XIV (Declaração Nutricional Obrigatória)",
+        "portion_label_pt": portion_label_pt,
+        "portion_weight_g": portion_weight_g,
+        "per_100g": {
+            "energy_kj": energy_kj_100,
+            "energy_kcal": energy_kcal_100,
+            **per100,
+        },
+        "per_portion": {
+            "energy_kj": round(energy_kj_100 * scale, 1),
+            "energy_kcal": round(energy_kcal_100 * scale, 1),
+            **{k: round(v * scale, 2) for k, v in per100.items()},
+        },
+    }
 
 
 def validate_portuguese_nif_modulo11(nif: str) -> bool:
@@ -703,76 +782,302 @@ def design_3d_cake_and_production_sheet(
     }
 
 
-def render_cake_asae_ficha_html(design_res: Dict[str, Any]) -> str:
-    """Renders a printable A4 ASAE Technical Data Sheet (`Ficha Técnica de Fabrico Próprio`) for any 3D cake."""
-    scene = design_res["threejs_3d_scene"]
-    bom = design_res["recipe_bom_grams"]
-    struct = design_res["portions_and_structure"]
-    allerg = design_res["allergens_eu_1169_2011"]
-    pricing = design_res["pricing_and_at_invoicing"]
-    cold = design_res["logistics_and_haccp_cold_chain"]
-    ficha_id = f"FT-ASAE-BAKE-{design_res['design_sha256'][:8].upper()}"
+from insight_pastelaria.asae_ficha_tecnica import (
+    ASAE_NORMATIVE_TEMPLATE_BASIS,
+    ASAEEstablishmentProfile,
+    ASAEFichaTecnica,
+    build_validated_asae_ficha_tecnica,
+    load_establishment_profile,
+    render_asae_ficha_pdf_bytes,
+    render_counter_allergen_matrix_pdf_bytes,
+    render_printable_asae_ficha_html,
+    save_establishment_profile,
+)
 
-    rows_html = "".join(
-        f"<tr><td>{html.escape(k)}</td><td>Massa Base ({html.escape(bom['sponge_type'])})</td><td style='text-align:right'>{v:.1f} g</td></tr>"
-        for k, v in bom["sponge_ingredients_g"].items()
+
+def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnica:
+    """
+    Converts any `InsightBake` 3D Multi-Tier Cake Design (`design_3d_cake_and_production_sheet`)
+    OR Arrhenius Q10 Sourdough Batch (`compute_arrhenius_fermentation_and_bakers_pct`)
+    into a 100% validated `MOD-FT-ASAE-DGAV-ACIP-v2.0` `ASAEFichaTecnica`.
+    """
+    if result_res.get("mode") == "arrhenius_fermentation_and_bakers_pct":
+        b = result_res["bakers_percentage_bom_grams"]
+        k = result_res["arrhenius_fermentation_kinetics"]
+        t_rec = result_res["haccp_and_bitemporal_traceability"]
+        f_hash = str(t_rec.get("sha256_audit_receipt") or "FERM0001")[:8].upper()
+        ficha_id = f"FT-ASAE-FERM-{f_hash}"
+        total_raw_g = float(b["total_dough_mass_kg"]) * 1000.0
+        loaves = max(1, int(round(total_raw_g / 750.0)))
+        unit_raw = round(total_raw_g / loaves, 1)
+        unit_cooked = round(unit_raw * 0.87, 1)
+        return build_validated_asae_ficha_tecnica(
+            ficha_id=ficha_id,
+            sku=f"pao_levain_{f_hash.lower()}",
+            product_name=f"Pão de Fermentação Natural (Levain {b['starter_pct']}% · Hidratação {b['hydration_pct']}%)",
+            category="Panificação Artesanal de Longa Fermentação (Arrhenius Q10 · InsightBake)",
+            batch_yield_units=loaves,
+            unit_raw_weight_g=unit_raw,
+            unit_cooked_weight_g=unit_cooked,
+            prep_time_minutes=int(k["estimated_bulk_fermentation_minutes"]),
+            resting_or_freezing_minutes=int(float(k["cold_retard_hours"]) * 60),
+            baking_temp_c=235.0,
+            baking_time_minutes=36,
+            core_target_temp_c=96.0,
+            raw_ingredients=[
+                {
+                    "name": "Farinha de trigo T65 de mó de pedra",
+                    "component_group": "Massa Base (100%)",
+                    "gross_weight_g": float(b["flour_100pct_g"]),
+                    "net_weight_g": float(b["flour_100pct_g"]),
+                    "cost_eur_per_kg": 1.45,
+                    "allergen_codes": ["GLUTEN"],
+                },
+                {
+                    "name": f"Água potável filtrada a {k['required_water_temp_ddt_c']}°C (DDT)",
+                    "component_group": "Hidratação",
+                    "gross_weight_g": float(b["water_g"]),
+                    "net_weight_g": float(b["water_g"]),
+                    "cost_eur_per_kg": 0.02,
+                    "allergen_codes": [],
+                },
+                {
+                    "name": "Massa-mãe natural ativa (levain de trigo e centeio)",
+                    "component_group": "Fermento Natural",
+                    "gross_weight_g": float(b["levain_starter_g"]),
+                    "net_weight_g": float(b["levain_starter_g"]),
+                    "cost_eur_per_kg": 1.80,
+                    "allergen_codes": ["GLUTEN"],
+                },
+                {
+                    "name": "Sal marinho tradicional português",
+                    "component_group": "Regulador Enzimático",
+                    "gross_weight_g": float(b["salt_g"]),
+                    "net_weight_g": float(b["salt_g"]),
+                    "cost_eur_per_kg": 0.90,
+                    "allergen_codes": [],
+                },
+            ],
+            preparation_steps=[
+                f"Autólise da farinha com água regulada a {k['required_water_temp_ddt_c']}°C para atingir DDT de {k['target_dough_temp_c']}°C.",
+                f"Incorporar o levain ({b['starter_pct']}%) e o sal marinho ({b['salt_pct']}%), conduzindo fermentação em bloco de {k['estimated_bulk_fermentation_hours']} h.",
+                f"Dividir em {loaves} unidades de {unit_raw} g, tender e retardar a frio (+{k['cold_retard_temp_c']}°C) durante {k['cold_retard_hours']} h.",
+                "Cozer em forno de laje com vapor a 235°C durante 36 minutos até centro térmico >= +96°C.",
+            ],
+            good_hygiene_practices_bph=[
+                "Controlar temperatura da água com termómetro calibrado e higienizar bannetons.",
+                "Manter câmara de retardo a frio rigorosamente <= +4,0°C.",
+            ],
+            haccp_pccs=[
+                {
+                    "pcc_id": "PCC-1",
+                    "stage": f"Retardo a Frio (+{k['cold_retard_temp_c']}°C / {k['cold_retard_hours']}h)",
+                    "hazard_class": "Biológico",
+                    "hazard_description": "Sobrefermentação ou crescimento indesejado fora de cadeia de frio.",
+                    "critical_limit": "Câmara entre +1,0°C e +4,0°C.",
+                    "monitoring_method": "Sonda `InsightActivity` zona `CHILLER`.",
+                    "corrective_action": "Transferir tabuleiros para câmara de reserva se > +5,0°C.",
+                    "verification_record": "Registo de Frio de Panificação.",
+                },
+                {
+                    "pcc_id": "PCC-2",
+                    "stage": "Cozedura com Vapor (235°C / 36 min)",
+                    "hazard_class": "Biológico / Alergénico",
+                    "hazard_description": "Gelatinização completa do amido e declaração obrigatória de Glúten (DL 26/2016).",
+                    "critical_limit": "Centro térmico >= +95,0°C; dístico de Glúten afixado na prateleira.",
+                    "monitoring_method": "Termómetro de sonda e verificação de abertura.",
+                    "corrective_action": "Prolongar cozedura 5 min se miolo < +95°C.",
+                    "verification_record": "Quadro de Alergénios de Balcão.",
+                },
+            ],
+            storage_zones_to_validate=[
+                {"zone": "CHILLER", "target_temp_c": min(4.0, max(1.0, float(k["cold_retard_temp_c"]))), "usage_note": "Retardo de massa em câmara (+1°C a +4°C)."},
+                {"zone": "DRY_VITRINE", "target_temp_c": 20.0, "usage_note": "Exposição de pão cozido em escaparate seco higienizado."},
+            ],
+            primary_shelf_life="48 horas em escaparate ventilado seco à temperatura ambiente.",
+            secondary_shelf_life="24 horas ao balcão de padaria protegido de contaminação.",
+            may_contain_trace_codes=["SESAME", "SOY", "NUTS"],
+            organoleptic_criteria={
+                "aspeto": "Pestana aberta caramelizada e alvéolos bem distribuídos.",
+                "cor": "Côdea castanha-dourada rústica.",
+                "odor": f"Aroma lático-acético equilibrado ({k['lactic_to_acetic_profile']}).",
+                "textura_e_sabor": "Côdea estaladiça e miolo elástico húmido.",
+            },
+            suggested_unit_gross_price_eur=4.20,
+            iva_rate_pct=6.0,
+            chronicle_book_id=f"FERM-{f_hash}",
+            source_creator="SetMiddle Insight™ · Bake Arrhenius Lab",
+        )
+
+    scene = result_res["threejs_3d_scene"]
+    bom = result_res["recipe_bom_grams"]
+    struct = result_res["portions_and_structure"]
+    allerg = result_res["allergens_eu_1169_2011"]
+    pricing = result_res["pricing_and_at_invoicing"]
+    cold = result_res["logistics_and_haccp_cold_chain"]
+
+    design_hash = str(result_res["design_sha256"])[:8].upper()
+    ficha_id = f"FT-ASAE-BAKE-{design_hash}"
+    sku = f"bolo_3d_{design_hash.lower()}"
+
+    sponge_spec = SPONGE_RECIPES.get(bom["sponge_key"], SPONGE_RECIPES["red_velvet"])
+    filling_spec = FILLING_RECIPES.get(bom["filling_key"], FILLING_RECIPES["brigadeiro_gourmet"])
+    frosting_spec = FROSTING_RECIPES.get(bom["frosting_key"], FROSTING_RECIPES["swiss_meringue_buttercream"])
+
+    label_map = {
+        "wheat_flour_g": ("Farinha de trigo T55 peneirada", ["GLUTEN"]),
+        "almond_flour_g": ("Farinha de amêndoa selecionada", ["NUTS"]),
+        "walnut_meal_g": ("Miolo de noz nobre moído", ["NUTS"]),
+        "sugar_g": ("Açúcar branco granulado fino", []),
+        "eggs_g": ("Ovo inteiro pasteurizado", ["EGGS"]),
+        "butter_g": ("Manteiga pasteurizada sem sal (82% MG)", ["MILK"]),
+        "buttermilk_g": ("Leitelho pasteurizado (buttermilk)", ["MILK"]),
+        "dark_chocolate_70_g": ("Chocolate belga 70% cacau (lecitina de soja)", ["SOY", "MILK"]),
+        "port_wine_reduction_g": ("Redução de Vinho do Porto DOP (contém sulfitos)", ["SULPHITES"]),
+    }
+
+    raw_ings: List[Dict[str, Any]] = []
+    for k, grams in bom["sponge_ingredients_g"].items():
+        lbl, explicit_alg = label_map.get(k, (k, []))
+        raw_ings.append(
+            {
+                "name": lbl,
+                "component_group": f"Massa Base ({bom['sponge_type']})",
+                "gross_weight_g": round(float(grams) * 1.03, 1),
+                "net_weight_g": float(grams),
+                "cost_eur_per_kg": float(sponge_spec["cost_eur_per_kg"]),
+                "allergen_codes": explicit_alg,
+            }
+        )
+    raw_ings.append(
+        {
+            "name": str(bom["filling_type"]),
+            "component_group": "Recheio Refrigerado",
+            "gross_weight_g": round(float(bom["filling_total_g"]) * 1.02, 1),
+            "net_weight_g": float(bom["filling_total_g"]),
+            "cost_eur_per_kg": float(filling_spec["cost_eur_per_kg"]),
+            "allergen_codes": list(filling_spec.get("allergens") or []),
+        }
     )
-    rows_html += (
-        f"<tr><td>{html.escape(bom['filling_type'])}</td><td>Recheio Refrigerado</td><td style='text-align:right'>{bom['filling_total_g']:.1f} g</td></tr>"
-        f"<tr><td>{html.escape(bom['frosting_type'])}</td><td>Cobertura &amp; Blindagem</td><td style='text-align:right'>{bom['frosting_total_g']:.1f} g</td></tr>"
+    raw_ings.append(
+        {
+            "name": str(bom["frosting_type"]),
+            "component_group": "Cobertura & Blindagem",
+            "gross_weight_g": round(float(bom["frosting_total_g"]) * 1.04, 1),
+            "net_weight_g": float(bom["frosting_total_g"]),
+            "cost_eur_per_kg": float(frosting_spec["cost_eur_per_kg"]),
+            "allergen_codes": list(frosting_spec.get("allergens") or []),
+        }
     )
-    dowel_rows = "".join(
-        f"<li>Andar {d['tier_index']} ({d['tier_diameter_cm']} cm): <strong>{d['polypropylene_dowel_rods_count']} estacas PP alimentares</strong> cortadas a {d['dowel_cut_height_cm']} cm + prato {d['cake_board_under_upper_tier_cm']} cm</li>"
-        for d in struct["tier_dowel_blueprint"]
-    ) or "<li>Andar único — sem estacas internas necessárias.</li>"
 
-    return f"""<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-<meta charset="utf-8">
-<title>{ficha_id} — Ficha Técnica ASAE Cake Design ({html.escape(scene['topper_text'])})</title>
-<style>
-  body {{ font-family: Inter, system-ui, sans-serif; color: #0f172a; margin: 24px; line-height: 1.45; font-variant-numeric: tabular-nums; }}
-  h1 {{ font-size: 18px; margin: 0 0 4px; }}
-  h2 {{ font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-top: 16px; }}
-  table {{ width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }}
-  th, td {{ border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }}
-  th {{ background: #f1f5f9; }}
-  .box {{ background: #fffbeb; border: 1px solid #f59e0b; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-top: 8px; }}
-  @media print {{ .no-print {{ display: none; }} body {{ margin: 10mm; }} }}
-</style>
-</head>
-<body>
-  <div class="no-print" style="margin-bottom:12px;">
-    <button onclick="window.print()" style="padding:8px 14px;background:#4f46e5;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Imprimir / Guardar PDF A4 (ASAE)</button>
-  </div>
-  <h1>FICHA TÉCNICA DE FABRICO PRÓPRIO — {ficha_id}</h1>
-  <div style="font-size:12px;color:#475569;">
-    <strong>Produto:</strong> Bolo Celebrativo {scene['tier_count']} Andares ({scene['shape']}) — Topo: "{html.escape(scene['topper_text'])}" |
-    <strong>Peso Total:</strong> {struct['total_assembled_weight_kg']} kg ({struct['wedding_portions_2_5x5cm']} fatias casamento) |
-    <strong>PVP:</strong> €{pricing['recommended_client_total_gross_eur']:.2f} ({html.escape(pricing['atcud_preview'])})
-  </div>
+    cooked_g = max(500.0, round(float(struct["total_assembled_weight_kg"]) * 1000.0, 1))
+    raw_g = round(max(cooked_g * 1.06, sum(i["net_weight_g"] for i in raw_ings)), 1)
 
-  <h2>1. Capitação Quantitativa em Gramas (Reg. CE n.º 178/2002 Art. 18.º)</h2>
-  <table>
-    <thead><tr><th>Ingrediente / Componente</th><th>Grupo Técnico</th><th style="text-align:right">Peso Líquido (g)</th></tr></thead>
-    <tbody>{rows_html}</tbody>
-  </table>
+    dowel_summary = (
+        "; ".join(
+            f"Andar {d['tier_index']} ({d['tier_diameter_cm']}cm): {d['polypropylene_dowel_rods_count']} estacas PP a {d['dowel_cut_height_cm']}cm + prato {d['cake_board_under_upper_tier_cm']}cm"
+            for d in struct["tier_dowel_blueprint"]
+        )
+        or "Andar único estruturalmente estável (sem estacas internas)"
+    )
 
-  <h2>2. Declaração Obrigatória dos 14 Alergénios (Reg. UE n.º 1169/2011 Anexo II &amp; DL n.º 26/2016)</h2>
-  <div class="box"><strong>{html.escape(allerg['allergen_counter_signage_pt'])}</strong></div>
+    return build_validated_asae_ficha_tecnica(
+        ficha_id=ficha_id,
+        sku=sku,
+        product_name=f"Bolo Celebrativo 3D {scene['tier_count']} Andares ({scene['shape']}) — \"{scene['topper_text']}\"",
+        category="Cake Design Multi-Andar por Encomenda (SetMiddle Insight™ · Bake)",
+        batch_yield_units=1,
+        unit_raw_weight_g=raw_g,
+        unit_cooked_weight_g=cooked_g,
+        prep_time_minutes=int(round(float(pricing["estimated_baker_labor_hours"]) * 60)),
+        resting_or_freezing_minutes=180,
+        baking_temp_c=float(bom["sponge_baking_temp_c"]),
+        baking_time_minutes=int(bom["sponge_baking_time_minutes"]),
+        core_target_temp_c=84.0,
+        raw_ingredients=raw_ings,
+        preparation_steps=[
+            f"1. Pesar matérias-primas em balança calibrada e cozer discos de '{bom['sponge_type']}' a {bom['sponge_baking_temp_c']}°C durante {bom['sponge_baking_time_minutes']} min (centro >= +82°C).",
+            "2. Abater rapidamente os discos e o recheio em célula de arrefecimento até <= +4,0°C antes da montagem.",
+            f"3. Montar estrutura interna certificada para uso alimentar: {dowel_summary}.",
+            f"4. Aplicar blindagem '{bom['frosting_type']}', acondicionar em caixa isotérmica ({cold['required_transport_box_cm']}) e manter entre +2°C e +5°C.",
+        ],
+        good_hygiene_practices_bph=[
+            "Desinfeção prévia de estacas de polipropileno (PP alimentar), espátulas, bailarina e pratos separadores.",
+            "Utilização exclusiva de claras/ovos pasteurizados em coberturas de merengue e curds.",
+            "Transporte em viatura isotérmica higienizada com tapete antiderrapante (força-G curva <= 0,35g).",
+        ],
+        haccp_pccs=[
+            {
+                "pcc_id": "PCC-1",
+                "stage": f"Cozedura das Massas ({bom['sponge_baking_temp_c']}°C / {bom['sponge_baking_time_minutes']} min)",
+                "hazard_class": "Biológico",
+                "hazard_description": "Sobrevivência de Salmonella spp. em massas ricas em ovos.",
+                "critical_limit": "Temperatura no centro térmico de cada disco >= +82,0°C.",
+                "monitoring_method": "Sonda de penetração calibrada à saída do forno.",
+                "corrective_action": "Prolongar cozedura em incrementos de 4 min até atingir >= +82,0°C.",
+                "verification_record": "Registo de Fornadas Cake Studio (`InsightBake`).",
+            },
+            {
+                "pcc_id": "PCC-2",
+                "stage": "Armazenamento, Engenharia de Estacas & Transporte Frio",
+                "hazard_class": "Biológico / Físico-Estrutural",
+                "hazard_description": "Multiplicação microbiana em recheios refrigerados, corpos estranhos não alimentares ou colapso estrutural.",
+                "critical_limit": f"Câmara +2,0°C a +4,0°C; exposição máx. <= +{cold['max_safe_ambient_display_temp_c']}°C; apenas estacas PP próprias p/ contacto alimentar informadas ao cliente.",
+                "monitoring_method": "Telemetria IoT de câmara e conferência física da contagem de estacas na guia de entrega.",
+                "corrective_action": "Bloquear expedição se núcleo > +5,0°C; declarar nº exato de estacas internas na etiqueta de corte.",
+                "verification_record": "Guia de Expedição Frio & Ficha Técnica ASAE.",
+            },
+        ],
+        storage_zones_to_validate=[
+            {
+                "zone": "CHILLER",
+                "target_temp_c": 3.0,
+                "usage_note": f"Câmara refrigerada e transporte isotérmico ({cold['refrigerated_van_target_temp_c']}) em caixa {cold['required_transport_box_cm']}.",
+            }
+        ],
+        primary_shelf_life="72 horas refrigerado (+2°C a +4°C) em embalagem fechada.",
+        secondary_shelf_life=f"Até 3 horas em mesa de evento climatizada (<= +{cold['max_safe_ambient_display_temp_c']}°C).",
+        may_contain_trace_codes=list(allerg.get("may_contain_traces") or ["NUTS", "SESAME"]),
+        organoleptic_criteria={
+            "aspeto": f"Bolo celebrativo {scene['tier_count']} andares ({scene['shape']}) perfeitamente nivelado ({struct['wedding_portions_2_5x5cm']} fatias casamento).",
+            "cor": f"Base {scene['tiers'][0]['base_color_hex']} com detalhes {scene['tiers'][0]['piping_accent_color_hex']}.",
+            "odor": "Aroma fresco e nobre característico da massa e recheio selecionados.",
+            "textura_e_sabor": "Camadas húmidas e equilibradas com cobertura estável.",
+        },
+        suggested_unit_gross_price_eur=float(pricing["recommended_client_total_gross_eur"]),
+        iva_rate_pct=float(pricing["iva_rate_pct"]),
+        chronicle_book_id=f"BAKE-{design_hash}",
+        source_creator="SetMiddle Insight™ · Bake 3D Studio",
+    )
 
-  <h2>3. Engenharia Estrutural Alimentar &amp; PCCs HACCP (Reg. CE n.º 852/2004)</h2>
-  <ul style="font-size:12px;">
-    <li><strong>PCC-1 Cozedura da Massa:</strong> Forno a {bom['sponge_baking_temp_c']} °C durante {bom['sponge_baking_time_minutes']} min (centro térmico &ge; +82 °C).</li>
-    <li><strong>PCC-2 Conservação &amp; Transporte Frio:</strong> {html.escape(cold['refrigerated_van_target_temp_c'])} em caixa {html.escape(cold['required_transport_box_cm'])} (exposição ambiente máx. {cold['max_safe_ambient_display_temp_c']} °C).</li>
-    {dowel_rows}
-  </ul>
-  <div style="font-size:11px;color:#64748b;margin-top:16px;font-family:monospace;">
-    Recibo Criptográfico SHA-256 (EU AI Act Art. 12): {design_res['design_sha256']}
-  </div>
-</body>
-</html>"""
+
+def render_cake_asae_ficha_html(
+    design_res: Dict[str, Any],
+    establishment: Optional[ASAEEstablishmentProfile | Dict[str, Any]] = None,
+    pdf_download_url: Optional[str] = None,
+) -> str:
+    """
+    Renders the complete `MOD-FT-ASAE-DGAV-ACIP-v2.0` Official ASAE A4 HTML Sheet
+    (with 14-Allergen Cross-Matrix, HACCP PCCs, Dowel Engineering & Establishment Header).
+    """
+    ficha = build_bake_asae_ficha_tecnica(design_res)
+    return render_printable_asae_ficha_html(
+        ficha,
+        establishment=establishment,
+        pdf_download_url=pdf_download_url or "/api/bake/ficha-asae/pdf",
+    )
+
+
+def render_cake_asae_ficha_pdf_bytes(
+    design_res: Dict[str, Any],
+    establishment: Optional[ASAEEstablishmentProfile | Dict[str, Any]] = None,
+) -> bytes:
+    """
+    Renders a native Vector A4 Portrait PDF (`MOD-FT-ASAE-DGAV-ACIP-v2.0`) for any 3D Cake
+    or Arrhenius Q10 Sourdough Batch in `InsightBake`.
+    """
+    ficha = build_bake_asae_ficha_tecnica(design_res)
+    return render_asae_ficha_pdf_bytes(ficha, establishment=establishment)
 
 
 class InsightBakeEngine:
@@ -782,18 +1087,48 @@ class InsightBakeEngine:
     DEFAULT_PORT = 4030
     API_PREFIX = "/api/bake"
 
+    def __init__(self, storage_dir: Optional[Path] = None) -> None:
+        base_dir = Path(storage_dir) if storage_dir else (Path(__file__).resolve().parent.parent / "pipeline_data")
+        self.asae_fichas_dir = base_dir / "fichas_tecnicas_asae"
+        pastelaria_prof_dir = _PROJECTS_ROOT / "InsightPastelaria" / "pipeline_data" / "fichas_tecnicas_asae"
+        if storage_dir is None and pastelaria_prof_dir.exists():
+            self.establishment_profile_path = pastelaria_prof_dir / "establishment_profile.json"
+        else:
+            self.establishment_profile_path = self.asae_fichas_dir / "establishment_profile.json"
+        self.registered_fichas: Dict[str, ASAEFichaTecnica] = {}
+
+    def get_establishment_profile(self) -> Dict[str, Any]:
+        prof = load_establishment_profile(self.establishment_profile_path)
+        return {"ok": True, "establishment": prof.to_dict()}
+
+    def update_establishment_profile(self, updates: Dict[str, Any]) -> Dict[str, Any]:
+        prof = save_establishment_profile(self.establishment_profile_path, updates)
+        self.asae_fichas_dir.mkdir(parents=True, exist_ok=True)
+        for ficha in self.registered_fichas.values():
+            (self.asae_fichas_dir / f"{ficha.ficha_id}.html").write_text(
+                render_printable_asae_ficha_html(ficha, establishment=prof, pdf_download_url="/api/bake/ficha-asae/pdf"),
+                encoding="utf-8",
+            )
+            (self.asae_fichas_dir / f"{ficha.ficha_id}.pdf").write_bytes(
+                render_asae_ficha_pdf_bytes(ficha, establishment=prof)
+            )
+        return {"ok": True, "establishment": prof.to_dict(), "re_exported_fichas_count": len(self.registered_fichas)}
+
     def get_status(self) -> Dict[str, Any]:
+        est = load_establishment_profile(self.establishment_profile_path)
         return {
             "ok": True,
             "product": self.CLIENT_BRAND,
             "member_id": self.MEMBER_ID,
             "internal_engine": self.INTERNAL_ENGINE,
-            "version": "1.2.0",
+            "version": "1.3.0",
             "port": self.DEFAULT_PORT,
             "api_prefix": self.API_PREFIX,
+            "asae_normative_template": ASAE_NORMATIVE_TEMPLATE_BASIS["template_code"],
+            "establishment": est.to_dict(),
             "standalone_benefit": (
                 "Interactive Three.js 3D Multi-Tier Cake Configurator + Arrhenius Q10 Sourdough Fermentation Lab "
-                "+ Exact Portion/Dowel/Gram Recipe Scaler + Full 14 EU 1169/2011 Allergens + Printable ASAE Ficha & InsightPastelaria (:4029) Bridge."
+                "+ Exact Portion/Dowel/Gram Recipe Scaler + Full 14 EU 1169/2011 Allergens + Native Vector A4 ASAE PDF & InsightPastelaria (:4029) Bridge."
             ),
             "ecosystem_synergy": [
                 "Combined with SetMiddle Insight™ · Pastelaria (:4029): Dispatches 24h custom cake orders directly into the Owner Stock-Confirmation Gate & ASAE Ficha Dossier.",
@@ -808,6 +1143,65 @@ class InsightBakeEngine:
             "eu_14_allergens_supported": len(EU_14_MANDATORY_ALLERGENS),
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
+
+    def export_asae_ficha_artifacts(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Executes a 3D Cake Design or Arrhenius Q10 Fermentation calculation, builds its
+        `MOD-FT-ASAE-DGAV-ACIP-v2.0` `ASAEFichaTecnica`, persists `.html` + `.pdf`, and returns bytes.
+        """
+        res = self.execute(payload)
+        if not res.get("ok"):
+            return res
+        est = load_establishment_profile(self.establishment_profile_path)
+        ficha = build_bake_asae_ficha_tecnica(res)
+        self.registered_fichas[ficha.ficha_id] = ficha
+        self.asae_fichas_dir.mkdir(parents=True, exist_ok=True)
+        html_str = render_printable_asae_ficha_html(
+            ficha,
+            establishment=est,
+            pdf_download_url="/api/bake/ficha-asae/pdf",
+        )
+        pdf_bytes = render_asae_ficha_pdf_bytes(ficha, establishment=est)
+        html_path = self.asae_fichas_dir / f"{ficha.ficha_id}.html"
+        pdf_path = self.asae_fichas_dir / f"{ficha.ficha_id}.pdf"
+        html_path.write_text(html_str, encoding="utf-8")
+        pdf_path.write_bytes(pdf_bytes)
+        return {
+            "ok": True,
+            "ficha": ficha,
+            "html": html_str,
+            "pdf_bytes": pdf_bytes,
+            "html_path": str(html_path),
+            "pdf_path": str(pdf_path),
+            "design": res,
+        }
+
+    def render_counter_allergen_matrix_pdf(self) -> bytes:
+        """
+        Generates the A4 Landscape Counter Allergen Matrix PDF (`DL n.º 26/2016`) for `InsightBake`'s
+        signature 3D Cake & Sourdough lines plus all custom cakes designed in the active studio.
+        """
+        est = load_establishment_profile(self.establishment_profile_path)
+        presets = [
+            {"shape": "ROUND", "sponge_key": "red_velvet", "filling_key": "brigadeiro_gourmet", "frosting_key": "swiss_meringue_buttercream", "topper_text": "Clássico Red Velvet"},
+            {"shape": "SQUARE", "sponge_key": "chocolate_belga_70", "filling_key": "praline_avela_crocante", "frosting_key": "ganache_blindagem_fondant", "topper_text": "Belga 70% & Praliné"},
+            {"shape": "HEART", "sponge_key": "amendoa_sem_gluten", "filling_key": "curd_limao_frutos_vermelhos", "frosting_key": "semi_naked_rustico", "topper_text": "Amêndoa Sem Glúten"},
+            {"shape": "HEXAGON", "sponge_key": "nozes_vinho_porto", "filling_key": "pistacio_tahini_crocante", "frosting_key": "swiss_meringue_buttercream", "topper_text": "Noz Porto & Pistácio"},
+            {"action": "fermentation", "flour_mass_g": 5000.0, "dough_temp_c": 26.0, "hydration_pct": 72.0, "starter_pct": 20.0},
+        ]
+        fichas_map: Dict[str, ASAEFichaTecnica] = {}
+        for p in presets:
+            r = self.execute(p)
+            if r.get("ok"):
+                f = build_bake_asae_ficha_tecnica(r)
+                fichas_map[f.ficha_id] = f
+        for fid, f_custom in self.registered_fichas.items():
+            fichas_map[fid] = f_custom
+
+        pdf_bytes = render_counter_allergen_matrix_pdf_bytes(list(fichas_map.values()), establishment=est)
+        self.asae_fichas_dir.mkdir(parents=True, exist_ok=True)
+        (self.asae_fichas_dir / "Quadro_Alergenios_Balcao_ASAE_DL26_2016.pdf").write_bytes(pdf_bytes)
+        return pdf_bytes
 
     def execute(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         ok_storage, violations = assert_no_binary_blob_in_db_row(payload or {})
@@ -858,16 +1252,19 @@ class InsightBakeEngine:
         and forwards it to `InsightPastelaria` (`:4029 /api/pastelaria/reservations/custom-cake`)
         when online, or returns a verified offline handoff envelope if `:4029` is unreachable.
         """
-        design = self.execute(payload)
-        if not design.get("ok"):
-            return design
+        export_bundle = self.export_asae_ficha_artifacts(payload)
+        if not export_bundle.get("ok"):
+            return export_bundle
+        design = export_bundle["design"]
+        ficha_obj: ASAEFichaTecnica = export_bundle["ficha"]
 
         client_name = _normalize_scrubbed_text(str(payload.get("client_name") or design["threejs_3d_scene"]["topper_text"] or "Cliente Cake Design"))
         requested_pickup = str(payload.get("requested_pickup_time") or "Amanhã às 16:00 (24h Cake Studio)")
+        lead_mins = int(max(720, int(payload.get("lead_minutes_ahead", 1440))))
         handoff_packet = {
             "client_name": client_name,
             "requested_pickup_time": requested_pickup,
-            "lead_minutes_ahead": int(max(720, int(payload.get("lead_minutes_ahead", 1440)))),
+            "lead_minutes_ahead": lead_mins,
             "cake_design": design,
         }
 
@@ -884,14 +1281,34 @@ class InsightBakeEngine:
                 return {
                     "ok": True,
                     "bridge_mode": "LIVE_HTTP_4029",
+                    "asae_ficha_id": ficha_obj.ficha_id,
+                    "bake_pdf_path": export_bundle["pdf_path"],
                     "pastelaria_reservation": remote_data,
                     "cake_design": design,
                 }
         except (urllib.error.URLError, TimeoutError, OSError, ValueError):
+            local_sync_info: Optional[Dict[str, Any]] = None
+            try:
+                from insight_pastelaria.engine import InsightPastelariaEngine
+
+                local_past = InsightPastelariaEngine(load_persisted_state=True)
+                local_sync_info = local_past.register_custom_cake_reservation_from_bake(
+                    client_name=client_name,
+                    requested_pickup_time=requested_pickup,
+                    cake_design=design,
+                    lead_minutes_ahead=lead_mins,
+                )
+            except Exception:
+                local_sync_info = None
+
             return {
                 "ok": True,
                 "bridge_mode": "QUEUED_HANDOFF_PACKET",
-                "note": "InsightPastelaria (:4029) offline — deterministic 24h handoff packet & ASAE Ficha ready for import.",
+                "local_pastelaria_ledger_synced": bool(local_sync_info),
+                "asae_ficha_id": ficha_obj.ficha_id,
+                "bake_pdf_path": export_bundle["pdf_path"],
+                "pastelaria_local_sync": local_sync_info,
+                "note": "Sincronizado diretamente no Dossier ASAE & Quadro de Alergénios em disco (HTTP :4029 offline).",
                 "handoff_packet": handoff_packet,
                 "cake_design": design,
             }

@@ -11,3 +11,4 @@ build/
 target/
 rust_core/target/
 *.bak
+pipeline_data/fichas_tecnicas_asae/*.pdf

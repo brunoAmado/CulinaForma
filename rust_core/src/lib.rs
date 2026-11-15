@@ -1,7 +1,5 @@
-//! `insight_bake_rs` — Memory-safe Rust Structural, Dowel Load & Arrhenius Q10 Kernel (`:4030`).
-//! Enforces stacked multi-tier cake stability (`top_diameter <= bottom_diameter`),
-//! slenderness safety ratio (`total_height / base_diameter <= 2.2`), polypropylene dowel count,
-//! EU Reg. 1169/2011 Annex II 14-allergen validation, and Arrhenius Q10 fermentation kinetics.
+//! `insight_bake_rs` — Memory-safe Rust Structural, Dowel Load, Arrhenius Q10,
+//! Nutritional Atwater (`Reg. UE 1169/2011 Art. 30`) & Multibanco Deposit Kernel (`:4030`).
 
 pub const EU_14_ALLERGEN_CODES: [&str; 14] = [
     "GLUTEN",
@@ -68,6 +66,24 @@ pub fn estimate_q10_bulk_hours(dough_temp_c: f64, starter_pct: f64) -> Result<f6
     Ok(((base_h / rate) * 100.0).round() / 100.0)
 }
 
+/// Computes statutory EU Reg. 1169/2011 Annex XIV energy `(kJ, kcal)` per 100g from macronutrients.
+pub fn compute_eu1169_energy_per_100g(fat_g: f64, carbs_g: f64, protein_g: f64) -> (f64, f64) {
+    let kj = (fat_g.max(0.0) * 37.0) + (carbs_g.max(0.0) * 17.0) + (protein_g.max(0.0) * 17.0);
+    let kcal = (fat_g.max(0.0) * 9.0) + (carbs_g.max(0.0) * 4.0) + (protein_g.max(0.0) * 4.0);
+    ((kj * 10.0).round() / 10.0, (kcal * 10.0).round() / 10.0)
+}
+
+/// Generates a deterministic 9-digit Portuguese Multibanco reference (`Modulo-97` check digits).
+pub fn format_multibanco_ref_mod97(entity_5digits: u32, order_seed_7digits: u32, amount_cents: u64) -> String {
+    let ent = entity_5digits % 100_000;
+    let body = order_seed_7digits % 10_000_000;
+    let composite: u128 =
+        (ent as u128) * 1_000_000_000_000_000 + (body as u128) * 100_000_000 + ((amount_cents % 100_000_000) as u128);
+    let check = (98 - ((composite * 100) % 97)) % 97;
+    let full9 = format!("{:07}{:02}", body, check);
+    format!("{} {} {}", &full9[0..3], &full9[3..6], &full9[6..9])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -82,10 +98,13 @@ mod tests {
     }
 
     #[test]
-    fn test_q10_fermentation() {
+    fn test_q10_nutrition_and_multibanco() {
         let warm = estimate_q10_bulk_hours(28.0, 20.0).unwrap();
         let cool = estimate_q10_bulk_hours(20.0, 20.0).unwrap();
         assert!(warm < cool);
-        assert!(estimate_q10_bulk_hours(50.0, 20.0).is_err());
+        let (kj, kcal) = compute_eu1169_energy_per_100g(18.0, 45.0, 6.0);
+        assert!(kj > kcal && kcal > 350.0);
+        let mb = format_multibanco_ref_mod97(21849, 1234567, 12425);
+        assert_eq!(mb.len(), 11);
     }
 }

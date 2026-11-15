@@ -6,14 +6,18 @@ Enforces UX Engine 2.8, WCAG 2.2 AA/AAA & Portugal Decreto-Lei n.º 82/2022.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+import urllib.parse
+from pathlib import Path
+from typing import Any, Dict, Optional
 from fastapi import APIRouter, Body, FastAPI, Query
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from insight_bake.engine import (
     InsightBakeEngine,
+    build_bake_asae_ficha_tecnica,
     compute_arrhenius_fermentation_and_bakers_pct,
     render_cake_asae_ficha_html,
+    render_cake_asae_ficha_pdf_bytes,
 )
 
 
@@ -168,6 +172,9 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
       <button id="tab-ferment" class="tab-btn" role="tab" aria-selected="false" aria-controls="view-ferment" tabindex="-1" onclick="switchMode('ferment')">
         🧪 Fermentação Arrhenius (Q10)
       </button>
+      <button id="tab-estab" class="tab-btn" role="tab" aria-selected="false" aria-controls="view-estab" tabindex="-1" onclick="switchMode('estab')">
+        🏛️ Estabelecimento ASAE
+      </button>
     </div>
   </div>
 </header>
@@ -284,6 +291,12 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;" onclick="openPrintableASAE()">
               🖨️ Ficha Técnica ASAE A4 ↗
             </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#059669;color:#6ee7b7;" onclick="downloadBakeAsaePdf()">
+              ⬇️ PDF A4 ASAE
+            </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;" onclick="window.open('/api/bake/fichas-tecnicas/caderno-alergenios.pdf', '_blank', 'noopener')">
+              📋 Quadro 14 Alergénios (PDF)
+            </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#4f46e5;color:#c7d2fe;" onclick="sendToPastelaria24h()">
               📦 Reservar 24h na InsightPastelaria (:4029)
             </button>
@@ -332,6 +345,47 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
       </div>
     </section>
   </div>
+
+  <!-- VIEW 3: OFFICIAL ASAE ESTABLISHMENT IDENTIFICATION -->
+  <div id="view-estab" role="tabpanel" aria-labelledby="tab-estab" class="grid-studio hidden">
+    <section class="panel" aria-label="Identificação Oficial do Operador Económico ASAE">
+      <h2>1. Operador Económico &amp; NIF Módulo-11 (ASAE / DGAV)</h2>
+      <label for="estab-denom">Denominação Social</label>
+      <input id="estab-denom" type="text" value="" />
+
+      <label for="estab-nome">Nome Comercial / Insígnia</label>
+      <input id="estab-nome" type="text" value="" />
+
+      <label for="estab-nif">NIF Português (9 dígitos — Validação Módulo-11)</label>
+      <input id="estab-nif" type="text" maxlength="9" value="" />
+
+      <label for="estab-cae">CAE Principal</label>
+      <input id="estab-cae" type="text" value="" />
+
+      <button type="button" class="primary" onclick="saveEstablishmentBake()">
+        Guardar e Carimbar Todas as Fichas A4 &amp; PDFs
+      </button>
+    </section>
+
+    <section class="panel" aria-label="Licenciamento RJACSR e Responsável HACCP">
+      <h2>2. Morada, Licença RJACSR/DGAV &amp; Responsável HACCP</h2>
+      <label for="estab-morada">Morada Completa do Estabelecimento</label>
+      <input id="estab-morada" type="text" value="" />
+
+      <label for="estab-licenca">Licença RJACSR (DL n.º 10/2015) / NCV DGAV</label>
+      <input id="estab-licenca" type="text" value="" />
+
+      <label for="estab-haccp">Responsável Técnico de Autocontrolo HACCP</label>
+      <input id="estab-haccp" type="text" value="" />
+
+      <label for="estab-contacto">Contacto Dístico Alergénios (DL n.º 26/2016)</label>
+      <input id="estab-contacto" type="text" value="" />
+
+      <div id="estab-feedback" class="tile" style="margin-top:14px;font-size:12px;color:#94a3b8;" aria-live="polite">
+        Partilhado com InsightPastelaria (:4029) — carimbado automaticamente nos PDFs A4 de Bolos 3D, Fermentação Natural e Quadro dos 14 Alergénios.
+      </div>
+    </section>
+  </div>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer onerror="window.__threeOffline=true"></script>
@@ -358,7 +412,7 @@ function toggleMobileDrawer() {
 }
 
 function switchMode(mode) {
-  const modes = ['cake', 'ferment'];
+  const modes = ['cake', 'ferment', 'estab'];
   modes.forEach(m => {
     const active = m === mode;
     document.getElementById('view-' + m).classList.toggle('hidden', !active);
@@ -367,14 +421,23 @@ function switchMode(mode) {
     btn.setAttribute('tabindex', active ? '0' : '-1');
   });
   document.getElementById('main-tablist').classList.remove('open');
-  announce(mode === 'cake' ? 'Estúdio 3D Multi-Andar ativo' : 'Laboratório de Fermentação Arrhenius ativo');
+  const labels = {
+    cake: 'Estúdio 3D Multi-Andar ativo',
+    ferment: 'Laboratório de Fermentação Arrhenius ativo',
+    estab: 'Identificação Oficial do Estabelecimento ASAE ativa'
+  };
+  announce(labels[mode] || 'Modo atualizado');
   if (mode === 'ferment') calcFermentation();
+  if (mode === 'estab') loadEstablishmentBake();
 }
 
 function onTabKeydown(ev) {
   if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
   ev.preventDefault();
-  const next = document.getElementById('tab-cake').getAttribute('aria-selected') === 'true' ? 'ferment' : 'cake';
+  const modes = ['cake', 'ferment', 'estab'];
+  const curIdx = modes.findIndex(m => document.getElementById('tab-' + m).getAttribute('aria-selected') === 'true');
+  const delta = ev.key === 'ArrowRight' ? 1 : -1;
+  const next = modes[(curIdx + delta + modes.length) % modes.length];
   switchMode(next);
   document.getElementById('tab-' + next).focus();
 }
@@ -680,6 +743,89 @@ function openPrintableASAE() {
   window.open('/api/bake/ficha-asae/print?' + qs.toString(), '_blank', 'noopener');
 }
 
+async function downloadBakeAsaePdf() {
+  const fb = document.getElementById('bridge-feedback');
+  fb.style.color = '#a5b4fc';
+  fb.textContent = 'A gerar PDF A4 Oficial ASAE (MOD-FT-ASAE-DGAV-ACIP-v2.0)...';
+  try {
+    const r = await fetch('/api/bake/ficha-asae/pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(collectCakePayload())
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank', 'noopener');
+    fb.style.color = '#6ee7b7';
+    fb.textContent = '✓ PDF A4 Oficial ASAE gerado e guardado em pipeline_data/fichas_tecnicas_asae/.';
+    announce('PDF A4 ASAE gerado com sucesso.');
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro ao gerar PDF A4 ASAE: ' + e.message;
+  }
+}
+
+function openFermentationASAE(isPdf) {
+  const qs = new URLSearchParams({
+    action: 'fermentation',
+    flour_mass_g: String(document.getElementById('ferm-flour').value || 5000),
+    dough_temp_c: String(document.getElementById('ferm-temp').value || 26),
+    hydration_pct: String(document.getElementById('ferm-hyd').value || 72),
+    starter_pct: String(document.getElementById('ferm-starter').value || 20)
+  });
+  const base = isPdf ? '/api/bake/ficha-asae/pdf?' : '/api/bake/ficha-asae/print?';
+  window.open(base + qs.toString(), '_blank', 'noopener');
+}
+
+async function loadEstablishmentBake() {
+  try {
+    const r = await fetch('/api/bake/estabelecimento');
+    const d = await r.json();
+    if (!r.ok || !d.establishment) return;
+    const e = d.establishment;
+    document.getElementById('estab-denom').value = e.denominacao_social || '';
+    document.getElementById('estab-nome').value = e.nome_comercial || '';
+    document.getElementById('estab-nif').value = e.nif || '';
+    document.getElementById('estab-cae').value = e.cae_principal || '';
+    document.getElementById('estab-morada').value = e.morada_estabelecimento || '';
+    document.getElementById('estab-licenca').value = e.licenca_rjacsr_dgav || '';
+    document.getElementById('estab-haccp').value = e.responsavel_haccp || '';
+    document.getElementById('estab-contacto').value = e.contacto_alergenios || '';
+  } catch (_) {}
+}
+
+async function saveEstablishmentBake() {
+  const fb = document.getElementById('estab-feedback');
+  fb.style.color = '#a5b4fc';
+  fb.textContent = 'A validar NIF Módulo-11 e a carimbar dossier ASAE...';
+  try {
+    const r = await fetch('/api/bake/estabelecimento', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        denominacao_social: document.getElementById('estab-denom').value,
+        nome_comercial: document.getElementById('estab-nome').value,
+        nif: document.getElementById('estab-nif').value,
+        cae_principal: document.getElementById('estab-cae').value,
+        morada_estabelecimento: document.getElementById('estab-morada').value,
+        licenca_rjacsr_dgav: document.getElementById('estab-licenca').value,
+        responsavel_haccp: document.getElementById('estab-haccp').value,
+        contacto_alergenios: document.getElementById('estab-contacto').value
+      })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || d.detail || ('HTTP ' + r.status));
+    fb.style.color = '#6ee7b7';
+    fb.textContent = `✓ Estabelecimento validado (${d.establishment.denominacao_social} · NIF ${d.establishment.nif}). Todas as Fichas A4 & PDFs atualizados.`;
+    announce('Identificação oficial do estabelecimento guardada.');
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro de validação: ' + e.message;
+    announce('Erro ao guardar estabelecimento: ' + e.message);
+  }
+}
+
 async function sendToPastelaria24h() {
   const fb = document.getElementById('bridge-feedback');
   fb.style.color = '#a5b4fc';
@@ -695,7 +841,7 @@ async function sendToPastelaria24h() {
     fb.style.color = '#6ee7b7';
     const modeMsg = d.bridge_mode === 'LIVE_HTTP_4029'
       ? `✓ Encomenda 24h registada ao vivo na InsightPastelaria (${d.pastelaria_reservation.reservation.reservation_id})!`
-      : `✓ Pacote 24h & Ficha ASAE preparados (modo autónomo — inicie :4029 para sincronização direta).`;
+      : `✓ Pacote 24h & PDF A4 ASAE (${d.asae_ficha_id}) sincronizados no Dossier!`;
     fb.textContent = modeMsg;
     announce(modeMsg);
   } catch (e) {
@@ -733,6 +879,10 @@ async function calcFermentation() {
         <strong>Perfil Sensorial:</strong> ${escapeHtml(k.lactic_to_acetic_profile)} · Retardo +${k.cold_retard_temp_c} °C (${k.cold_retard_hours}h ≈ ${k.cold_retard_24c_equivalent_hours}h equiv.)<br/>
         <span style="font-family:monospace;font-size:11px;color:#94a3b8;">SHA-256 HACCP: ${d.haccp_and_bitemporal_traceability.sha256_audit_receipt.slice(0, 24)}…</span>
       </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <button type="button" class="secondary" onclick="openFermentationASAE(false)">🖨️ Ficha Técnica ASAE A4 ↗</button>
+        <button type="button" class="secondary" style="border-color:#059669;color:#6ee7b7;" onclick="openFermentationASAE(true)">⬇️ PDF A4 ASAE (Levain)</button>
+      </div>
     `;
   } catch (e) {
     out.innerHTML = `<span style="color:#fda4af;">Erro: ${escapeHtml(e.message)}</span> <button type="button" class="secondary" onclick="calcFermentation()">↻ Retry</button>`;
@@ -746,13 +896,25 @@ recalcCake();
 </html>"""
 
 
-def create_insight_bake_router() -> APIRouter:
-    engine = InsightBakeEngine()
+def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
+    engine = InsightBakeEngine(storage_dir=storage_dir)
     router = APIRouter(tags=["InsightBake"])
 
     @router.get("/status")
     def get_status() -> Dict[str, Any]:
         return engine.get_status()
+
+    @router.get("/estabelecimento")
+    def get_establishment() -> Dict[str, Any]:
+        return engine.get_establishment_profile()
+
+    @router.put("/estabelecimento")
+    def update_establishment(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        try:
+            updates = {k: v for k, v in (payload or {}).items() if v is not None}
+            return JSONResponse(status_code=200, content=engine.update_establishment_profile(updates))
+        except ValueError as exc:
+            return JSONResponse(status_code=400, content={"ok": False, "error": str(exc)})
 
     @router.get("/studio", response_class=HTMLResponse)
     def get_interactive_3d_studio() -> HTMLResponse:
@@ -771,28 +933,124 @@ def create_insight_bake_router() -> APIRouter:
         res = engine.execute(body)
         return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
 
+    def _build_query_payload(
+        action: str,
+        shape: str,
+        sponge_key: str,
+        filling_key: str,
+        frosting_key: str,
+        topper_text: str,
+        consumption_mode: str,
+        flour_mass_g: float,
+        dough_temp_c: float,
+        hydration_pct: float,
+        starter_pct: float,
+    ) -> Dict[str, Any]:
+        if action.strip().lower() in ("fermentation", "arrhenius", "sourdough"):
+            return {
+                "action": "fermentation",
+                "flour_mass_g": flour_mass_g,
+                "dough_temp_c": dough_temp_c,
+                "hydration_pct": hydration_pct,
+                "starter_pct": starter_pct,
+            }
+        return {
+            "shape": shape,
+            "sponge_key": sponge_key,
+            "filling_key": filling_key,
+            "frosting_key": frosting_key,
+            "topper_text": topper_text,
+            "consumption_mode": consumption_mode,
+        }
+
     @router.get("/ficha-asae/print", response_class=HTMLResponse)
     def print_cake_asae_ficha(
+        action: str = Query(default="cake"),
         shape: str = Query(default="ROUND"),
         sponge_key: str = Query(default="red_velvet"),
         filling_key: str = Query(default="brigadeiro_gourmet"),
         frosting_key: str = Query(default="swiss_meringue_buttercream"),
         topper_text: str = Query(default="Sofia & Miguel"),
         consumption_mode: str = Query(default="RESTAURACAO_13"),
+        flour_mass_g: float = Query(default=5000.0),
+        dough_temp_c: float = Query(default=26.0),
+        hydration_pct: float = Query(default=72.0),
+        starter_pct: float = Query(default=20.0),
     ) -> HTMLResponse:
-        res = engine.execute(
-            {
-                "shape": shape,
-                "sponge_key": sponge_key,
-                "filling_key": filling_key,
-                "frosting_key": frosting_key,
-                "topper_text": topper_text,
-                "consumption_mode": consumption_mode,
-            }
+        q_payload = _build_query_payload(
+            action, shape, sponge_key, filling_key, frosting_key,
+            topper_text, consumption_mode, flour_mass_g, dough_temp_c, hydration_pct, starter_pct,
         )
+        res = engine.execute(q_payload)
         if not res.get("ok"):
             return HTMLResponse(status_code=400, content=f"<h1>Erro Estrutural: {res.get('error')}</h1>")
-        return HTMLResponse(content=render_cake_asae_ficha_html(res))
+        qs = urllib.parse.urlencode({k: str(v) for k, v in q_payload.items()})
+        est = engine.get_establishment_profile()["establishment"]
+        return HTMLResponse(
+            content=render_cake_asae_ficha_html(
+                res,
+                establishment=est,
+                pdf_download_url=f"/api/bake/ficha-asae/pdf?{qs}",
+            )
+        )
+
+    @router.get("/ficha-asae/pdf")
+    def download_cake_asae_ficha_pdf_get(
+        action: str = Query(default="cake"),
+        shape: str = Query(default="ROUND"),
+        sponge_key: str = Query(default="red_velvet"),
+        filling_key: str = Query(default="brigadeiro_gourmet"),
+        frosting_key: str = Query(default="swiss_meringue_buttercream"),
+        topper_text: str = Query(default="Sofia & Miguel"),
+        consumption_mode: str = Query(default="RESTAURACAO_13"),
+        flour_mass_g: float = Query(default=5000.0),
+        dough_temp_c: float = Query(default=26.0),
+        hydration_pct: float = Query(default=72.0),
+        starter_pct: float = Query(default=20.0),
+    ) -> Response:
+        q_payload = _build_query_payload(
+            action, shape, sponge_key, filling_key, frosting_key,
+            topper_text, consumption_mode, flour_mass_g, dough_temp_c, hydration_pct, starter_pct,
+        )
+        bundle = engine.export_asae_ficha_artifacts(q_payload)
+        if not bundle.get("ok"):
+            return JSONResponse(status_code=400, content=bundle)
+        ficha = bundle["ficha"]
+        return Response(
+            content=bundle["pdf_bytes"],
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'inline; filename="{ficha.ficha_id}.pdf"',
+                "Cache-Control": "no-store",
+            },
+        )
+
+    @router.post("/ficha-asae/pdf")
+    def download_cake_asae_ficha_pdf_post(payload: Dict[str, Any] = Body(default={})) -> Response:
+        bundle = engine.export_asae_ficha_artifacts(payload or {})
+        if not bundle.get("ok"):
+            return JSONResponse(status_code=400, content=bundle)
+        ficha = bundle["ficha"]
+        return Response(
+            content=bundle["pdf_bytes"],
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'inline; filename="{ficha.ficha_id}.pdf"',
+                "Cache-Control": "no-store",
+            },
+        )
+
+    @router.get("/fichas-tecnicas/caderno-alergenios.pdf")
+    def download_bake_counter_allergen_matrix_pdf() -> Response:
+        pdf_bytes = engine.render_counter_allergen_matrix_pdf()
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": 'inline; filename="Quadro_Alergenios_Balcao_ASAE_DL26_2016.pdf"',
+                "Cache-Control": "no-store",
+            },
+        )
 
     @router.post("/reserve-pastelaria")
     def reserve_custom_cake_in_pastelaria(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
@@ -838,6 +1096,10 @@ def create_insight_bake_router() -> APIRouter:
     return router
 
 
-def mount_insight_bake_plugin(app: FastAPI, prefix: str = "/api/bake") -> bool:
-    app.include_router(create_insight_bake_router(), prefix=prefix)
+def mount_insight_bake_plugin(
+    app: FastAPI,
+    prefix: str = "/api/bake",
+    storage_dir: Optional[Path] = None,
+) -> bool:
+    app.include_router(create_insight_bake_router(storage_dir=storage_dir), prefix=prefix)
     return True

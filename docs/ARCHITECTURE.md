@@ -1,4 +1,4 @@
-# 🏛️ InsightBake — System Architecture & Documentation (`v1.2.0`)
+# 🏛️ InsightBake — System Architecture & Documentation (`v1.3.0`)
 
 See the **[InsightBake Wiki](../wiki/Home.md)** for full navigation.
 
@@ -13,6 +13,6 @@ See the **[InsightBake Wiki](../wiki/Home.md)** for full navigation.
      - Parametric `1..6` tier 3D scene graph supporting `ROUND` (`CylinderGeometry`), `SQUARE` (`BoxGeometry`), `HEART` (`ExtrudeHeartGeometry`), and `HEXAGON` (`6`-segment prism).
      - Exact gram-level BOM scaling, all **14 mandatory EU `Reg. (UE) n.º 1169/2011 Anexo II` allergens** + Portuguese counter signage (`DL n.º 26/2016`), Modulo-11 NIF validation, and Portugal AT IVA regimes (`13%` *Restauração* vs. `23%` *Take-Away*) with `ATCUD` 50% deposit preview.
      - **Arrhenius $Q_{10}$ Sourdough Fermentation & Baker's % Engine** (`/api/bake/fermentation`) with 3-factor Desired Dough Temperature (`DDT`) water calculation and bi-temporal ASAE HACCP lot traceability.
-     - **Printable A4 ASAE Ficha Técnica** (`GET /api/bake/ficha-asae/print`) and **Live 24h Custom Cake Bridge** (`POST /api/bake/reserve-pastelaria` -> `InsightPastelaria :4029`).
+     - **Native Vector A4 ASAE PDFs (`MOD-FT-ASAE-DGAV-ACIP-v2.0`), 14-Allergen Counter Matrix & Establishment Sync**: `GET/POST /api/bake/ficha-asae/pdf` (for both 3D cakes `FT-ASAE-BAKE-*` and Arrhenius sourdough `FT-ASAE-FERM-*`), `GET /api/bake/fichas-tecnicas/caderno-alergenios.pdf`, `GET/PUT /api/bake/estabelecimento` (Modulo-11 NIF + RJACSR/DGAV/HACCP stamping shared with `InsightPastelaria`), and **Live 24h Custom Cake Bridge** (`POST /api/bake/reserve-pastelaria` -> `InsightPastelaria :4029`).
   3. **Node.js / TypeScript SDK (`node_sdk/index.js`)**: `getBakeStatus`, `designCake3D`, `computeFermentation`, and `reserveCustomCakeInPastelaria`.
   4. **UX Engine 2.8 Studio & `<insight-bake>` Web Component (`ui_component/insight-bake.ts` & `/api/bake/studio`)**: Interactive `Three.js` WebGL viewport (with zero-dependency 2.5D isometric fallback and internal dowel X-ray toggle), roving `tabindex` modes, 1 Hero KPI + 3 secondary KPIs, and 4 async states (`WCAG 2.2 AA/AAA` & `DL n.º 82/2022`).

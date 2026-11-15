@@ -150,6 +150,83 @@ class TestInsightBake(unittest.TestCase):
         self.assertEqual(r_scrub.status_code, 200)
         self.assertNotIn("123456789", r_scrub.json()["scrubbed_text"])
 
+    def test_06_native_vector_asae_pdf_arrhenius_pdf_matrix_and_establishment(self) -> None:
+        import tempfile
+        from io import BytesIO
+        from fastapi import FastAPI
+        from pypdf import PdfReader
+        from insight_bake.router import mount_insight_bake_plugin
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_app = FastAPI()
+            mount_insight_bake_plugin(tmp_app, prefix="/api/bake", storage_dir=Path(tmp))
+            tmp_client = TestClient(tmp_app)
+
+            # 1. Invalid Modulo-11 NIF rejected (400), valid NIF accepted & stamped
+            r_bad_nif = tmp_client.put("/api/bake/estabelecimento", json={"nif": "501964840"})
+            self.assertEqual(r_bad_nif.status_code, 400)
+
+            r_est_ok = tmp_client.put(
+                "/api/bake/estabelecimento",
+                json={
+                    "denominacao_social": "Atelier Cake Design Chiado, Lda.",
+                    "nome_comercial": "Chiado 3D Cake Atelier",
+                    "nif": "501964843",
+                    "responsavel_haccp": "Chef Eng.º Duarte Vasconcelos",
+                },
+            )
+            self.assertEqual(r_est_ok.status_code, 200)
+            self.assertEqual(r_est_ok.json()["establishment"]["nif"], "501964843")
+
+            # 2. 3D Multi-Tier HEART Cake Vector A4 PDF with 7 Annex II Allergens + Establishment stamp
+            r_cake_pdf = tmp_client.post(
+                "/api/bake/ficha-asae/pdf",
+                json={
+                    "shape": "HEART",
+                    "tiers": [
+                        {"diameter_cm": 28.0, "height_cm": 12.0},
+                        {"diameter_cm": 20.0, "height_cm": 12.0},
+                    ],
+                    "sponge_key": "nozes_vinho_porto",
+                    "filling_key": "pistacio_tahini_crocante",
+                    "frosting_key": "ganache_blindagem_fondant",
+                    "topper_text": "Leonor & Vasco",
+                },
+            )
+            self.assertEqual(r_cake_pdf.status_code, 200)
+            self.assertEqual(r_cake_pdf.headers["content-type"], "application/pdf")
+            self.assertTrue(r_cake_pdf.content.startswith(b"%PDF-"))
+            cake_pdf_txt = "\n".join(p.extract_text() or "" for p in PdfReader(BytesIO(r_cake_pdf.content)).pages)
+            self.assertIn("MOD-FT-ASAE-DGAV-ACIP-v2.0", cake_pdf_txt)
+            self.assertIn("Atelier Cake Design Chiado, Lda.", cake_pdf_txt)
+            self.assertIn("501964843", cake_pdf_txt)
+            self.assertIn("Leonor & Vasco", cake_pdf_txt)
+
+            # 3. Arrhenius Q10 Sourdough Fermentation Vector A4 PDF (GET & POST)
+            r_ferm_pdf = tmp_client.get(
+                "/api/bake/ficha-asae/pdf?action=fermentation&flour_mass_g=5000&dough_temp_c=26&hydration_pct=74&starter_pct=20"
+            )
+            self.assertEqual(r_ferm_pdf.status_code, 200)
+            self.assertTrue(r_ferm_pdf.content.startswith(b"%PDF-"))
+            ferm_pdf_txt = "\n".join(p.extract_text() or "" for p in PdfReader(BytesIO(r_ferm_pdf.content)).pages)
+            self.assertIn("FT-ASAE-FERM-", ferm_pdf_txt)
+            self.assertIn("Levain", ferm_pdf_txt)
+
+            # 4. Horizontal Counter 14-Allergen Matrix PDF (`DL n.º 26/2016`)
+            r_mat = tmp_client.get("/api/bake/fichas-tecnicas/caderno-alergenios.pdf")
+            self.assertEqual(r_mat.status_code, 200)
+            self.assertTrue(r_mat.content.startswith(b"%PDF-"))
+            mat_txt = "\n".join(p.extract_text() or "" for p in PdfReader(BytesIO(r_mat.content)).pages)
+            self.assertIn("Decreto-Lei n.º 26/2016", mat_txt)
+            self.assertIn("Atelier Cake Design Chiado, Lda.", mat_txt)
+
+            # 5. Unhappy path: inverted tier rejected on PDF endpoint with HTTP 400
+            r_bad_pdf = tmp_client.post(
+                "/api/bake/ficha-asae/pdf",
+                json={"tiers": [{"diameter_cm": 12.0, "height_cm": 12.0}, {"diameter_cm": 28.0, "height_cm": 12.0}]},
+            )
+            self.assertEqual(r_bad_pdf.status_code, 400)
+
 
 if __name__ == "__main__":
     unittest.main()
