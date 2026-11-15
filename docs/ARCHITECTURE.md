@@ -1,8 +1,8 @@
-# 🏛️ InsightBake — System Architecture & Documentation (`v1.7.0`)
+# 🏛️ InsightBake — System Architecture & Documentation (`v1.8.0`)
 
 See the **[InsightBake Wiki](../wiki/Home.md)** for full navigation.
 
-## Overview — `SetMiddle Insight™ · Bake` (`:4030 /api/bake`)
+## Overview — `SetMiddle Insight™ · Bake` (`:4030 /api/bake` · `InsightFresco` `:4029 /api/fresco` Bridge)
 
 - **Company**: **SetMiddle** (`setmiddle.io` / `setmiddle.ai`)
 - **Product Line**: **`SetMiddle Insight™ · Bake — 3D Cake Studio, Arrhenius Q10 Lab & ASAE Compliance`**

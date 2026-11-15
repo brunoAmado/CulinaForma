@@ -577,6 +577,31 @@ class TestInsightBake(unittest.TestCase):
         self.assertEqual(r_sim.status_code, 200)
         self.assertEqual(r_sim.json()["recommendation"], "STAY_EXEMPT")
 
+    def test_15_insight_fresco_bridge_and_status_v1_8_0(self) -> None:
+        r_st = self.client.get("/api/bake/status")
+        self.assertEqual(r_st.status_code, 200)
+        st_json = r_st.json()
+        self.assertEqual(st_json["version"], "1.8.0")
+        self.assertIn("SetMiddle Insight™ · Fresco", " ".join(st_json["ecosystem_synergy"]))
+
+        r_res = self.client.post(
+            "/api/bake/reserve-fresco",
+            json={
+                "pastelaria_base_url": "http://127.0.0.1:49999",
+                "customer_name": "Atelier Fresco Demo",
+                "pickup_iso": "2026-12-20T16:00:00Z",
+                "shape": "ROUND",
+                "tiers": [{"diameter_cm": 20.0, "height_cm": 10.0}],
+            },
+        )
+        self.assertEqual(r_res.status_code, 200)
+        res_json = r_res.json()
+        self.assertTrue(res_json["ok"])
+        self.assertTrue(str(res_json["asae_ficha_id"]).startswith("FT-ASAE-BAKE-"))
+        self.assertIn("/api/fresco/reservations/custom-cake", res_json["target_url"])
+        self.assertIn("fresco_reservation", res_json)
+        self.assertIn("pastelaria_reservation", res_json)
+
 
 if __name__ == "__main__":
     unittest.main()

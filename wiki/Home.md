@@ -1,6 +1,6 @@
-# 📚 InsightBake Project Wiki (`v1.7.0`)
+# 📚 InsightBake Project Wiki (`v1.8.0`)
 
-- **Workspace**: `PycharmProjects/InsightBake` (`:4030 /api/bake`)
+- **Workspace**: `PycharmProjects/InsightBake` (`:4030 /api/bake` — paired with `SetMiddle Insight™ · Fresco` `:4029 /api/fresco`)
 - **System Architecture**: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
 - **Security & Statutory Policy**: [SECURITY.md](../SECURITY.md)
 

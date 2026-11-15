@@ -1389,7 +1389,7 @@ class InsightBakeEngine:
             "product": self.CLIENT_BRAND,
             "member_id": self.MEMBER_ID,
             "internal_engine": self.INTERNAL_ENGINE,
-            "version": "1.7.0",
+            "version": "1.8.0",
             "port": self.DEFAULT_PORT,
             "api_prefix": self.API_PREFIX,
             "asae_normative_template": ASAE_NORMATIVE_TEMPLATE_BASIS["template_code"],
@@ -1398,14 +1398,14 @@ class InsightBakeEngine:
             "standalone_benefit": (
                 "Interactive Three.js 3D Multi-Tier Cake Configurator (Per-Tier Flavor Mixing + 3D Cutaway Cross-Section) "
                 "+ Arrhenius Q10 Sourdough Fermentation Lab + EU 1169/2011 Allergens & Nutritional Table "
-                "+ MB WAY / Multibanco 50% Deposit + SAF-T (PT) XML + Async ComfyUI Render Queue "
-                "+ Catering Cutting & Dowel PDF + Stand Caução Ledger + Dietary Reformulator."
+                "+ MB WAY / Multibanco 50% Deposit + Locale-Ready Small-Business Tax Exemption & SAF-T XML "
+                "+ Async ComfyUI Render Queue + Catering Cutting & Dowel PDF + Stand Caução Ledger + Dietary Reformulator."
             ),
             "ecosystem_synergy": [
-                "Combined with SetMiddle Insight™ · Pastelaria (:4029): Dispatches 24h custom cake orders directly into the Owner Stock-Confirmation Gate, FEFO Lot Ledger & ASAE Ficha Dossier.",
+                "Combined with SetMiddle Insight™ · Fresco (:4029 /api/fresco): Dispatches 24h custom cake orders directly into the Owner Stock-Confirmation Gate, FEFO Lot Ledger & ASAE Ficha Dossier.",
                 "Combined with SetMiddle Insight™ · Fleet (:4026): Checks refrigerated delivery box dimensions, route smoothness (<=0.35g vibration), and venue arrival windows.",
                 "Combined with SetMiddle Insight™ · Sensor (:4025): Monitors bakery fridge/freezer temperatures 24/7 for ASAE HACCP (Reg. CE 852/2004) compliance.",
-                "Combined with SetMiddle Insight™ · Fiscal (:4017) & Expense (:4002): Issues immediate 50% deposit ATCUD / SAF-T (PT) v1.04_01 invoices (13% vs. 23% IVA) with MB WAY & Multibanco Modulo-97.",
+                "Combined with SetMiddle Insight™ · Fiscal (:4017) & Expense (:4002): Issues immediate 50% deposit ATCUD / SAF-T v1.04_01 e-invoices across Standard VAT and Small-Business Exemption regimes.",
             ],
             "available_shapes": ["ROUND", "SQUARE", "HEART", "HEXAGON"],
             "available_sponges": list(SPONGE_RECIPES.keys()),
@@ -1998,7 +1998,8 @@ class InsightBakeEngine:
             "cake_design": design,
         }
 
-        target_url = f"{pastelaria_base_url.rstrip('/')}/api/pastelaria/reservations/custom-cake"
+        eff_base_url = str(payload.get("fresco_base_url") or payload.get("pastelaria_base_url") or pastelaria_base_url)
+        target_url = f"{eff_base_url.rstrip('/')}/api/fresco/reservations/custom-cake"
         try:
             req = urllib.request.Request(
                 target_url,
@@ -2011,9 +2012,12 @@ class InsightBakeEngine:
                 return {
                     "ok": True,
                     "bridge_mode": "LIVE_HTTP_4029",
+                    "target_product": "InsightFresco",
+                    "target_url": target_url,
                     "asae_ficha_id": ficha_obj.ficha_id,
                     "bake_pdf_path": export_bundle["pdf_path"],
                     "pastelaria_reservation": remote_data,
+                    "fresco_reservation": remote_data,
                     "cake_design": design,
                 }
         except (urllib.error.URLError, TimeoutError, OSError, ValueError):
@@ -2034,10 +2038,14 @@ class InsightBakeEngine:
             return {
                 "ok": True,
                 "bridge_mode": "QUEUED_HANDOFF_PACKET",
+                "target_product": "InsightFresco",
+                "target_url": target_url,
                 "local_pastelaria_ledger_synced": bool(local_sync_info),
                 "asae_ficha_id": ficha_obj.ficha_id,
                 "bake_pdf_path": export_bundle["pdf_path"],
                 "pastelaria_local_sync": local_sync_info,
+                "fresco_reservation": local_sync_info,
+                "pastelaria_reservation": local_sync_info,
                 "note": "Sincronizado diretamente no Dossier ASAE & Quadro de Alergénios em disco (HTTP :4029 offline).",
                 "handoff_packet": handoff_packet,
                 "cake_design": design,

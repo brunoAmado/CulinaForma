@@ -1,12 +1,12 @@
 # Graph Report - InsightBake  (2026-11-15)
 
 ## Corpus Check
-- 48 files · ~53,032 words
+- 50 files · ~56,250 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 2 file(s) not represented in the graph (top: (none) 1, .feature 1)
 
 ## Summary
-- 199 nodes · 338 edges · 15 communities (8 shown, 5 thin omitted)
+- 201 nodes · 340 edges · 15 communities (8 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
@@ -14,7 +14,7 @@
 - Community 0
 - Community 1
 - Community 2
-- Community 3
+- Community 4
 - Community 5
 - Community 6
 - Community 7
@@ -28,7 +28,7 @@
 ## God Nodes (most connected - your core abstractions)
 1. `create_insight_bake_router()` - 44 edges
 2. `InsightBakeEngine` - 41 edges
-3. `TestInsightBake` - 17 edges
+3. `TestInsightBake` - 18 edges
 4. `design_3d_cake_and_production_sheet()` - 13 edges
 5. `_normalize_scrubbed_text()` - 11 edges
 6. `build_bake_asae_ficha_tecnica()` - 9 edges
@@ -66,7 +66,7 @@ Nodes (12): FastAPI, get, Validates a 9-digit Portuguese NIF using the statutory
 Cohesion: 0.13
 Nodes (22): ASAEEstablishmentProfile, ASAEFichaTecnica, build_bake_asae_ficha_tecnica(), compute_arrhenius_fermentation_and_bakers_pct(), compute_eu_1169_nutritional_declaration(), compute_thermal_melt_countdown(), design_3d_cake_and_production_sheet(), filter_point_in_time_records() (+14 more)
 
-### Community 3 - "Community 3"
+### Community 4 - "Community 4"
 Cohesion: 0.21
 Nodes (5): Any, InsightBakeEngine, Semantic & constraint-aware recipe discovery (`RULE-16` Zero `ChromaDB` —…, Reverse Guest-Count & Budget Solver: searches multi-tier geometries and recipe…, scrub_pt_eu_pii_and_byok_secrets()
 
@@ -88,23 +88,23 @@ Nodes (5): _normalize_scrubbed_text(), Exports a locale-ready `SAF-T v1.04_01` S
 
 ## Knowledge Gaps
 - **3 isolated node(s):** `insight-bake`, `insight_bake_rs`, `EU_14_ALLERGEN_CODES`
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 109 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 111 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `InsightBakeEngine` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 11`?**
+- **Why does `InsightBakeEngine` connect `Community 4` to `Community 0`, `Community 1`, `Community 2`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 11`?**
   _High betweenness centrality (0.295) - this node is a cross-community bridge._
-- **Why does `create_insight_bake_router()` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`?**
-  _High betweenness centrality (0.262) - this node is a cross-community bridge._
-- **Why does `TestInsightBake` connect `Community 1` to `Community 3`?**
-  _High betweenness centrality (0.098) - this node is a cross-community bridge._
+- **Why does `create_insight_bake_router()` connect `Community 0` to `Community 1`, `Community 2`, `Community 4`?**
+  _High betweenness centrality (0.259) - this node is a cross-community bridge._
+- **Why does `TestInsightBake` connect `Community 1` to `Community 4`?**
+  _High betweenness centrality (0.104) - this node is a cross-community bridge._
 - **What connects `insight-bake`, `insight_bake_rs`, `EU_14_ALLERGEN_CODES` to the rest of the system?**
   _3 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.05384615384615385 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.08045977011494253 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07741935483870968 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.13 - nodes in this community are weakly interconnected._

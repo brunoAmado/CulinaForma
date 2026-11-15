@@ -1362,6 +1362,7 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
             },
         )
 
+    @router.post("/reserve-fresco")
     @router.post("/reserve-pastelaria")
     def reserve_custom_cake_in_pastelaria(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
         res = engine.dispatch_custom_cake_to_pastelaria(payload)
