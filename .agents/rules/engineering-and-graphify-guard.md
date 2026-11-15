@@ -41,6 +41,10 @@ description: Immune-to-Graphify-Install Engineering & High-Core Windows (<=61 wo
    - Enforce **UX Engine 2.8** (Anti-AI-Slop, Off-Canvas `<768px` Drawer, `@container` Card Tables, Thumb-Zone Bottom Bar, 5-State Abortable AI Input, WCAG 2.2 AA/AAA & PT `DL 82/2022`) and the **55-Tool `chronicle-rag` MCP Hub** across all SetMiddle workspaces (`PycharmProjects/chronicle-rag` and `browser_extension/`).
 11. **Mandatory `InsightPatent™` v2.0 Delegation for Patent, Prior-Art, Trademark (`TM`) & Zero-Leak RDAP Clearance (`RULE-17`)**:
    - Whenever verifying whether a trademark/brand/game/product name is registered, checking authoritative domain RDAP (`.com`, `.gg`, `.io`, `.pt`, `.ai`), synthesizing coined titles, or stress-testing patent claims (`EPC Art. 54/56` / `INPI PPP`), **always delegate execution to `InsightPatent™` v2.0 first** via `delegate_patent_and_trademark_verification` (`chronicle-rag` MCP) or `POST /api/patent/delegate/verify-ip` rather than running manual web/RDAP loops inline, and audit the returned SHA-256 dossier as the user's Second Pair of Eyes (`RULE-14`).
+12. **Zero Competitor or Inspiration-Example Naming — Sovereign Product Identity (`RULE-18`)**:
+   - Never name competitors, third-party reference tools, or inspiration examples provided by the user (`NotebookLM`, `Research Rabbit`, `ulo-thesis`, `Publish or Perish`, `Scite`, `Nomic Atlas`, `bbycroft`, `Ciechanowski`, `3Blue1Brown`, `"Inspired by ..."`, `"... style"`) in UI labels, spinners, subtitles, tooltips, prompts, or docstrings across SetMiddle, `Insight*`, and `ChronicleRAG`.
+13. **Sovereign SetMiddle AST, 4-Axis Topology & Semantic Gravity Substitution (`RULE-19`)**:
+   - Third-party `graphify` (`uv\tools\graphifyy`) and `code-review-graph` are retired at runtime across SetMiddle workspaces. `.\run_sovereign_code_graph.ps1` (and the backward-compatible `.\run_graphify_update.ps1` wrapper) executes SetMiddle's **`InsightCode™` (`:4013`) + `InsightChanged™` (`:4011` SimHash `<1ms` cache) + `InsightGravity™` (`:4026`, `PPP5` `0.20x` orphan-route decay) + `ChronicleRAG` (`query_workspace_graph` / `query_code_map` / `Apache AGE`)**.
 
 
 

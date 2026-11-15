@@ -17,7 +17,7 @@ Team-shared Master Thematic Book consolidating **187 chapters** and **187 source
 ## 📑 Key Chapters Index (Showing 25 of 187 Chapters)
 - **Chapter 1**: rust in action (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 2**: Manning Publications — Owned Dashboard Library (eBooks, liveVideos & liveProjects) (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 3**: Antigravity Conversation — Extract WhatsApp Links And Books — use tool for extract li (🛡️ 9.1/10 | PT: 9.4/10)
+- **Chapter 3**: Antigravity Conversation — Extract WhatsApp Links And Books — use tool for extract (🛡️ 9.1/10 | PT: 9.4/10)
 - **Chapter 4**: rust servers services and apps (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 5**: Blockchain in Action (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 6**: Docker in Action (🛡️ 8.5/10 | PT: 8.8/10)
@@ -66,7 +66,7 @@ Team-shared Master Thematic Book consolidating **187 chapters** and **187 source
 - **🛠️ What to Do Instead (Safe & Legal `PT` Strategy)**: Cross-check against ChronicleRAG's Level 5.5 web citations and local compliance rules.
 - **Referenced Tools / Repos**: https://livebook.manning.com/, https://liveproject.manning.com/, https://liveproject.manning.com/project/1468/1087, https://liveproject.manning.com/project/1469/1088, https://liveproject.manning.com/project/1470/1089, https://li
 
-### Chapter 3 [Antigravity Conversation — Extract WhatsApp Links And Books — use tool for extract li (🛡️ 9.1/10 | PT: 9.4/10)]
+### Chapter 3 [Antigravity Conversation — Extract WhatsApp Links And Books — use tool for extract (🛡️ 9.1/10 | PT: 9.4/10)]
 - **🇵🇹 Local (`PT`) Adaptation**: PORTUGAL (PT — 9.4/10): Aligns with **EU AI Act (Reg. 2024/1689)** transparency/oversight rules, **GDPR / CNPD (Lei n.º 58/2019)** data minimization, and **CNCS Portugal** cybersecurity baseline.
 - **✅ When It IS Valid (Exact Conditions & Thresholds)**: Valid when paired with local-first inference, row-level security, immutable audit logs, and GDPR Art. 17 RAG erasure.
 - **🛠️ What to Do Instead (Safe & Legal `PT` Strategy)**: Keep volatile facts/PII in local RAG storage (not SFT weights) and enforce strict API/key isolation.

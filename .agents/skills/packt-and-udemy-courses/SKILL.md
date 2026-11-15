@@ -4,7 +4,7 @@ description: Compact Team Master Playbook for Packt and Udemy Courses distilled 
 ---
 
 # ⚡ Compact Specialist Skill: Packt and Udemy Courses (`lit_Master_Packt_and_Udemy_Courses`)
-> **Token-Budget Guard (`RULE-12`)**: This skill is pre-distilled (`< 9 KB`) from `books/master_books/Book_Lit_Master_Packt_and_Udemy_Courses.md` (`5636 KB`) to prevent context bloat.
+> **Token-Budget Guard (`RULE-12`)**: This skill is pre-distilled (`< 9 KB`) from `books/master_books/Book_Lit_Master_Packt_and_Udemy_Courses.md` (`5664 KB`) to prevent context bloat.
 > **Active SetMiddle Ecosystem Baseline (`RULE-10..RULE-16`)**: **UX Engine 2.8** · **Unified PostgreSQL 17 (`pgvector` + `Apache AGE` + `TimescaleDB` on `:5432/:5433`, Zero Runtime `ChromaDB`)** · **55-Tool `chronicle-rag` MCP Hub** · **WCAG 2.2 AA/AAA & PT `DL 82/2022`**.
 > **Hierarchical Progressive Disclosure & Backtrace**:
 > - **Full Chapter TOC**: `chronicle-rag:read_book(identifier='lit_Master_Packt_and_Udemy_Courses', section='toc')`
@@ -21,25 +21,25 @@ Team-shared Master Thematic Book consolidating **2005 chapters** and **2000 sour
 - **Chapter 4**: Chapter 4
 - **Chapter 5**: Chapter 5
 - **Chapter 6**: Antigravity Conversation — Udemy Course Ingestion Status — do we have injested the 71 (🛡️ 9.1/10 | PT: 9.4/10)
-- **Chapter 7**: Hello Coding 4.0 - The Complete Learn to Code in 99 Days (Levels 1-3) This is the las (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 7**: Hello Coding 4.0 - The Complete Learn to Code in 99 Days (Levels 1-3) This is (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 8**: Human Resources for Christian Nonprofits and Ministries (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 9**: The Essential AWS Certified Developer - Associate Bundle (DVA-C02) with Practice Exam (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 10**: Hello Coding 2.0: Anyone Can Learn to Code (80 Hours) Smash your career goals. Build  (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 9**: The Essential AWS Certified Developer - Associate Bundle (DVA-C02) with Practice (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 10**: Hello Coding 2.0: Anyone Can Learn to Code (80 Hours) Smash your career goals. Build (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 11**: Hello Coding 4.0 - The Complete Learn to Code in 99 Days (Levels 4-6) Part 2 of Hello (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 12**: The Essential CompTIA A+ Certification Masterclass (220-1101/1102) with Practice Exam (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 13**: Hello Coding: Anyone Can Learn to Code (170 Hours) Learn to code with 5 levels of web (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 12**: The Essential CompTIA A+ Certification Masterclass (220-1101/1102) with Practice (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 13**: Hello Coding: Anyone Can Learn to Code (170 Hours) Learn to code with 5 levels (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 14**: Udemy — My Learning Enrolled Courses Library (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 15**: CompTIA Cybersecurity Analyst+ Certification Bundle (CySA+) with Practice Exam Prepar (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 16**: The Essential Microsoft Azure Administrator Certification (AZ-104) with Practice Exam (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 16**: The Essential Microsoft Azure Administrator Certification (AZ-104) with Practice (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 17**: Build a social networking Rust smart contract for NEAR Blockchain (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 18**: CompTIA Advanced Security Practitioner Certification Series (CASP+) with Practice Exa (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 19**: The Extensive CompTIA Project+ Certification Training (PK0-005) with Practice Exam Th (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 18**: CompTIA Advanced Security Practitioner Certification Series (CASP+) with Practice (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 19**: The Extensive CompTIA Project+ Certification Training (PK0-005) with Practice (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 20**: Massive Swift Fundamentals and Algorithms Bundle Do you want to be an advanced, high- (🛡️ 8.5/10 | PT: 8.8/10)
 - **Chapter 21**: Udemy Business (hnservices) — My Learning Enrolled Courses Library (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 22**: Designing and Implementing Microsoft DevOps Solutions Certification (AZ-400) with Pra (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 23**: Unreal Engine 5 Mastery for Beginners - Start Building Games Today Do you want to bui (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 24**: The Absolute AWS Certified Advanced Networking - Specialty (ANS-C01) with Practice Ex (🛡️ 8.5/10 | PT: 8.8/10)
-- **Chapter 25**: Build NFT smart contract in Rust for NEAR Blockchain Non-fungible token development w (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 22**: Designing and Implementing Microsoft DevOps Solutions Certification (AZ-400) (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 23**: Unreal Engine 5 Mastery for Beginners - Start Building Games Today Do you want (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 24**: The Absolute AWS Certified Advanced Networking - Specialty (ANS-C01) with Practice (🛡️ 8.5/10 | PT: 8.8/10)
+- **Chapter 25**: Build NFT smart contract in Rust for NEAR Blockchain Non-fungible token development (🛡️ 8.5/10 | PT: 8.8/10)
 - *(+1980 additional chapters indexed in `Book_Lit_Master_Packt_and_Udemy_Courses.md`)*
 
 ## 📐 Distilled Engineering Rules & Actionable Patterns

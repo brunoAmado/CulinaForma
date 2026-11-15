@@ -15,11 +15,12 @@ description: Compact Team Master Playbook for UI UX Engineering distilled from C
 1. **Anti-AI-Slop Dark Surfaces**: `#090d16` (`canvas`) -> `#0f172a` (`surface`) -> `#172033` (`card`), `tabular-nums`, `68ch` prose measure, Concentric Radii (`Inner = Outer - Padding`), 1 Primary CTA per view.
 2. **UX Engine 2.8 Mobile & Layout**: Off-Canvas `<768px` Mobile Drawer, `@container` / `table.mobile-card-table` row collapse, `16px` mobile inputs (anti-iOS-zoom), `44x44px` coarse-pointer targets, `env(safe-area-inset-bottom)` thumb-zone bar, 5-State Abortable AI Chat Input, Live UX/WCAG 2.2 Self-Auditor.
 3. **4 Async States + WCAG 2.2 AA/AAA + PT `DL 82/2022`**: Skeleton loading, Empty CTA, plain-language Error + `↻ Retry`, `<100ms` Success + `#sr-announcer` (`aria-live='polite'`), `2px solid #818cf8` `:focus-visible`, roving `tabindex`, modal `Tab` trap.
+4. **Self-Explaining Relative KPI Matrices (`Gate 100`)**: Corpus-adaptive Matrix Median & Chi-Square Expected baselines, monotonic 4-Tier KPI badges (`GAP`/`SPARSE`/`ADEQUATE`/`STRONG`), dual Grounding vs. Novelty guidance, and click-to-inspect cell provenance.
 
 ## 🌟 Executive Synopsis (Level 1)
 Team-shared Master Thematic Book consolidating **111 chapters** and **89 source books** on `UI_UX_Engineering`.
 
-## 📑 Key Chapters Index (Showing 25 of 879 Chapters)
+## 📑 Key Chapters Index (Showing 25 of 111 Chapters)
 - **Chapter 1**: Anti-AI-Slop Dashboard Architecture
 - **Chapter 2**: Typography as a 7-Decision Mathematical System
 - **Chapter 3**: Concentric Border Radii, Cards vs. Panels & Dark-Mode Elevation
@@ -45,12 +46,23 @@ Team-shared Master Thematic Book consolidating **111 chapters** and **89 source 
 - **Chapter 23**: brunoAmado/chronicle-rag — README.md > **Source Link**: https://github.com/brunoAmado (🛡️ 9.5/10 | PT: 9.8/10)
 - **Chapter 24**: Home (🛡️ 9.7/10 | PT: 9.9/10)
 - **Chapter 25**: README > **Source Link**: J:/bobcat/bobcat300-recycle/README.md (🛡️ 9.1/10 | PT: 9.4/10)
-- *(+854 additional chapters indexed in `Book_Lit_Master_UI_UX_Engineering.md`)*
+- *(+86 additional chapters indexed in `Book_Lit_Master_UI_UX_Engineering.md`)*
 
 ## 📐 Distilled Engineering Rules & Actionable Patterns
+### Chapter 110 [Java 21 - Exploring the Latest Innovations for 2024 [Video] (Packt Owned Video Course (🛡️ 9.9/10 | PT: 10.0/10)]
+- **🇵🇹 Local (`PT`) Adaptation**: PORTUGAL (`PT`) & EUROPEAN UNION (`EU`) MANDATORY 5-PILLAR AI PROJECT COMPLIANCE (10.0/10):
+- **✅ When It IS Valid (Exact Conditions & Thresholds)**: Enforce across all 68+ local AI, RAG, IoT, Web, and SaaS repositories via ChronicleRAG's Master Playbooks and `.agents/skills/` auto-sync.
+- **🛠️ What to Do Instead (Safe & Legal `PT` Strategy)**: Run `BOOK_ENGINE.sync_antigravity_skills_to_all_projects()` and `tests/test_agent_failure_regression_gates.py` to propagate and verify all PT/EU statutory and engineering rules across every project.
+- **Referenced Tools / Repos**: https://subscription.packtpub.com/owned, http://maven.apache.org/POM/4.0.0, http://www.w3.org/2001/XMLSchema-instance, http://maven.apache.org/xsd/maven-4.0.0.xsd, https://www.packtpub.com/voucher/redeem?voucher=V6AB52711650D5, 
+
+### Chapter 111 [⚡Comment "Course" I will send you the source code link. Visit LightswindUI🔥 - "lights (🛡️ 9.9/10 | PT: 10.0/10)]
+- **🇵🇹 Local (`PT`) Adaptation**: PORTUGAL (`PT`) & EUROPEAN UNION (`EU`) MANDATORY 5-PILLAR AI PROJECT COMPLIANCE (10.0/10):
+- **✅ When It IS Valid (Exact Conditions & Thresholds)**: Enforce across all 68+ local AI, RAG, IoT, Web, and SaaS repositories via ChronicleRAG's Master Playbooks and `.agents/skills/` auto-sync.
+- **🛠️ What to Do Instead (Safe & Legal `PT` Strategy)**: Run `BOOK_ENGINE.sync_antigravity_skills_to_all_projects()` and `tests/test_agent_failure_regression_gates.py` to propagate and verify all PT/EU statutory and engineering rules across every project.
+- **Referenced Tools / Repos**: https://codewithmuhilan.com/ebook, https://lightswind.com, https://outlook.com
+
 ### Chapter 1 [Anti-AI-Slop Dashboard Architecture]
 1. **Eliminate Decorative Gradients**: AI-generated UIs paint purple-to-blue gradients on headers, buttons, and chart fills where they have nothing to say. Use **one flat semantic accent** (`indigo-600`) so color carries meaning.
 2. **Drop Pastel Icon Tiles on Metric Cards**: Putting blue, green, purple, and orange icon squares on 4 KPI cards is decoration, not information. Drop the pastel tiles — **the metric number is the hero**.
 3. **Break Equal-Card Monotony**: Four identical cards with the same size, weight, and green badge is "a spreadsheet with padding." Render **1 primary metric large** and **3 secondary metrics compact** so the user's eye lands once.
 4. **Never Ship Database-Shaped Schemas**: Do not dump all 12 database columns onto a screen with `Delete` sitting right next to `Edit` on every row. Rank columns by user intent, limit to 1 primary CTA per view, and spec all **4 mandatory states** (*Loading sk
-1. **5 Sizes Max (1.25 Modular Scale)**: Never hand-pick 11 arbitrary pixel sizes; collapse to 5 steps on a `1.25` ratio.
