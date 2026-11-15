@@ -89,3 +89,39 @@ export async function searchSafeCakeRecipes(baseUrl = "http://127.0.0.1:4030", p
   });
   return res.json();
 }
+
+export async function solveCakeByGuestsAndBudget(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/solve-budget`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function createTastingBoxOrder(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/tasting-box`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function createShareableClientQuote(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/quotes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function dispatchRefrigeratedFleet(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/fleet-dispatch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}

@@ -84,6 +84,34 @@ pub fn format_multibanco_ref_mod97(entity_5digits: u32, order_seed_7digits: u32,
     format!("{} {} {}", &full9[0..3], &full9[3..6], &full9[6..9])
 }
 
+/// Estimates safe out-of-fridge venue display minutes before frosting structural softening.
+pub fn estimate_out_of_fridge_safe_minutes(
+    max_safe_ambient_c: f64,
+    venue_temp_c: f64,
+    relative_humidity_pct: f64,
+    tier_count: usize,
+) -> u32 {
+    let base_minutes = 180.0_f64;
+    let delta_t = venue_temp_c - max_safe_ambient_c;
+    let temp_factor = if delta_t <= 0.0 {
+        1.0 + ((-delta_t) * 0.04).min(0.35)
+    } else {
+        (1.0 - delta_t * 0.14).max(0.15)
+    };
+    let rh_penalty = if relative_humidity_pct > 65.0 {
+        (1.0 - (relative_humidity_pct - 65.0) * 0.008).max(0.65)
+    } else {
+        1.0
+    };
+    let tier_penalty = (1.0 - ((tier_count.saturating_sub(1)) as f64) * 0.05).max(0.70);
+    (base_minutes * temp_factor * rh_penalty * tier_penalty).round().max(15.0) as u32
+}
+
+/// Validates refrigerated van box temperature (`+2.0..+5.0 °C`) and cornering G-force (`<= 0.35g`).
+pub fn is_fleet_delivery_telemetry_safe(van_temp_c: f64, max_lateral_g: f64) -> bool {
+    (2.0..=5.0).contains(&van_temp_c) && (0.0..=0.35).contains(&max_lateral_g)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -98,7 +126,7 @@ mod tests {
     }
 
     #[test]
-    fn test_q10_nutrition_and_multibanco() {
+    fn test_q10_nutrition_multibanco_and_fleet() {
         let warm = estimate_q10_bulk_hours(28.0, 20.0).unwrap();
         let cool = estimate_q10_bulk_hours(20.0, 20.0).unwrap();
         assert!(warm < cool);
@@ -106,5 +134,8 @@ mod tests {
         assert!(kj > kcal && kcal > 350.0);
         let mb = format_multibanco_ref_mod97(21849, 1234567, 12425);
         assert_eq!(mb.len(), 11);
+        assert!(estimate_out_of_fridge_safe_minutes(24.0, 31.0, 75.0, 3) < 90);
+        assert!(is_fleet_delivery_telemetry_safe(3.4, 0.22));
+        assert!(!is_fleet_delivery_telemetry_safe(3.4, 0.48));
     }
 }

@@ -315,6 +315,12 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#eab308;color:#fde047;" onclick="generateDepositMultibanco()">
               💳 Sinal 50% MB / SAF-T PT
             </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#ec4899;color:#f9a8d4;" onclick="createClientQuotePortal()">
+              🔗 Link Proposta Cliente
+            </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#14b8a6;color:#5eead4;" onclick="dispatchFleetColdChain()">
+              🚚 Guia AT &amp; Frota Frio
+            </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#4f46e5;color:#c7d2fe;" onclick="sendToPastelaria24h()">
               📦 Reservar 24h (:4029)
             </button>
@@ -1097,6 +1103,42 @@ async function calcFermentation() {
   }
 }
 
+async function createClientQuotePortal() {
+  const fb = document.getElementById('bridge-feedback');
+  try {
+    const r = await fetch('/api/bake/quotes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(collectCakePayload())
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Erro ao criar proposta');
+    fb.style.color = '#f9a8d4';
+    fb.textContent = `✓ Portal Proposta criado: ${d.quote.share_path} · Total €${d.quote.total_gross_eur.toFixed(2)} (Sinal €${d.quote.net_deposit_due_eur.toFixed(2)})`;
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro: ' + e.message;
+  }
+}
+
+async function dispatchFleetColdChain() {
+  const fb = document.getElementById('bridge-feedback');
+  try {
+    const r = await fetch('/api/bake/fleet-dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...collectCakePayload(), vehicle_plate: 'AA-42-BB', van_temp_c: 3.2, max_expected_lateral_g: 0.22 })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Erro Frota');
+    fb.style.color = '#5eead4';
+    fb.textContent = `✓ Frota Refrigerada ${d.delivery.delivery_id} (${d.delivery.at_guia_transporte_doc_code_id}) · Janela Exposição: ${d.delivery.melt_countdown.minutes_until_structural_softening} min`;
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro Frota: ' + e.message;
+  }
+}
+
 renderTiersEditor();
 recalcCake();
 </script>
@@ -1309,6 +1351,60 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
             limit=int(data.get("limit", 5)),
         )
         return JSONResponse(status_code=200, content=res)
+
+    @router.post("/solve-budget")
+    def solve_cake_by_guests_budget(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        data = payload or {}
+        res = engine.solve_cake_by_guests_and_budget(
+            guest_count=int(data.get("guest_count", 60)),
+            max_budget_eur=float(data.get("max_budget_eur", 280.0)),
+            exclude_allergens=data.get("exclude_allergens"),
+            venue_temp_c=float(data.get("venue_temp_c", 22.0)),
+            preferred_shape=str(data.get("preferred_shape") or "ROUND"),
+            consumption_mode=str(data.get("consumption_mode") or "RESTAURACAO_13"),
+        )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/tasting-box")
+    def book_tasting_box(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.create_tasting_box_order(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/quotes")
+    def create_client_quote(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.create_shareable_client_quote(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.get("/quotes/{quote_token}")
+    def get_client_quote(quote_token: str) -> JSONResponse:
+        res = engine.get_shareable_client_quote(quote_token)
+        return JSONResponse(status_code=200 if res.get("ok") else 404, content=res)
+
+    @router.post("/quotes/{quote_token}/approve")
+    def approve_client_quote(quote_token: str, payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        data = payload or {}
+        res = engine.approve_shareable_client_quote(
+            quote_token=quote_token,
+            client_signature_name=str(data.get("client_signature_name") or ""),
+            tasting_voucher_code=data.get("tasting_voucher_code"),
+        )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/fleet-dispatch")
+    def dispatch_fleet_delivery(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.dispatch_refrigerated_fleet_delivery(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/fleet-dispatch/{delivery_id}/pod")
+    def confirm_fleet_pod(delivery_id: str, payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        data = payload or {}
+        res = engine.confirm_fleet_proof_of_delivery(
+            delivery_id=delivery_id,
+            handoff_probe_temp_c=float(data.get("handoff_probe_temp_c", 3.6)),
+            pod_photo_cas_uri=str(data.get("pod_photo_cas_uri") or ""),
+            receiver_name=str(data.get("receiver_name") or "Responsável Evento"),
+        )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
 
     @router.post("/scrub")
     def scrub_text(payload: Dict[str, Any] = Body(default={})) -> Dict[str, Any]:

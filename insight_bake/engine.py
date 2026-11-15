@@ -483,6 +483,37 @@ def compute_arrhenius_fermentation_and_bakers_pct(
     }
 
 
+def compute_thermal_melt_countdown(
+    max_safe_ambient_c: float,
+    venue_temp_c: float = 22.0,
+    venue_rh_pct: float = 55.0,
+    tier_count: int = 3,
+) -> Dict[str, Any]:
+    """Calculates dynamic max-safe out-of-fridge venue display minutes before frosting structural softening."""
+    base_minutes = 180.0
+    delta_t = float(venue_temp_c) - float(max_safe_ambient_c)
+    if delta_t <= 0.0:
+        temp_factor = 1.0 + min(0.35, (-delta_t) * 0.04)
+    else:
+        temp_factor = max(0.15, 1.0 - delta_t * 0.14)
+    rh_penalty = max(0.65, 1.0 - (float(venue_rh_pct) - 65.0) * 0.008) if float(venue_rh_pct) > 65.0 else 1.0
+    tier_penalty = max(0.70, 1.0 - max(0, int(tier_count) - 1) * 0.05)
+    safe_minutes = max(15, int(round(base_minutes * temp_factor * rh_penalty * tier_penalty)))
+    if safe_minutes <= 60:
+        risk_level = "CRITICAL_MELT_RISK"
+    elif safe_minutes <= 120:
+        risk_level = "MODERATE"
+    else:
+        risk_level = "SAFE"
+    return {
+        "venue_temp_c": round(float(venue_temp_c), 1),
+        "venue_rh_pct": round(float(venue_rh_pct), 1),
+        "frosting_max_safe_ambient_c": round(float(max_safe_ambient_c), 1),
+        "minutes_until_structural_softening": safe_minutes,
+        "risk_level": risk_level,
+    }
+
+
 def design_3d_cake_and_production_sheet(
     tiers: List[Dict[str, Any]] | None = None,
     shape: str = "ROUND",
@@ -498,6 +529,8 @@ def design_3d_cake_and_production_sheet(
     may_contain_trace_codes: Optional[List[str]] = None,
     client_nif: Optional[str] = None,
     point_in_time_date: Optional[str] = None,
+    venue_temp_c: float = 22.0,
+    venue_rh_pct: float = 55.0,
 ) -> Dict[str, Any]:
     """
     Computes the complete `Three.js` 3D scene graph (including per-tier flavor mixing & 3D cutaway slice layers),
@@ -866,6 +899,12 @@ def design_3d_cake_and_production_sheet(
             "required_transport_box_cm": f"{box_width_cm} x {box_width_cm} x {box_height_cm} cm",
             "refrigerated_van_target_temp_c": "+2.0 °C to +5.0 °C (ASAE Reg. CE 852/2004)",
             "max_safe_ambient_display_temp_c": frosting["max_ambient_temp_c"],
+            "summer_thermal_melt_countdown": compute_thermal_melt_countdown(
+                max_safe_ambient_c=float(frosting["max_ambient_temp_c"]),
+                venue_temp_c=float(venue_temp_c),
+                venue_rh_pct=float(venue_rh_pct),
+                tier_count=len(tier_specs),
+            ),
             "max_safe_cornering_g_force": 0.35,
             "non_slip_silicone_mat_required": True,
             "bitemporal_haccp_lot_traceability": bitemporal_lots,
@@ -1191,6 +1230,9 @@ class InsightBakeEngine:
         self.registered_fichas: Dict[str, ASAEFichaTecnica] = {}
         self.deposit_payments: Dict[str, Dict[str, Any]] = {}
         self.render_jobs: Dict[str, Dict[str, Any]] = {}
+        self.tasting_vouchers: Dict[str, Dict[str, Any]] = {}
+        self.client_quotes: Dict[str, Dict[str, Any]] = {}
+        self.fleet_deliveries: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.Lock()
         self.pg17_last_sync_status: str = "STANDBY_LOCAL_FALLBACK"
 
@@ -1282,7 +1324,7 @@ class InsightBakeEngine:
             "product": self.CLIENT_BRAND,
             "member_id": self.MEMBER_ID,
             "internal_engine": self.INTERNAL_ENGINE,
-            "version": "1.4.0",
+            "version": "1.5.0",
             "port": self.DEFAULT_PORT,
             "api_prefix": self.API_PREFIX,
             "asae_normative_template": ASAE_NORMATIVE_TEMPLATE_BASIS["template_code"],
@@ -1306,6 +1348,8 @@ class InsightBakeEngine:
             "eu_14_allergens_supported": len(EU_14_MANDATORY_ALLERGENS),
             "active_render_jobs": len(self.render_jobs),
             "active_deposit_intents": len(self.deposit_payments),
+            "active_client_quotes": len(self.client_quotes),
+            "active_fleet_deliveries": len(self.fleet_deliveries),
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
 
@@ -1809,6 +1853,8 @@ class InsightBakeEngine:
             may_contain_trace_codes=data.get("may_contain_trace_codes"),
             client_nif=data.get("client_nif"),
             point_in_time_date=data.get("point_in_time_date"),
+            venue_temp_c=float(data.get("venue_temp_c", 22.0)),
+            venue_rh_pct=float(data.get("venue_rh_pct", 55.0)),
         )
 
     def dispatch_custom_cake_to_pastelaria(
@@ -1889,3 +1935,313 @@ class InsightBakeEngine:
         if isinstance(res, tuple) and len(res) >= 2:
             return {"scrubbed_text": res[0], "stats": res[1]}
         return {"scrubbed_text": str(res), "stats": {}}
+
+    # =========================================================================
+    # ROUND-3 TRACKS: REVERSE GUEST/BUDGET SOLVER, TASTING BOX + QUOTE PORTAL,
+    # AND REFRIGERATED FLEET G-FORCE + AT TRANSPORT GUIDE + CAS POD
+    # =========================================================================
+    def solve_cake_by_guests_and_budget(
+        self,
+        guest_count: int = 60,
+        max_budget_eur: float = 280.0,
+        exclude_allergens: Optional[List[str]] = None,
+        venue_temp_c: float = 22.0,
+        preferred_shape: str = "ROUND",
+        consumption_mode: str = "RESTAURACAO_13",
+    ) -> Dict[str, Any]:
+        """
+        Reverse Guest-Count & Budget Solver: searches multi-tier geometries and recipe combinations
+        to find optimal structurally stable designs satisfying `wedding_portions >= guest_count`,
+        `recommended_client_total_gross_eur <= max_budget_eur`, allergen exclusions, and thermal safety.
+        """
+        guests = max(8, int(guest_count))
+        budget = float(max_budget_eur)
+        if budget <= 20.0:
+            return {"ok": False, "error": "BUDGET_TOO_LOW_MIN_20_EUR"}
+
+        excluded = {str(a).strip().upper() for a in (exclude_allergens or []) if a}
+        shape_clean = str(preferred_shape or "ROUND").strip().upper()
+        if shape_clean not in ("ROUND", "SQUARE", "HEART", "HEXAGON"):
+            shape_clean = "ROUND"
+
+        tier_candidates = [
+            [{"diameter_cm": 18.0, "height_cm": 12.0}],
+            [{"diameter_cm": 22.0, "height_cm": 12.0}],
+            [{"diameter_cm": 24.0, "height_cm": 12.0}, {"diameter_cm": 16.0, "height_cm": 12.0}],
+            [{"diameter_cm": 26.0, "height_cm": 12.0}, {"diameter_cm": 18.0, "height_cm": 12.0}],
+            [{"diameter_cm": 28.0, "height_cm": 12.0}, {"diameter_cm": 20.0, "height_cm": 12.0}, {"diameter_cm": 14.0, "height_cm": 12.0}],
+            [{"diameter_cm": 32.0, "height_cm": 13.0}, {"diameter_cm": 24.0, "height_cm": 13.0}, {"diameter_cm": 16.0, "height_cm": 14.0}],
+        ]
+
+        solutions: List[Dict[str, Any]] = []
+        for sk, s_spec in SPONGE_RECIPES.items():
+            if excluded & set(s_spec["allergens"]):
+                continue
+            for fk, f_spec in FILLING_RECIPES.items():
+                if excluded & set(f_spec["allergens"]):
+                    continue
+                for frk, fr_spec in FROSTING_RECIPES.items():
+                    if excluded & set(fr_spec["allergens"]):
+                        continue
+                    if float(fr_spec["max_ambient_temp_c"]) < float(venue_temp_c):
+                        continue
+                    for t_spec in tier_candidates:
+                        d = design_3d_cake_and_production_sheet(
+                            tiers=t_spec,
+                            shape=shape_clean,
+                            sponge_key=sk,
+                            filling_key=fk,
+                            frosting_key=frk,
+                            consumption_mode=consumption_mode,
+                            venue_temp_c=venue_temp_c,
+                        )
+                        if not d.get("ok"):
+                            continue
+                        w_port = int(d["portions_and_structure"]["wedding_portions_2_5x5cm"])
+                        gross = float(d["pricing_and_at_invoicing"]["recommended_client_total_gross_eur"])
+                        if w_port >= guests and gross <= budget:
+                            solutions.append({
+                                "tier_count": len(t_spec),
+                                "tiers": t_spec,
+                                "shape": shape_clean,
+                                "sponge_key": sk,
+                                "sponge_name": s_spec["name"],
+                                "filling_key": fk,
+                                "filling_name": f_spec["name"],
+                                "frosting_key": frk,
+                                "frosting_name": fr_spec["name"],
+                                "wedding_portions": w_port,
+                                "total_gross_eur": gross,
+                                "budget_headroom_eur": round(budget - gross, 2),
+                                "allergen_codes": d["allergens_eu_1169_2011"]["allergen_codes"],
+                                "melt_countdown": d["logistics_and_haccp_cold_chain"]["summer_thermal_melt_countdown"],
+                                "design_sha256": d["design_sha256"],
+                            })
+                            break
+
+        solutions.sort(key=lambda s: (s["wedding_portions"] - guests, s["total_gross_eur"]))
+        if not solutions:
+            return {
+                "ok": False,
+                "error": f"NO_FEASIBLE_CAKE_FOR_GUESTS({guests})_WITHIN_BUDGET({budget:.2f}EUR)",
+            }
+        return {
+            "ok": True,
+            "requested_guests": guests,
+            "max_budget_eur": budget,
+            "excluded_allergens": sorted(excluded),
+            "recommended_solution": solutions[0],
+            "alternatives_count": len(solutions),
+            "alternatives": solutions[:5],
+        }
+
+    def create_tasting_box_order(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Books a 4-Flavor Tasting Box (`Caixa de Prova de Sabores`) and issues a redeemable
+        credit voucher (`TASTING-CREDIT-*`) automatically deductible from the final 3D cake deposit.
+        """
+        data = payload or {}
+        flavors = data.get("flavors") or [
+            "pao_de_lo_tradicional+ovos_moles_doces_conventuais",
+            "chocolate_belga_70+brigadeiro_gourmet",
+            "red_velvet+curd_limao_frutos_vermelhos",
+            "amendoa_sem_gluten+pistacio_tahini_crocante",
+        ]
+        if not isinstance(flavors, list) or not (2 <= len(flavors) <= 6):
+            return {"ok": False, "error": "TASTING_BOX_REQUIRES_2_TO_6_FLAVORS"}
+        price_eur = round(float(data.get("box_price_eur", 24.0)), 2)
+        if price_eur <= 0.0:
+            return {"ok": False, "error": "INVALID_TASTING_BOX_PRICE"}
+
+        voucher_code = f"TASTING-CREDIT-{uuid.uuid4().hex[:8].upper()}"
+        client_clean = _normalize_scrubbed_text(str(data.get("client_name") or "Noivos / Cliente Evento"))[:64]
+        rec = {
+            "voucher_code": voucher_code,
+            "client_name": client_clean,
+            "flavors": [str(f) for f in flavors],
+            "box_price_eur": price_eur,
+            "credit_eur": price_eur,
+            "pickup_date": str(data.get("pickup_date") or datetime.now(timezone.utc).strftime("%Y-%m-%d")),
+            "redeemed": False,
+            "redeemed_on_quote": None,
+            "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        with self._lock:
+            self.tasting_vouchers[voucher_code] = rec
+        self._sync_unified_pg17_or_local_ledger("tasting_box", voucher_code, rec)
+        return {"ok": True, "tasting_box": dict(rec)}
+
+    def create_shareable_client_quote(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Creates a zero-PII shareable Client Quote Approval Portal token (`QT-BAKE-*`)."""
+        design = self.execute(payload)
+        if not design.get("ok"):
+            return design
+        quote_token = f"QT-BAKE-{uuid.uuid4().hex[:10].upper()}"
+        now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        pricing = design["pricing_and_at_invoicing"]
+        quote_rec = {
+            "quote_token": quote_token,
+            "share_path": f"/api/bake/quotes/{quote_token}",
+            "status": "PENDING_CLIENT_APPROVAL",
+            "event_title": _normalize_scrubbed_text(str((payload or {}).get("event_title") or design["threejs_3d_scene"]["topper_text"]))[:64],
+            "design_sha256": design["design_sha256"],
+            "total_gross_eur": float(pricing["recommended_client_total_gross_eur"]),
+            "initial_deposit_50pct_eur": float(pricing["deposit_50pct_atcud_invoice_eur"]),
+            "tasting_credit_applied_eur": 0.0,
+            "net_deposit_due_eur": float(pricing["deposit_50pct_atcud_invoice_eur"]),
+            "allergens_eu_1169": design["allergens_eu_1169_2011"],
+            "nutritional_declaration_eu_1169": design["nutritional_declaration_eu_1169"],
+            "threejs_3d_scene": design["threejs_3d_scene"],
+            "approved_by": None,
+            "approved_at": None,
+            "approval_receipt_sha256": None,
+            "created_at": now_iso,
+        }
+        with self._lock:
+            self.client_quotes[quote_token] = quote_rec
+        self._sync_unified_pg17_or_local_ledger("client_quote_created", quote_token, {
+            "quote_token": quote_token,
+            "design_sha256": design["design_sha256"],
+            "total_gross_eur": quote_rec["total_gross_eur"],
+        })
+        return {"ok": True, "quote": dict(quote_rec)}
+
+    def get_shareable_client_quote(self, quote_token: str) -> Dict[str, Any]:
+        with self._lock:
+            rec = self.client_quotes.get(str(quote_token or "").strip().upper())
+            if not rec:
+                return {"ok": False, "error": f"QUOTE_TOKEN_NOT_FOUND({quote_token})"}
+            return {"ok": True, "quote": dict(rec)}
+
+    def approve_shareable_client_quote(
+        self,
+        quote_token: str,
+        client_signature_name: str,
+        tasting_voucher_code: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        sig_clean = _normalize_scrubbed_text(str(client_signature_name or "").strip())[:64]
+        if len(sig_clean) < 3:
+            return {"ok": False, "error": "CLIENT_SIGNATURE_NAME_REQUIRED"}
+
+        tok = str(quote_token or "").strip().upper()
+        v_code = str(tasting_voucher_code or "").strip().upper()
+        with self._lock:
+            rec = self.client_quotes.get(tok)
+            if not rec:
+                return {"ok": False, "error": f"QUOTE_TOKEN_NOT_FOUND({tok})"}
+            if rec["status"] == "LOCKED_APPROVED":
+                return {"ok": False, "error": f"QUOTE_ALREADY_APPROVED({tok})"}
+
+            credit_eur = 0.0
+            if v_code:
+                v_rec = self.tasting_vouchers.get(v_code)
+                if not v_rec:
+                    return {"ok": False, "error": f"TASTING_VOUCHER_NOT_FOUND({v_code})"}
+                if v_rec["redeemed"]:
+                    return {"ok": False, "error": f"TASTING_VOUCHER_ALREADY_REDEEMED({v_code})"}
+                credit_eur = float(v_rec["credit_eur"])
+                v_rec["redeemed"] = True
+                v_rec["redeemed_on_quote"] = tok
+
+            now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            net_dep = max(0.0, round(float(rec["initial_deposit_50pct_eur"]) - credit_eur, 2))
+            receipt_sha = hashlib.sha256(
+                f"QUOTE-APPROVED:{tok}:{rec['design_sha256']}:{sig_clean}:{net_dep}:{now_iso}".encode("utf-8")
+            ).hexdigest()
+            rec["status"] = "LOCKED_APPROVED"
+            rec["tasting_credit_applied_eur"] = credit_eur
+            rec["net_deposit_due_eur"] = net_dep
+            rec["approved_by"] = sig_clean
+            rec["approved_at"] = now_iso
+            rec["approval_receipt_sha256"] = receipt_sha
+            snap = dict(rec)
+
+        self._sync_unified_pg17_or_local_ledger("client_quote_approved", tok, {
+            "quote_token": tok,
+            "net_deposit_due_eur": snap["net_deposit_due_eur"],
+            "approval_receipt_sha256": snap["approval_receipt_sha256"],
+        })
+        return {"ok": True, "quote": snap}
+
+    def dispatch_refrigerated_fleet_delivery(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Dispatches a multi-tier cake via `InsightFleet` (`:4026`), enforcing cold-chain van box bounds
+        (`+2.0°C..+5.0°C`), cornering G-force (`<= 0.35g`), and Portuguese AT Transport Guide (`DL n.º 198/2012`).
+        """
+        data = payload or {}
+        van_temp_c = float(data.get("van_temp_c", 3.4))
+        max_lateral_g = float(data.get("max_expected_lateral_g", 0.24))
+        if not (2.0 <= van_temp_c <= 5.0):
+            return {"ok": False, "error": f"UNSAFE_FLEET_VAN_TEMP_C({van_temp_c}): must be between +2.0°C and +5.0°C"}
+        if not (0.0 <= max_lateral_g <= 0.35):
+            return {"ok": False, "error": f"UNSAFE_CORNERING_G_FORCE({max_lateral_g}>0.35g): route exceeds structural tier limit"}
+
+        plate = str(data.get("vehicle_plate") or "AA-42-BB").strip().upper()
+        if not re.match(r"^[A-Z0-9]{2}-[A-Z0-9]{2}-[A-Z0-9]{2}$", plate):
+            return {"ok": False, "error": "INVALID_PT_VEHICLE_PLATE_FORMAT"}
+
+        design = self.execute(data)
+        if not design.get("ok"):
+            return design
+
+        delivery_id = f"FLT-BAKE-{uuid.uuid4().hex[:8].upper()}"
+        at_doc_code = f"AT-{int(hashlib.sha256(delivery_id.encode('utf-8')).hexdigest()[:8], 16) % 900000000 + 100000000}"
+        now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        rec = {
+            "delivery_id": delivery_id,
+            "status": "IN_TRANSIT_COLD_CHAIN",
+            "vehicle_plate": plate,
+            "van_temp_c": round(van_temp_c, 2),
+            "max_expected_lateral_g": round(max_lateral_g, 2),
+            "loading_postal_code": str(data.get("loading_postal_code") or "1200-109"),
+            "venue_postal_code": str(data.get("venue_postal_code") or "2710-616"),
+            "at_guia_transporte_doc_code_id": at_doc_code,
+            "regulation": "Decreto-Lei n.º 198/2012 (Guia de Transporte AT) & Reg. (CE) n.º 852/2004",
+            "design_sha256": design["design_sha256"],
+            "melt_countdown": design["logistics_and_haccp_cold_chain"]["summer_thermal_melt_countdown"],
+            "dispatched_at": now_iso,
+            "pod_completed_at": None,
+            "pod_photo_cas_uri": None,
+            "pod_receipt_sha256": None,
+        }
+        with self._lock:
+            self.fleet_deliveries[delivery_id] = rec
+        self._sync_unified_pg17_or_local_ledger("fleet_dispatch", delivery_id, rec)
+        return {"ok": True, "delivery": dict(rec)}
+
+    def confirm_fleet_proof_of_delivery(
+        self,
+        delivery_id: str,
+        handoff_probe_temp_c: float,
+        pod_photo_cas_uri: str,
+        receiver_name: str,
+    ) -> Dict[str, Any]:
+        did = str(delivery_id or "").strip().upper()
+        uri = str(pod_photo_cas_uri or "").strip()
+        if not uri.startswith("cas://"):
+            return {"ok": False, "error": "POD_PHOTO_MUST_USE_CAS_URI_SCHEME"}
+        probe_c = float(handoff_probe_temp_c)
+        if probe_c > 6.0 or probe_c < -2.0:
+            return {"ok": False, "error": f"COLD_CHAIN_BREACH_AT_VENUE({probe_c}°C)"}
+        recv_clean = _normalize_scrubbed_text(str(receiver_name or "Responsável Quinta/Evento"))[:64]
+
+        with self._lock:
+            rec = self.fleet_deliveries.get(did)
+            if not rec:
+                return {"ok": False, "error": f"DELIVERY_ID_NOT_FOUND({did})"}
+            if rec["status"] == "DELIVERED_POD_SIGNED":
+                return {"ok": False, "error": f"POD_ALREADY_CONFIRMED({did})"}
+            now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            pod_hash = hashlib.sha256(
+                f"POD:{did}:{probe_c}:{uri}:{recv_clean}:{now_iso}".encode("utf-8")
+            ).hexdigest()
+            rec["status"] = "DELIVERED_POD_SIGNED"
+            rec["handoff_probe_temp_c"] = round(probe_c, 2)
+            rec["pod_photo_cas_uri"] = uri
+            rec["receiver_name"] = recv_clean
+            rec["pod_completed_at"] = now_iso
+            rec["pod_receipt_sha256"] = pod_hash
+            snap = dict(rec)
+
+        self._sync_unified_pg17_or_local_ledger("fleet_pod_signed", did, snap)
+        return {"ok": True, "delivery": snap}

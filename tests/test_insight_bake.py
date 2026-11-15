@@ -341,6 +341,90 @@ class TestInsightBake(unittest.TestCase):
             self.assertGreaterEqual(m["max_safe_ambient_temp_c"], 27.0)
             self.assertGreaterEqual(m["wedding_portions"], 50)
 
+    def test_10_reverse_guest_budget_solver_tasting_box_voucher_and_client_quote_portal(self) -> None:
+        # 1. Unhappy path: impossible budget rejected
+        r_imp = self.client.post("/api/bake/solve-budget", json={"guest_count": 120, "max_budget_eur": 35.0})
+        self.assertEqual(r_imp.status_code, 400)
+
+        # 2. Reverse solver finds optimal nut-free configuration within guest & EUR bounds
+        r_solve = self.client.post(
+            "/api/bake/solve-budget",
+            json={"guest_count": 45, "max_budget_eur": 360.0, "exclude_allergens": ["NUTS"], "venue_temp_c": 23.0},
+        )
+        self.assertEqual(r_solve.status_code, 200)
+        rec = r_solve.json()["recommended_solution"]
+        self.assertGreaterEqual(rec["wedding_portions"], 45)
+        self.assertLessEqual(rec["total_gross_eur"], 360.0)
+        self.assertNotIn("NUTS", rec["allergen_codes"])
+
+        # 3. Book 4-flavor Caixa de Prova + apply credit on Client Quote Portal + block double-redemption
+        r_tb = self.client.post("/api/bake/tasting-box", json={"client_name": "Clara & Diogo", "box_price_eur": 25.0})
+        self.assertEqual(r_tb.status_code, 200)
+        voucher = r_tb.json()["tasting_box"]["voucher_code"]
+
+        r_qt = self.client.post("/api/bake/quotes", json={"event_title": "Casamento Clara & Diogo"})
+        self.assertEqual(r_qt.status_code, 200)
+        q_tok = r_qt.json()["quote"]["quote_token"]
+        init_dep = r_qt.json()["quote"]["initial_deposit_50pct_eur"]
+
+        r_get_q = self.client.get(f"/api/bake/quotes/{q_tok}")
+        self.assertEqual(r_get_q.status_code, 200)
+
+        r_app = self.client.post(
+            f"/api/bake/quotes/{q_tok}/approve",
+            json={"client_signature_name": "Clara Monteiro", "tasting_voucher_code": voucher},
+        )
+        self.assertEqual(r_app.status_code, 200)
+        approved = r_app.json()["quote"]
+        self.assertEqual(approved["status"], "LOCKED_APPROVED")
+        self.assertAlmostEqual(approved["net_deposit_due_eur"], round(init_dep - 25.0, 2), places=2)
+
+        # Unhappy path: double quote approval & voucher reuse rejected
+        r_app2 = self.client.post(
+            f"/api/bake/quotes/{q_tok}/approve",
+            json={"client_signature_name": "Clara Monteiro"},
+        )
+        self.assertEqual(r_app2.status_code, 400)
+
+    def test_11_fleet_cold_chain_gforce_at_guia_transporte_melt_countdown_and_cas_pod(self) -> None:
+        # 1. Unhappy paths: excessive G-force (>0.35g) or warm van (>5.0°C) blocked
+        r_bad_g = self.client.post(
+            "/api/bake/fleet-dispatch",
+            json={"vehicle_plate": "AA-42-BB", "van_temp_c": 3.2, "max_expected_lateral_g": 0.52},
+        )
+        self.assertEqual(r_bad_g.status_code, 400)
+
+        r_bad_t = self.client.post(
+            "/api/bake/fleet-dispatch",
+            json={"vehicle_plate": "AA-42-BB", "van_temp_c": 8.5, "max_expected_lateral_g": 0.20},
+        )
+        self.assertEqual(r_bad_t.status_code, 400)
+
+        # 2. Valid cold-chain dispatch with AT Guia de Transporte & summer melt countdown
+        r_disp = self.client.post(
+            "/api/bake/fleet-dispatch",
+            json={"vehicle_plate": "AA-42-BB", "van_temp_c": 3.2, "max_expected_lateral_g": 0.22, "venue_temp_c": 30.0, "venue_rh_pct": 74.0},
+        )
+        self.assertEqual(r_disp.status_code, 200)
+        deliv = r_disp.json()["delivery"]
+        did = deliv["delivery_id"]
+        self.assertTrue(deliv["at_guia_transporte_doc_code_id"].startswith("AT-"))
+        self.assertLess(deliv["melt_countdown"]["minutes_until_structural_softening"], 120)
+
+        # 3. POD requires cas:// URI and handoff probe <= +6.0°C
+        r_bad_pod = self.client.post(
+            f"/api/bake/fleet-dispatch/{did}/pod",
+            json={"handoff_probe_temp_c": 3.8, "pod_photo_cas_uri": "https://not-cas/img.jpg"},
+        )
+        self.assertEqual(r_bad_pod.status_code, 400)
+
+        r_ok_pod = self.client.post(
+            f"/api/bake/fleet-dispatch/{did}/pod",
+            json={"handoff_probe_temp_c": 3.8, "pod_photo_cas_uri": "cas://insight-fleet/pod/venue-handoff-01.webp", "receiver_name": "Chefe Sala Quinta"},
+        )
+        self.assertEqual(r_ok_pod.status_code, 200)
+        self.assertEqual(r_ok_pod.json()["delivery"]["status"], "DELIVERED_POD_SIGNED")
+
 
 if __name__ == "__main__":
     unittest.main()
