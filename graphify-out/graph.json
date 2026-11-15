@@ -4,12 +4,24 @@
   "graph": {},
   "nodes": [
     {
+      "id": "ui_component_insight_bake_insightbakeelement",
+      "label": "InsightBakeElement",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": "insightbakeelement",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L10"
+    },
+    {
       "id": "insight_bake_engine_insightbakeengine",
       "label": "InsightBakeEngine",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 0,
+      "community": 5,
       "file_type": "code",
       "norm_label": "insightbakeengine",
       "source_file": "insight_bake/engine.py",
@@ -28,650 +40,396 @@
       "source_location": "L21"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement",
-      "label": "InsightBakeElement",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "file_type": "code",
-      "norm_label": "insightbakeelement",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "insight_bake_engine_assert_no_binary_blob_in_db_row",
-      "label": "assert_no_binary_blob_in_db_row()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "assert_no_binary_blob_in_db_row()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L46"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_approve_shareable_client_quote",
-      "label": ".approve_shareable_client_quote()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".approve_shareable_client_quote()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2116"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_cancel_comfyui_render_job",
-      "label": ".cancel_comfyui_render_job()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".cancel_comfyui_render_job()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1627"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_confirm_deposit_payment",
-      "label": ".confirm_deposit_payment()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".confirm_deposit_payment()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1407"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_confirm_fleet_proof_of_delivery",
-      "label": ".confirm_fleet_proof_of_delivery()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".confirm_fleet_proof_of_delivery()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2212"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_create_deposit_payment_intent",
-      "label": ".create_deposit_payment_intent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".create_deposit_payment_intent()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1356"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_create_shareable_client_quote",
-      "label": ".create_shareable_client_quote()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".create_shareable_client_quote()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2074"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_create_tasting_box_order",
-      "label": ".create_tasting_box_order()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".create_tasting_box_order()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2038"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_dispatch_custom_cake_to_pastelaria",
-      "label": ".dispatch_custom_cake_to_pastelaria()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".dispatch_custom_cake_to_pastelaria()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1860"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_dispatch_refrigerated_fleet_delivery",
-      "label": ".dispatch_refrigerated_fleet_delivery()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".dispatch_refrigerated_fleet_delivery()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2166"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_execute",
-      "label": ".execute()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".execute()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1819"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_export_asae_ficha_artifacts",
-      "label": ".export_asae_ficha_artifacts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".export_asae_ficha_artifacts()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1760"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_export_saft_pt_invoice_xml",
-      "label": ".export_saft_pt_invoice_xml()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".export_saft_pt_invoice_xml()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1427"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_get_comfyui_render_job",
-      "label": ".get_comfyui_render_job()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".get_comfyui_render_job()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1620"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_get_establishment_profile",
-      "label": ".get_establishment_profile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".get_establishment_profile()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1303"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_get_shareable_client_quote",
-      "label": ".get_shareable_client_quote()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".get_shareable_client_quote()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2109"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_get_status",
-      "label": ".get_status()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".get_status()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1320"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1220"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_scrub_input",
-      "label": ".scrub_input()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".scrub_input()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1931"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_search_safe_cake_configurations",
-      "label": ".search_safe_cake_configurations()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".search_safe_cake_configurations()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1639"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_solve_cake_by_guests_and_budget",
-      "label": ".solve_cake_by_guests_and_budget()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".solve_cake_by_guests_and_budget()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1943"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_submit_comfyui_render_job",
-      "label": ".submit_comfyui_render_job()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".submit_comfyui_render_job()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1541"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_submit_comfyui_render_job_render_worker",
-      "label": "_render_worker()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "_render_worker()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1581"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_sync_unified_pg17_or_local_ledger",
-      "label": "._sync_unified_pg17_or_local_ledger()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "._sync_unified_pg17_or_local_ledger()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1239"
-    },
-    {
-      "id": "insight_bake_engine_insightbakeengine_update_establishment_profile",
-      "label": ".update_establishment_profile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": ".update_establishment_profile()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1307"
-    },
-    {
-      "id": "insight_bake_engine_normalize_scrubbed_text",
-      "label": "_normalize_scrubbed_text()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "_normalize_scrubbed_text()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L348"
-    },
-    {
-      "id": "insight_bake_engine_scrub_pt_eu_pii_and_byok_secrets",
-      "label": "scrub_pt_eu_pii_and_byok_secrets()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "scrub_pt_eu_pii_and_byok_secrets()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L65"
-    },
-    {
       "id": "insight_bake_router_create_insight_bake_router",
       "label": "create_insight_bake_router()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "create_insight_bake_router()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1149"
+      "source_location": "L1195"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_approve_client_quote",
       "label": "approve_client_quote()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "approve_client_quote()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1384"
+      "source_location": "L1430"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_book_tasting_box",
       "label": "book_tasting_box()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "book_tasting_box()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1369"
+      "source_location": "L1415"
+    },
+    {
+      "id": "insight_bake_router_create_insight_bake_router_build_catering_timeline_and_cutting_plan",
+      "label": "build_catering_timeline_and_cutting_plan()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "build_catering_timeline_and_cutting_plan()",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1441"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_build_query_payload",
       "label": "_build_query_payload()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "_build_query_payload()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1186"
+      "source_location": "L1232"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_cancel_async_render_job",
       "label": "cancel_async_render_job()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "cancel_async_render_job()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1339"
+      "source_location": "L1385"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_confirm_deposit_checkout",
       "label": "confirm_deposit_checkout()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "confirm_deposit_checkout()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1316"
+      "source_location": "L1362"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_confirm_fleet_pod",
       "label": "confirm_fleet_pod()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "confirm_fleet_pod()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1399"
+      "source_location": "L1493"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_create_client_quote",
       "label": "create_client_quote()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "create_client_quote()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1374"
+      "source_location": "L1420"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_create_deposit_checkout",
       "label": "create_deposit_checkout()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "create_deposit_checkout()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1311"
+      "source_location": "L1357"
+    },
+    {
+      "id": "insight_bake_router_create_insight_bake_router_create_stand_rental",
+      "label": "create_stand_rental()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "create_stand_rental()",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1461"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_dispatch_fleet_delivery",
       "label": "dispatch_fleet_delivery()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "dispatch_fleet_delivery()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1394"
+      "source_location": "L1488"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_download_bake_counter_allergen_matrix_pdf",
       "label": "download_bake_counter_allergen_matrix_pdf()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "download_bake_counter_allergen_matrix_pdf()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1294"
+      "source_location": "L1340"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_download_cake_asae_ficha_pdf_get",
       "label": "download_cake_asae_ficha_pdf_get()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "download_cake_asae_ficha_pdf_get()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1248"
+      "source_location": "L1294"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_download_cake_asae_ficha_pdf_post",
       "label": "download_cake_asae_ficha_pdf_post()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "download_cake_asae_ficha_pdf_post()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1279"
+      "source_location": "L1325"
+    },
+    {
+      "id": "insight_bake_router_create_insight_bake_router_download_catering_cutting_guide_pdf",
+      "label": "download_catering_cutting_guide_pdf()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "download_catering_cutting_guide_pdf()",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1446"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_execute_action",
       "label": "execute_action()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "execute_action()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1175"
+      "source_location": "L1221"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_execute_fermentation",
       "label": "execute_fermentation()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "execute_fermentation()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1180"
+      "source_location": "L1226"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_export_saft_pt_preview",
       "label": "export_saft_pt_preview()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "export_saft_pt_preview()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1324"
+      "source_location": "L1370"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_get_async_render_job",
       "label": "get_async_render_job()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "get_async_render_job()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1334"
+      "source_location": "L1380"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_get_client_quote",
       "label": "get_client_quote()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "get_client_quote()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1379"
+      "source_location": "L1425"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_get_establishment",
       "label": "get_establishment()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "get_establishment()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1158"
+      "source_location": "L1204"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_get_interactive_3d_studio",
       "label": "get_interactive_3d_studio()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "get_interactive_3d_studio()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1170"
+      "source_location": "L1216"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_get_status",
       "label": "get_status()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "get_status()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1154"
+      "source_location": "L1200"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_get_web_component_js",
       "label": "get_web_component_js()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "get_web_component_js()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1414"
+      "source_location": "L1508"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_print_cake_asae_ficha",
       "label": "print_cake_asae_ficha()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "print_cake_asae_ficha()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1217"
+      "source_location": "L1263"
+    },
+    {
+      "id": "insight_bake_router_create_insight_bake_router_reformulate_dietary_cake",
+      "label": "reformulate_dietary_cake()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "reformulate_dietary_cake()",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1483"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_reserve_custom_cake_in_pastelaria",
       "label": "reserve_custom_cake_in_pastelaria()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "reserve_custom_cake_in_pastelaria()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1306"
+      "source_location": "L1352"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_scrub_text",
       "label": "scrub_text()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "scrub_text()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1410"
+      "source_location": "L1504"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_search_safe_recipes",
       "label": "search_safe_recipes()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "search_safe_recipes()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1344"
+      "source_location": "L1390"
+    },
+    {
+      "id": "insight_bake_router_create_insight_bake_router_settle_stand_rental",
+      "label": "settle_stand_rental()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "file_type": "code",
+      "norm_label": "settle_stand_rental()",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1473"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_solve_cake_by_guests_budget",
       "label": "solve_cake_by_guests_budget()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "solve_cake_by_guests_budget()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1356"
+      "source_location": "L1402"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_submit_async_render_job",
       "label": "submit_async_render_job()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "submit_async_render_job()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1329"
+      "source_location": "L1375"
     },
     {
       "id": "insight_bake_router_create_insight_bake_router_update_establishment",
       "label": "update_establishment()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "update_establishment()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1162"
+      "source_location": "L1208"
     },
     {
       "id": "insight_bake_router_mount_insight_bake_plugin",
       "label": "mount_insight_bake_plugin()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "file_type": "code",
       "norm_label": "mount_insight_bake_plugin()",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1448"
+      "source_location": "L1542"
     },
     {
       "id": "insight_bake_server_health_check",
       "label": "health_check()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "file_type": "code",
       "norm_label": "health_check()",
       "source_file": "insight_bake/server.py",
@@ -682,7 +440,7 @@
       "label": "main()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "insight_bake/server.py",
@@ -693,7 +451,7 @@
       "label": "standalone_project_dashboard()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "file_type": "code",
       "norm_label": "standalone_project_dashboard()",
       "source_file": "insight_bake/server.py",
@@ -704,106 +462,216 @@
       "label": ".test_06_native_vector_asae_pdf_arrhenius_pdf_matrix_and_establishment()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "file_type": "code",
       "norm_label": ".test_06_native_vector_asae_pdf_arrhenius_pdf_matrix_and_establishment()",
       "source_file": "tests/test_insight_bake.py",
       "source_location": "L153"
     },
     {
-      "id": "insight_bake_engine_compute_arrhenius_fermentation_and_bakers_pct",
-      "label": "compute_arrhenius_fermentation_and_bakers_pct()",
+      "id": "insight_bake_engine_insightbakeengine_confirm_deposit_payment",
+      "label": ".confirm_deposit_payment()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 10,
       "file_type": "code",
-      "norm_label": "compute_arrhenius_fermentation_and_bakers_pct()",
+      "norm_label": ".confirm_deposit_payment()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L357"
+      "source_location": "L1411"
     },
     {
-      "id": "insight_bake_engine_compute_eu_1169_nutritional_declaration",
-      "label": "compute_eu_1169_nutritional_declaration()",
+      "id": "insight_bake_engine_insightbakeengine_confirm_fleet_proof_of_delivery",
+      "label": ".confirm_fleet_proof_of_delivery()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 10,
       "file_type": "code",
-      "norm_label": "compute_eu_1169_nutritional_declaration()",
+      "norm_label": ".confirm_fleet_proof_of_delivery()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L298"
+      "source_location": "L2247"
     },
     {
-      "id": "insight_bake_engine_compute_thermal_melt_countdown",
-      "label": "compute_thermal_melt_countdown()",
+      "id": "insight_bake_engine_insightbakeengine_create_stand_rental_deposit",
+      "label": ".create_stand_rental_deposit()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 10,
       "file_type": "code",
-      "norm_label": "compute_thermal_melt_countdown()",
+      "norm_label": ".create_stand_rental_deposit()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L486"
+      "source_location": "L2509"
     },
     {
-      "id": "insight_bake_engine_design_3d_cake_and_production_sheet",
-      "label": "design_3d_cake_and_production_sheet()",
+      "id": "insight_bake_engine_insightbakeengine_dispatch_refrigerated_fleet_delivery",
+      "label": ".dispatch_refrigerated_fleet_delivery()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 10,
       "file_type": "code",
-      "norm_label": "design_3d_cake_and_production_sheet()",
+      "norm_label": ".dispatch_refrigerated_fleet_delivery()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L517"
+      "source_location": "L2201"
     },
     {
-      "id": "insight_bake_engine_filter_point_in_time_records",
-      "label": "filter_point_in_time_records()",
+      "id": "insight_bake_engine_insightbakeengine_settle_stand_rental_return",
+      "label": ".settle_stand_rental_return()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 10,
       "file_type": "code",
-      "norm_label": "filter_point_in_time_records()",
+      "norm_label": ".settle_stand_rental_return()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L52"
+      "source_location": "L2554"
     },
     {
-      "id": "insight_bake_engine_format_multibanco_ref_mod97",
-      "label": "format_multibanco_ref_mod97()",
+      "id": "insight_bake_engine_insightbakeengine_sync_unified_pg17_or_local_ledger",
+      "label": "._sync_unified_pg17_or_local_ledger()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 10,
       "file_type": "code",
-      "norm_label": "format_multibanco_ref_mod97()",
+      "norm_label": "._sync_unified_pg17_or_local_ledger()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L283"
+      "source_location": "L1240"
     },
     {
-      "id": "insight_bake_engine_validate_portuguese_nif_modulo11",
-      "label": "validate_portuguese_nif_modulo11()",
+      "id": "ui_component_insight_bake_insightbakeelement_attachvalidationandhandlers",
+      "label": ".attachValidationAndHandlers()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 11,
       "file_type": "code",
-      "norm_label": "validate_portuguese_nif_modulo11()",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L337"
+      "norm_label": ".attachvalidationandhandlers()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L122"
     },
     {
-      "id": "tests_test_insight_bake_testinsightbake_test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes",
-      "label": ".test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes()",
+      "id": "ui_component_insight_bake_insightbakeelement_connectedcallback",
+      "label": ".connectedCallback()",
       "_callable": true,
       "_origin": "ast",
-      "community": 3,
+      "community": 11,
       "file_type": "code",
-      "norm_label": ".test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes()",
-      "source_file": "tests/test_insight_bake.py",
-      "source_location": "L48"
+      "norm_label": ".connectedcallback()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "ui_component_insight_bake_insightbakeelement_escapehtml",
+      "label": ".escapeHtml()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": ".escapehtml()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L257"
+    },
+    {
+      "id": "ui_component_insight_bake_insightbakeelement_executeprimaryaction",
+      "label": ".executePrimaryAction()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": ".executeprimaryaction()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L163"
+    },
+    {
+      "id": "ui_component_insight_bake_insightbakeelement_observedattributes",
+      "label": ".observedAttributes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": ".observedattributes()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "ui_component_insight_bake_insightbakeelement_refreshstatus",
+      "label": ".refreshStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": ".refreshstatus()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L148"
+    },
+    {
+      "id": "ui_component_insight_bake_insightbakeelement_rendershell",
+      "label": ".renderShell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": ".rendershell()",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "label": ".compute_venue_assembly_timeline_and_cutting_plan()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "file_type": "code",
+      "norm_label": ".compute_venue_assembly_timeline_and_cutting_plan()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2294"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_minutes_to_hhmm",
+      "label": "._minutes_to_hhmm()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "file_type": "code",
+      "norm_label": "._minutes_to_hhmm()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2290"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_render_catering_cutting_guide_pdf_bytes",
+      "label": ".render_catering_cutting_guide_pdf_bytes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "file_type": "code",
+      "norm_label": ".render_catering_cutting_guide_pdf_bytes()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2395"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 13,
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1220"
+    },
+    {
+      "id": "node_sdk_index_buildcateringcuttingtimeline",
+      "label": "buildCateringCuttingTimeline()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "file_type": "code",
+      "norm_label": "buildcateringcuttingtimeline()",
+      "source_file": "node_sdk/index.js",
+      "source_location": "L129"
     },
     {
       "id": "node_sdk_index_computefermentation",
       "label": "computeFermentation()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "computefermentation()",
       "source_file": "node_sdk/index.js",
@@ -814,7 +682,7 @@
       "label": "confirmDepositPayment()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "confirmdepositpayment()",
       "source_file": "node_sdk/index.js",
@@ -825,7 +693,7 @@
       "label": "createDepositCheckout()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "createdepositcheckout()",
       "source_file": "node_sdk/index.js",
@@ -836,18 +704,29 @@
       "label": "createShareableClientQuote()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "createshareableclientquote()",
       "source_file": "node_sdk/index.js",
       "source_location": "L111"
     },
     {
+      "id": "node_sdk_index_createstandrentaldeposit",
+      "label": "createStandRentalDeposit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "file_type": "code",
+      "norm_label": "createstandrentaldeposit()",
+      "source_file": "node_sdk/index.js",
+      "source_location": "L138"
+    },
+    {
       "id": "node_sdk_index_createtastingboxorder",
       "label": "createTastingBoxOrder()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "createtastingboxorder()",
       "source_file": "node_sdk/index.js",
@@ -858,7 +737,7 @@
       "label": "designCake3D()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "designcake3d()",
       "source_file": "node_sdk/index.js",
@@ -869,7 +748,7 @@
       "label": "dispatchRefrigeratedFleet()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "dispatchrefrigeratedfleet()",
       "source_file": "node_sdk/index.js",
@@ -880,7 +759,7 @@
       "label": "exportSaftPtPreview()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "exportsaftptpreview()",
       "source_file": "node_sdk/index.js",
@@ -891,18 +770,29 @@
       "label": "getBakeStatus()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "getbakestatus()",
       "source_file": "node_sdk/index.js",
       "source_location": "L6"
     },
     {
+      "id": "node_sdk_index_reformulatedietarysafecake",
+      "label": "reformulateDietarySafeCake()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "file_type": "code",
+      "norm_label": "reformulatedietarysafecake()",
+      "source_file": "node_sdk/index.js",
+      "source_location": "L147"
+    },
+    {
       "id": "node_sdk_index_reservecustomcakeinpastelaria",
       "label": "reserveCustomCakeInPastelaria()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "reservecustomcakeinpastelaria()",
       "source_file": "node_sdk/index.js",
@@ -913,7 +803,7 @@
       "label": "searchSafeCakeRecipes()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "searchsafecakerecipes()",
       "source_file": "node_sdk/index.js",
@@ -924,7 +814,7 @@
       "label": "solveCakeByGuestsAndBudget()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "solvecakebyguestsandbudget()",
       "source_file": "node_sdk/index.js",
@@ -935,11 +825,209 @@
       "label": "submitAsyncComfyRenderJob()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
+      "community": 2,
       "file_type": "code",
       "norm_label": "submitasynccomfyrenderjob()",
       "source_file": "node_sdk/index.js",
       "source_location": "L75"
+    },
+    {
+      "id": "insight_bake_engine_compute_arrhenius_fermentation_and_bakers_pct",
+      "label": "compute_arrhenius_fermentation_and_bakers_pct()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "compute_arrhenius_fermentation_and_bakers_pct()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L357"
+    },
+    {
+      "id": "insight_bake_engine_compute_eu_1169_nutritional_declaration",
+      "label": "compute_eu_1169_nutritional_declaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "compute_eu_1169_nutritional_declaration()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L298"
+    },
+    {
+      "id": "insight_bake_engine_compute_thermal_melt_countdown",
+      "label": "compute_thermal_melt_countdown()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "compute_thermal_melt_countdown()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L486"
+    },
+    {
+      "id": "insight_bake_engine_design_3d_cake_and_production_sheet",
+      "label": "design_3d_cake_and_production_sheet()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "design_3d_cake_and_production_sheet()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L517"
+    },
+    {
+      "id": "insight_bake_engine_filter_point_in_time_records",
+      "label": "filter_point_in_time_records()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "filter_point_in_time_records()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L52"
+    },
+    {
+      "id": "insight_bake_engine_format_multibanco_ref_mod97",
+      "label": "format_multibanco_ref_mod97()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "format_multibanco_ref_mod97()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L283"
+    },
+    {
+      "id": "insight_bake_engine_validate_portuguese_nif_modulo11",
+      "label": "validate_portuguese_nif_modulo11()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "validate_portuguese_nif_modulo11()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L337"
+    },
+    {
+      "id": "tests_test_insight_bake_testinsightbake_test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes",
+      "label": ".test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": ".test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes()",
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L48"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_cancel_comfyui_render_job",
+      "label": ".cancel_comfyui_render_job()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".cancel_comfyui_render_job()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1631"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_get_comfyui_render_job",
+      "label": ".get_comfyui_render_job()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".get_comfyui_render_job()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1624"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_get_establishment_profile",
+      "label": ".get_establishment_profile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".get_establishment_profile()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1304"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_get_shareable_client_quote",
+      "label": ".get_shareable_client_quote()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".get_shareable_client_quote()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2119"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_get_status",
+      "label": ".get_status()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".get_status()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1321"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_scrub_input",
+      "label": ".scrub_input()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".scrub_input()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1935"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_search_safe_cake_configurations",
+      "label": ".search_safe_cake_configurations()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".search_safe_cake_configurations()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1643"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_solve_cake_by_guests_and_budget",
+      "label": ".solve_cake_by_guests_and_budget()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".solve_cake_by_guests_and_budget()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1947"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_update_establishment_profile",
+      "label": ".update_establishment_profile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": ".update_establishment_profile()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1308"
+    },
+    {
+      "id": "insight_bake_engine_scrub_pt_eu_pii_and_byok_secrets",
+      "label": "scrub_pt_eu_pii_and_byok_secrets()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "code",
+      "norm_label": "scrub_pt_eu_pii_and_byok_secrets()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L65"
     },
     {
       "id": "tests_test_insight_bake_testinsightbake_setup",
@@ -1052,11 +1140,110 @@
       "source_location": "L389"
     },
     {
+      "id": "tests_test_insight_bake_testinsightbake_test_12_catering_cutting_guide_pdf_golden_hour_timeline_and_stand_caucao_ledger",
+      "label": ".test_12_catering_cutting_guide_pdf_golden_hour_timeline_and_stand_caucao_ledger()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "file_type": "code",
+      "norm_label": ".test_12_catering_cutting_guide_pdf_golden_hour_timeline_and_stand_caucao_ledger()",
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L428"
+    },
+    {
+      "id": "tests_test_insight_bake_testinsightbake_test_13_dietary_reformulator_slenderness_guard_and_quote_to_pastelaria_kds_sync",
+      "label": ".test_13_dietary_reformulator_slenderness_guard_and_quote_to_pastelaria_kds_sync()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "file_type": "code",
+      "norm_label": ".test_13_dietary_reformulator_slenderness_guard_and_quote_to_pastelaria_kds_sync()",
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L481"
+    },
+    {
+      "id": "insight_bake_engine_assert_no_binary_blob_in_db_row",
+      "label": "assert_no_binary_blob_in_db_row()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": "assert_no_binary_blob_in_db_row()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L46"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_create_deposit_payment_intent",
+      "label": ".create_deposit_payment_intent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": ".create_deposit_payment_intent()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1360"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_execute",
+      "label": ".execute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": ".execute()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1823"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_export_asae_ficha_artifacts",
+      "label": ".export_asae_ficha_artifacts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": ".export_asae_ficha_artifacts()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1764"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_reformulate_dietary_safe_cake",
+      "label": ".reformulate_dietary_safe_cake()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": ".reformulate_dietary_safe_cake()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2614"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_submit_comfyui_render_job",
+      "label": ".submit_comfyui_render_job()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": ".submit_comfyui_render_job()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1545"
+    },
+    {
+      "id": "insight_bake_engine_insightbakeengine_submit_comfyui_render_job_render_worker",
+      "label": "_render_worker()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "code",
+      "norm_label": "_render_worker()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1585"
+    },
+    {
       "id": "insight_bake_engine_build_bake_asae_ficha_tecnica",
       "label": "build_bake_asae_ficha_tecnica()",
       "_callable": true,
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "code",
       "norm_label": "build_bake_asae_ficha_tecnica()",
       "source_file": "insight_bake/engine.py",
@@ -1067,18 +1254,18 @@
       "label": ".render_counter_allergen_matrix_pdf()",
       "_callable": true,
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "code",
       "norm_label": ".render_counter_allergen_matrix_pdf()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1792"
+      "source_location": "L1796"
     },
     {
       "id": "insight_bake_engine_render_cake_asae_ficha_html",
       "label": "render_cake_asae_ficha_html()",
       "_callable": true,
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "code",
       "norm_label": "render_cake_asae_ficha_html()",
       "source_file": "insight_bake/engine.py",
@@ -1089,224 +1276,83 @@
       "label": "render_cake_asae_ficha_pdf_bytes()",
       "_callable": true,
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "code",
       "norm_label": "render_cake_asae_ficha_pdf_bytes()",
       "source_file": "insight_bake/engine.py",
       "source_location": "L1201"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement_attachvalidationandhandlers",
-      "label": ".attachValidationAndHandlers()",
+      "id": "insight_bake_engine_insightbakeengine_approve_shareable_client_quote",
+      "label": ".approve_shareable_client_quote()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
+      "community": 9,
       "file_type": "code",
-      "norm_label": ".attachvalidationandhandlers()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L122"
+      "norm_label": ".approve_shareable_client_quote()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2126"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement_connectedcallback",
-      "label": ".connectedCallback()",
+      "id": "insight_bake_engine_insightbakeengine_create_shareable_client_quote",
+      "label": ".create_shareable_client_quote()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
+      "community": 9,
       "file_type": "code",
-      "norm_label": ".connectedcallback()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L18"
+      "norm_label": ".create_shareable_client_quote()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2078"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement_escapehtml",
-      "label": ".escapeHtml()",
+      "id": "insight_bake_engine_insightbakeengine_create_tasting_box_order",
+      "label": ".create_tasting_box_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
+      "community": 9,
       "file_type": "code",
-      "norm_label": ".escapehtml()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L257"
+      "norm_label": ".create_tasting_box_order()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2042"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement_executeprimaryaction",
-      "label": ".executePrimaryAction()",
+      "id": "insight_bake_engine_insightbakeengine_dispatch_custom_cake_to_pastelaria",
+      "label": ".dispatch_custom_cake_to_pastelaria()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
+      "community": 9,
       "file_type": "code",
-      "norm_label": ".executeprimaryaction()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L163"
+      "norm_label": ".dispatch_custom_cake_to_pastelaria()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1864"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement_observedattributes",
-      "label": ".observedAttributes()",
+      "id": "insight_bake_engine_insightbakeengine_export_saft_pt_invoice_xml",
+      "label": ".export_saft_pt_invoice_xml()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
+      "community": 9,
       "file_type": "code",
-      "norm_label": ".observedattributes()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L14"
+      "norm_label": ".export_saft_pt_invoice_xml()",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1431"
     },
     {
-      "id": "ui_component_insight_bake_insightbakeelement_refreshstatus",
-      "label": ".refreshStatus()",
+      "id": "insight_bake_engine_normalize_scrubbed_text",
+      "label": "_normalize_scrubbed_text()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
+      "community": 9,
       "file_type": "code",
-      "norm_label": ".refreshstatus()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L148"
-    },
-    {
-      "id": "ui_component_insight_bake_insightbakeelement_rendershell",
-      "label": ".renderShell()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "file_type": "code",
-      "norm_label": ".rendershell()",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L29"
-    },
-    {
-      "id": "any",
-      "label": "Any",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "any",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "insight_bake_engine_py_path",
-      "label": "Path",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "code",
-      "norm_label": "path",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "insight_bake_engine_rationale_1240",
-      "label": "Unified PostgreSQL 17 (`:5432/chroniclerag`, Zero Runtime `ChromaDB` per\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "unified postgresql 17 (`:5432/chroniclerag`, zero runtime `chromadb` per...",
+      "norm_label": "_normalize_scrubbed_text()",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1240"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1357",
-      "label": "Creates a 50% deposit payment intent (`MBWAY` or `MULTIBANCO` Modulo-97) for a\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "creates a 50% deposit payment intent (`mbway` or `multibanco` modulo-97) for a...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1357"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1428",
-      "label": "Exports a valid Portugal Autoridade Tribut\u00e1ria `SAF-T (PT) v1.04_01` (`Decreto-\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "exports a valid portugal autoridade tributaria `saf-t (pt) v1.04_01` (`decreto-...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1428"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1542",
-      "label": "Non-blocking asynchronous `ComfyUI` ControlNet Depth/Canny render job queue\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "non-blocking asynchronous `comfyui` controlnet depth/canny render job queue...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1542"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1647",
-      "label": "Semantic & constraint-aware recipe discovery (`RULE-16` Zero `ChromaDB` \u2014\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "semantic & constraint-aware recipe discovery (`rule-16` zero `chromadb` \u2014...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1647"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1761",
-      "label": "Executes a 3D Cake Design or Arrhenius Q10 Fermentation calculation, builds its\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "executes a 3d cake design or arrhenius q10 fermentation calculation, builds its...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1761"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1865",
-      "label": "Designs the 3D cake, builds the `day_before` (`24h`) production & ASAE handoff\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "designs the 3d cake, builds the `day_before` (`24h`) production & asae handoff...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1865"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1952",
-      "label": "Reverse Guest-Count & Budget Solver: searches multi-tier geometries and recipe\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "reverse guest-count & budget solver: searches multi-tier geometries and recipe...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1952"
-    },
-    {
-      "id": "insight_bake_engine_rationale_2039",
-      "label": "Books a 4-Flavor Tasting Box (`Caixa de Prova de Sabores`) and issues a\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "books a 4-flavor tasting box (`caixa de prova de sabores`) and issues a...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2039"
-    },
-    {
-      "id": "insight_bake_engine_rationale_2075",
-      "label": "Creates a zero-PII shareable Client Quote Approval Portal token (`QT-BAKE-*`).",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "creates a zero-pii shareable client quote approval portal token (`qt-bake-*`).",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2075"
-    },
-    {
-      "id": "insight_bake_engine_rationale_2167",
-      "label": "Dispatches a multi-tier cake via `InsightFleet` (`:4026`), enforcing cold-chain\u2026",
-      "_origin": "ast",
-      "community": 0,
-      "file_type": "rationale",
-      "norm_label": "dispatches a multi-tier cake via `insightfleet` (`:4026`), enforcing cold-chain...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L2167"
+      "source_location": "L348"
     },
     {
       "id": "apirouter",
       "label": "APIRouter",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "apirouter",
       "source_file": "",
@@ -1316,17 +1362,230 @@
       "id": "htmlresponse",
       "label": "HTMLResponse",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "file_type": "code",
       "norm_label": "htmlresponse",
       "source_file": "",
       "source_location": ""
     },
     {
+      "id": "fastapi",
+      "label": "FastAPI",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "fastapi",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "get",
+      "label": "get",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "get",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "insight_bake_init",
+      "label": "__init__.py",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "__init__.py",
+      "source_file": "insight_bake/__init__.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_router",
+      "label": "router.py",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "router.py",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_router_py_path",
+      "label": "Path",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "path",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "insight_bake_server",
+      "label": "server.py",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "server.py",
+      "source_file": "insight_bake/server.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_test_insight_bake",
+      "label": "test_insight_bake.py",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "code",
+      "norm_label": "test_insight_bake.py",
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_init_rationale_1",
+      "label": "`SetMiddle Insight\u2122 \u00b7 Bake` (`InsightBake` \u2014 `:4030 /api/bake`) \u2014 Extracted\u2026",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "rationale",
+      "norm_label": "`setmiddle insighttm \u00b7 bake` (`insightbake` \u2014 `:4030 /api/bake`) \u2014 extracted...",
+      "source_file": "insight_bake/__init__.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_router_rationale_1",
+      "label": "FastAPI `APIRouter` Plugin for `SetMiddle Insight\u2122 \u00b7 Bake`\u2026",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "rationale",
+      "norm_label": "fastapi `apirouter` plugin for `setmiddle insighttm \u00b7 bake`...",
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_server_rationale_1",
+      "label": "Standalone FastAPI Server for `SetMiddle Insight\u2122 \u00b7 Bake` (`python -m\u2026",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "rationale",
+      "norm_label": "standalone fastapi server for `setmiddle insighttm \u00b7 bake` (`python -m...",
+      "source_file": "insight_bake/server.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_server_rationale_35",
+      "label": "Serves the standalone UX Engine 2.8 & WCAG 2.2 AA/AAA webpage & interactive 3D\u2026",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "rationale",
+      "norm_label": "serves the standalone ux engine 2.8 & wcag 2.2 aa/aaa webpage & interactive 3d...",
+      "source_file": "insight_bake/server.py",
+      "source_location": "L35"
+    },
+    {
+      "id": "tests_test_insight_bake_rationale_1",
+      "label": "Unit, Unhappy-Path, Arrhenius Q10, ASAE Ficha & Cross-Workspace Bridge\u2026",
+      "_origin": "ast",
+      "community": 1,
+      "file_type": "rationale",
+      "norm_label": "unit, unhappy-path, arrhenius q10, asae ficha & cross-workspace bridge...",
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1241",
+      "label": "Unified PostgreSQL 17 (`:5432/chroniclerag`, Zero Runtime `ChromaDB` per\u2026",
+      "_origin": "ast",
+      "community": 10,
+      "file_type": "rationale",
+      "norm_label": "unified postgresql 17 (`:5432/chroniclerag`, zero runtime `chromadb` per...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1241"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2202",
+      "label": "Dispatches a multi-tier cake via `InsightFleet` (`:4026`), enforcing cold-chain\u2026",
+      "_origin": "ast",
+      "community": 10,
+      "file_type": "rationale",
+      "norm_label": "dispatches a multi-tier cake via `insightfleet` (`:4026`), enforcing cold-chain...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2202"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2517",
+      "label": "Registers a refundable security deposit (`Cau\u00e7\u00e3o de Suporte / Pedestal`) in\u2026",
+      "_origin": "ast",
+      "community": 10,
+      "file_type": "rationale",
+      "norm_label": "registers a refundable security deposit (`caucao de suporte / pedestal`) in...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2517"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2560",
+      "label": "Settles a reusable stand security deposit (`Cau\u00e7\u00e3o`): - Intact return -> 100%\u2026",
+      "_origin": "ast",
+      "community": 10,
+      "file_type": "rationale",
+      "norm_label": "settles a reusable stand security deposit (`caucao`): - intact return -> 100%...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2560"
+    },
+    {
+      "id": "ui_component_insight_bake",
+      "label": "insight-bake.ts",
+      "_origin": "ast",
+      "community": 11,
+      "file_type": "code",
+      "norm_label": "insight-bake.ts",
+      "source_file": "ui_component/insight-bake.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2295",
+      "label": "Computes backward-scheduled Golden-Hour venue assembly milestones from\u2026",
+      "_origin": "ast",
+      "community": 12,
+      "file_type": "rationale",
+      "norm_label": "computes backward-scheduled golden-hour venue assembly milestones from...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2295"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2396",
+      "label": "Renders a native ReportLab Vector A4 Portrait PDF (`Guia de Corte para Catering\u2026",
+      "_origin": "ast",
+      "community": 12,
+      "file_type": "rationale",
+      "norm_label": "renders a native reportlab vector a4 portrait pdf (`guia de corte para catering...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2396"
+    },
+    {
+      "id": "insight_bake_engine_py_path",
+      "label": "Path",
+      "_origin": "ast",
+      "community": 13,
+      "file_type": "code",
+      "norm_label": "path",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "pkg_insight_bake",
+      "label": "insight-bake",
+      "_origin": "ast",
+      "community": 14,
+      "ecosystem": "python",
+      "file_type": "code",
+      "norm_label": "insight-bake",
+      "source_file": "pyproject.toml",
+      "source_location": "L1",
+      "type": "package",
+      "version": "1.2.0"
+    },
+    {
       "id": "pkg_insight_bake_rs",
       "label": "insight_bake_rs",
       "_origin": "ast",
-      "community": 10,
+      "community": 15,
       "ecosystem": "cargo",
       "file_type": "code",
       "norm_label": "insight_bake_rs",
@@ -1339,217 +1598,27 @@
       "id": "run_graphify_update",
       "label": "run_graphify_update.ps1",
       "_origin": "ast",
-      "community": 11,
+      "community": 16,
       "file_type": "code",
       "norm_label": "run_graphify_update.ps1",
       "source_file": "run_graphify_update.ps1",
       "source_location": "L1"
     },
     {
-      "id": "fastapi",
-      "label": "FastAPI",
+      "id": "node_sdk_index",
+      "label": "index.js",
       "_origin": "ast",
       "community": 2,
       "file_type": "code",
-      "norm_label": "fastapi",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "get",
-      "label": "get",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "code",
-      "norm_label": "get",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "insight_bake_init",
-      "label": "__init__.py",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "code",
-      "norm_label": "__init__.py",
-      "source_file": "insight_bake/__init__.py",
+      "norm_label": "index.js",
+      "source_file": "node_sdk/index.js",
       "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_router",
-      "label": "router.py",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "code",
-      "norm_label": "router.py",
-      "source_file": "insight_bake/router.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_router_py_path",
-      "label": "Path",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "code",
-      "norm_label": "path",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "insight_bake_server",
-      "label": "server.py",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "code",
-      "norm_label": "server.py",
-      "source_file": "insight_bake/server.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "tests_test_insight_bake",
-      "label": "test_insight_bake.py",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "code",
-      "norm_label": "test_insight_bake.py",
-      "source_file": "tests/test_insight_bake.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_init_rationale_1",
-      "label": "`SetMiddle Insight\u2122 \u00b7 Bake` (`InsightBake` \u2014 `:4030 /api/bake`) \u2014 Extracted\u2026",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "rationale",
-      "norm_label": "`setmiddle insighttm \u00b7 bake` (`insightbake` \u2014 `:4030 /api/bake`) \u2014 extracted...",
-      "source_file": "insight_bake/__init__.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_router_rationale_1",
-      "label": "FastAPI `APIRouter` Plugin for `SetMiddle Insight\u2122 \u00b7 Bake`\u2026",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "rationale",
-      "norm_label": "fastapi `apirouter` plugin for `setmiddle insighttm \u00b7 bake`...",
-      "source_file": "insight_bake/router.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_server_rationale_1",
-      "label": "Standalone FastAPI Server for `SetMiddle Insight\u2122 \u00b7 Bake` (`python -m\u2026",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "rationale",
-      "norm_label": "standalone fastapi server for `setmiddle insighttm \u00b7 bake` (`python -m...",
-      "source_file": "insight_bake/server.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_server_rationale_35",
-      "label": "Serves the standalone UX Engine 2.8 & WCAG 2.2 AA/AAA webpage & interactive 3D\u2026",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "rationale",
-      "norm_label": "serves the standalone ux engine 2.8 & wcag 2.2 aa/aaa webpage & interactive 3d...",
-      "source_file": "insight_bake/server.py",
-      "source_location": "L35"
-    },
-    {
-      "id": "tests_test_insight_bake_rationale_1",
-      "label": "Unit, Unhappy-Path, Arrhenius Q10, ASAE Ficha & Cross-Workspace Bridge\u2026",
-      "_origin": "ast",
-      "community": 2,
-      "file_type": "rationale",
-      "norm_label": "unit, unhappy-path, arrhenius q10, asae ficha & cross-workspace bridge...",
-      "source_file": "tests/test_insight_bake.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_engine",
-      "label": "engine.py",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "code",
-      "norm_label": "engine.py",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_engine_rationale_1",
-      "label": "`SetMiddle Insight\u2122 \u00b7 Bake` (`InsightBake` \u00b7 `insight_bake.engine`). Internal\u2026",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "`setmiddle insighttm \u00b7 bake` (`insightbake` \u00b7 `insight_bake.engine`). internal...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "insight_bake_engine_rationale_284",
-      "label": "Generates a deterministic Portuguese SIBS Multibanco 9-digit reference (`XXX\u2026",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "generates a deterministic portuguese sibs multibanco 9-digit reference (`xxx...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L284"
-    },
-    {
-      "id": "insight_bake_engine_rationale_303",
-      "label": "Computes the statutory EU Regulation No. 1169/2011 Art. 30.\u00ba & Annex XIV\u2026",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "computes the statutory eu regulation no. 1169/2011 art. 30.o & annex xiv...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L303"
-    },
-    {
-      "id": "insight_bake_engine_rationale_338",
-      "label": "Validates a 9-digit Portuguese NIF using the statutory AT Modulo-11 check digit.",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "validates a 9-digit portuguese nif using the statutory at modulo-11 check digit.",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L338"
-    },
-    {
-      "id": "insight_bake_engine_rationale_370",
-      "label": "Computes Q10 / Arrhenius sourdough & pastry dough fermentation kinetics,\u2026",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "computes q10 / arrhenius sourdough & pastry dough fermentation kinetics,...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L370"
-    },
-    {
-      "id": "insight_bake_engine_rationale_492",
-      "label": "Calculates dynamic max-safe out-of-fridge venue display minutes before frosting\u2026",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "calculates dynamic max-safe out-of-fridge venue display minutes before frosting...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L492"
-    },
-    {
-      "id": "insight_bake_engine_rationale_535",
-      "label": "Computes the complete `Three.js` 3D scene graph (including per-tier flavor\u2026",
-      "_origin": "ast",
-      "community": 3,
-      "file_type": "rationale",
-      "norm_label": "computes the complete `three.js` 3d scene graph (including per-tier flavor...",
-      "source_file": "insight_bake/engine.py",
-      "source_location": "L535"
     },
     {
       "id": "result",
       "label": "Result",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "result",
       "source_file": "",
@@ -1559,7 +1628,7 @@
       "id": "rust_core_src_lib",
       "label": "lib.rs",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "lib.rs",
       "source_file": "rust_core/src/lib.rs",
@@ -1569,17 +1638,27 @@
       "id": "rust_core_src_lib_compute_eu1169_energy_per_100g",
       "label": "compute_eu1169_energy_per_100g()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "compute_eu1169_energy_per_100g()",
       "source_file": "rust_core/src/lib.rs",
       "source_location": "L70"
     },
     {
+      "id": "rust_core_src_lib_compute_stand_deposit_settlement_cents",
+      "label": "compute_stand_deposit_settlement_cents()",
+      "_origin": "ast",
+      "community": 3,
+      "file_type": "code",
+      "norm_label": "compute_stand_deposit_settlement_cents()",
+      "source_file": "rust_core/src/lib.rs",
+      "source_location": "L137"
+    },
+    {
       "id": "rust_core_src_lib_estimate_out_of_fridge_safe_minutes",
       "label": "estimate_out_of_fridge_safe_minutes()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "estimate_out_of_fridge_safe_minutes()",
       "source_file": "rust_core/src/lib.rs",
@@ -1589,7 +1668,7 @@
       "id": "rust_core_src_lib_estimate_q10_bulk_hours",
       "label": "estimate_q10_bulk_hours()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "estimate_q10_bulk_hours()",
       "source_file": "rust_core/src/lib.rs",
@@ -1599,7 +1678,7 @@
       "id": "rust_core_src_lib_eu_14_allergen_codes",
       "label": "EU_14_ALLERGEN_CODES",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "eu_14_allergen_codes",
       "source_file": "rust_core/src/lib.rs",
@@ -1609,7 +1688,7 @@
       "id": "rust_core_src_lib_format_multibanco_ref_mod97",
       "label": "format_multibanco_ref_mod97()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "format_multibanco_ref_mod97()",
       "source_file": "rust_core/src/lib.rs",
@@ -1619,7 +1698,7 @@
       "id": "rust_core_src_lib_is_fleet_delivery_telemetry_safe",
       "label": "is_fleet_delivery_telemetry_safe()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "is_fleet_delivery_telemetry_safe()",
       "source_file": "rust_core/src/lib.rs",
@@ -1629,27 +1708,37 @@
       "id": "rust_core_src_lib_test_q10_nutrition_multibanco_and_fleet",
       "label": "test_q10_nutrition_multibanco_and_fleet()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "test_q10_nutrition_multibanco_and_fleet()",
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L129"
+      "source_location": "L164"
     },
     {
       "id": "rust_core_src_lib_test_stability_and_dowels",
       "label": "test_stability_and_dowels()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "test_stability_and_dowels()",
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L120"
+      "source_location": "L155"
+    },
+    {
+      "id": "rust_core_src_lib_verify_dietary_tier_stability",
+      "label": "verify_dietary_tier_stability()",
+      "_origin": "ast",
+      "community": 3,
+      "file_type": "code",
+      "norm_label": "verify_dietary_tier_stability()",
+      "source_file": "rust_core/src/lib.rs",
+      "source_location": "L117"
     },
     {
       "id": "rust_core_src_lib_verify_multi_tier_stack",
       "label": "verify_multi_tier_stack()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "verify_multi_tier_stack()",
       "source_file": "rust_core/src/lib.rs",
@@ -1659,7 +1748,7 @@
       "id": "rust_core_src_lib_verify_tier_stability",
       "label": "verify_tier_stability()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "verify_tier_stability()",
       "source_file": "rust_core/src/lib.rs",
@@ -1669,7 +1758,7 @@
       "id": "rust_core_src_main",
       "label": "main.rs",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "main.rs",
       "source_file": "rust_core/src/main.rs",
@@ -1679,7 +1768,7 @@
       "id": "rust_core_src_main_main",
       "label": "main()",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "rust_core/src/main.rs",
@@ -1689,27 +1778,167 @@
       "id": "string",
       "label": "String",
       "_origin": "ast",
-      "community": 4,
+      "community": 3,
       "file_type": "code",
       "norm_label": "string",
       "source_file": "",
       "source_location": ""
     },
     {
-      "id": "node_sdk_index",
-      "label": "index.js",
+      "id": "insight_bake_engine",
+      "label": "engine.py",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "code",
+      "norm_label": "engine.py",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1",
+      "label": "`SetMiddle Insight\u2122 \u00b7 Bake` (`InsightBake` \u00b7 `insight_bake.engine`). Internal\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "`setmiddle insighttm \u00b7 bake` (`insightbake` \u00b7 `insight_bake.engine`). internal...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "insight_bake_engine_rationale_284",
+      "label": "Generates a deterministic Portuguese SIBS Multibanco 9-digit reference (`XXX\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "generates a deterministic portuguese sibs multibanco 9-digit reference (`xxx...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L284"
+    },
+    {
+      "id": "insight_bake_engine_rationale_303",
+      "label": "Computes the statutory EU Regulation No. 1169/2011 Art. 30.\u00ba & Annex XIV\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "computes the statutory eu regulation no. 1169/2011 art. 30.o & annex xiv...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L303"
+    },
+    {
+      "id": "insight_bake_engine_rationale_338",
+      "label": "Validates a 9-digit Portuguese NIF using the statutory AT Modulo-11 check digit.",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "validates a 9-digit portuguese nif using the statutory at modulo-11 check digit.",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L338"
+    },
+    {
+      "id": "insight_bake_engine_rationale_370",
+      "label": "Computes Q10 / Arrhenius sourdough & pastry dough fermentation kinetics,\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "computes q10 / arrhenius sourdough & pastry dough fermentation kinetics,...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L370"
+    },
+    {
+      "id": "insight_bake_engine_rationale_492",
+      "label": "Calculates dynamic max-safe out-of-fridge venue display minutes before frosting\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "calculates dynamic max-safe out-of-fridge venue display minutes before frosting...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L492"
+    },
+    {
+      "id": "insight_bake_engine_rationale_535",
+      "label": "Computes the complete `Three.js` 3D scene graph (including per-tier flavor\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "file_type": "rationale",
+      "norm_label": "computes the complete `three.js` 3d scene graph (including per-tier flavor...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L535"
+    },
+    {
+      "id": "any",
+      "label": "Any",
       "_origin": "ast",
       "community": 5,
       "file_type": "code",
-      "norm_label": "index.js",
-      "source_file": "node_sdk/index.js",
-      "source_location": "L1"
+      "norm_label": "any",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "insight_bake_engine_rationale_1651",
+      "label": "Semantic & constraint-aware recipe discovery (`RULE-16` Zero `ChromaDB` \u2014\u2026",
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "rationale",
+      "norm_label": "semantic & constraint-aware recipe discovery (`rule-16` zero `chromadb` \u2014...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1651"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1956",
+      "label": "Reverse Guest-Count & Budget Solver: searches multi-tier geometries and recipe\u2026",
+      "_origin": "ast",
+      "community": 5,
+      "file_type": "rationale",
+      "norm_label": "reverse guest-count & budget solver: searches multi-tier geometries and recipe...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1956"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1361",
+      "label": "Creates a 50% deposit payment intent (`MBWAY` or `MULTIBANCO` Modulo-97) for a\u2026",
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "rationale",
+      "norm_label": "creates a 50% deposit payment intent (`mbway` or `multibanco` modulo-97) for a...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1361"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1546",
+      "label": "Non-blocking asynchronous `ComfyUI` ControlNet Depth/Canny render job queue\u2026",
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "rationale",
+      "norm_label": "non-blocking asynchronous `comfyui` controlnet depth/canny render job queue...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1546"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1765",
+      "label": "Executes a 3D Cake Design or Arrhenius Q10 Fermentation calculation, builds its\u2026",
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "rationale",
+      "norm_label": "executes a 3d cake design or arrhenius q10 fermentation calculation, builds its...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1765"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2615",
+      "label": "Deterministically reformulates a 3D multi-tier cake for strict dietary regimes:\u2026",
+      "_origin": "ast",
+      "community": 7,
+      "file_type": "rationale",
+      "norm_label": "deterministically reformulates a 3d multi-tier cake for strict dietary regimes:...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2615"
     },
     {
       "id": "asaeestablishmentprofile",
       "label": "ASAEEstablishmentProfile",
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "code",
       "norm_label": "asaeestablishmentprofile",
       "source_file": "",
@@ -1719,7 +1948,7 @@
       "id": "asaefichatecnica",
       "label": "ASAEFichaTecnica",
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "code",
       "norm_label": "asaefichatecnica",
       "source_file": "",
@@ -1729,7 +1958,7 @@
       "id": "insight_bake_engine_rationale_1189",
       "label": "Renders the complete `MOD-FT-ASAE-DGAV-ACIP-v2.0` Official ASAE A4 HTML Sheet\u2026",
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "rationale",
       "norm_label": "renders the complete `mod-ft-asae-dgav-acip-v2.0` official asae a4 html sheet...",
       "source_file": "insight_bake/engine.py",
@@ -1739,54 +1968,71 @@
       "id": "insight_bake_engine_rationale_1205",
       "label": "Renders a native Vector A4 Portrait PDF (`MOD-FT-ASAE-DGAV-ACIP-v2.0`) for any\u2026",
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "rationale",
       "norm_label": "renders a native vector a4 portrait pdf (`mod-ft-asae-dgav-acip-v2.0`) for any...",
       "source_file": "insight_bake/engine.py",
       "source_location": "L1205"
     },
     {
-      "id": "insight_bake_engine_rationale_1793",
+      "id": "insight_bake_engine_rationale_1797",
       "label": "Generates the A4 Landscape Counter Allergen Matrix PDF (`DL n.\u00ba 26/2016`) for\u2026",
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "rationale",
       "norm_label": "generates the a4 landscape counter allergen matrix pdf (`dl n.o 26/2016`) for...",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1793"
+      "source_location": "L1797"
     },
     {
       "id": "insight_bake_engine_rationale_929",
       "label": "Converts any `InsightBake` 3D Multi-Tier Cake Design\u2026",
       "_origin": "ast",
-      "community": 7,
+      "community": 8,
       "file_type": "rationale",
       "norm_label": "converts any `insightbake` 3d multi-tier cake design...",
       "source_file": "insight_bake/engine.py",
       "source_location": "L929"
     },
     {
-      "id": "ui_component_insight_bake",
-      "label": "insight-bake.ts",
-      "_origin": "ast",
-      "community": 8,
-      "file_type": "code",
-      "norm_label": "insight-bake.ts",
-      "source_file": "ui_component/insight-bake.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "pkg_insight_bake",
-      "label": "insight-bake",
+      "id": "insight_bake_engine_rationale_1432",
+      "label": "Exports a valid Portugal Autoridade Tribut\u00e1ria `SAF-T (PT) v1.04_01` (`Decreto-\u2026",
       "_origin": "ast",
       "community": 9,
-      "ecosystem": "python",
-      "file_type": "code",
-      "norm_label": "insight-bake",
-      "source_file": "pyproject.toml",
-      "source_location": "L1",
-      "type": "package",
-      "version": "1.2.0"
+      "file_type": "rationale",
+      "norm_label": "exports a valid portugal autoridade tributaria `saf-t (pt) v1.04_01` (`decreto-...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1432"
+    },
+    {
+      "id": "insight_bake_engine_rationale_1869",
+      "label": "Designs the 3D cake, builds the `day_before` (`24h`) production & ASAE handoff\u2026",
+      "_origin": "ast",
+      "community": 9,
+      "file_type": "rationale",
+      "norm_label": "designs the 3d cake, builds the `day_before` (`24h`) production & asae handoff...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L1869"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2043",
+      "label": "Books a 4-Flavor Tasting Box (`Caixa de Prova de Sabores`) and issues a\u2026",
+      "_origin": "ast",
+      "community": 9,
+      "file_type": "rationale",
+      "norm_label": "books a 4-flavor tasting box (`caixa de prova de sabores`) and issues a...",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2043"
+    },
+    {
+      "id": "insight_bake_engine_rationale_2079",
+      "label": "Creates a zero-PII shareable Client Quote Approval Portal token (`QT-BAKE-*`).",
+      "_origin": "ast",
+      "community": 9,
+      "file_type": "rationale",
+      "norm_label": "creates a zero-pii shareable client quote approval portal token (`qt-bake-*`).",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2079"
     }
   ],
   "links": [
@@ -1895,7 +2141,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2122",
+      "source_location": "L2133",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_approve_shareable_client_quote",
+      "target": "insight_bake_engine_insightbakeengine_dispatch_custom_cake_to_pastelaria",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2178",
       "weight": 1.0
     },
     {
@@ -1907,7 +2165,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2159",
+      "source_location": "L2193",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "target": "insight_bake_engine_insightbakeengine_execute",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2309",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "target": "insight_bake_engine_insightbakeengine_minutes_to_hhmm",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2376",
       "weight": 1.0
     },
     {
@@ -1919,7 +2201,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1415",
+      "source_location": "L1419",
       "weight": 1.0
     },
     {
@@ -1931,7 +2213,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1424",
+      "source_location": "L1428",
       "weight": 1.0
     },
     {
@@ -1943,7 +2225,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2226",
+      "source_location": "L2261",
       "weight": 1.0
     },
     {
@@ -1955,7 +2237,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2246",
+      "source_location": "L2281",
       "weight": 1.0
     },
     {
@@ -1967,7 +2249,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1361",
+      "source_location": "L1365",
       "weight": 1.0
     },
     {
@@ -1979,7 +2261,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1382",
+      "source_location": "L1386",
       "weight": 1.0
     },
     {
@@ -1991,7 +2273,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1404",
+      "source_location": "L1408",
       "weight": 1.0
     },
     {
@@ -2003,7 +2285,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2076",
+      "source_location": "L2080",
       "weight": 1.0
     },
     {
@@ -2015,7 +2297,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2086",
+      "source_location": "L2090",
       "weight": 1.0
     },
     {
@@ -2027,7 +2309,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2102",
+      "source_location": "L2112",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_create_stand_rental_deposit",
+      "target": "insight_bake_engine_normalize_scrubbed_text",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2534",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_create_stand_rental_deposit",
+      "target": "insight_bake_engine_insightbakeengine_sync_unified_pg17_or_local_ledger",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2551",
       "weight": 1.0
     },
     {
@@ -2039,7 +2345,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2057",
+      "source_location": "L2061",
       "weight": 1.0
     },
     {
@@ -2051,7 +2357,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2071",
+      "source_location": "L2075",
       "weight": 1.0
     },
     {
@@ -2063,7 +2369,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1870",
+      "source_location": "L1874",
       "weight": 1.0
     },
     {
@@ -2075,7 +2381,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1876",
+      "source_location": "L1880",
       "weight": 1.0
     },
     {
@@ -2087,7 +2393,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2183",
+      "source_location": "L2218",
       "weight": 1.0
     },
     {
@@ -2099,7 +2405,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2209",
+      "source_location": "L2244",
       "weight": 1.0
     },
     {
@@ -2111,7 +2417,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1820",
+      "source_location": "L1824",
       "weight": 1.0
     },
     {
@@ -2123,7 +2429,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1828",
+      "source_location": "L1832",
       "weight": 1.0
     },
     {
@@ -2135,7 +2441,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1841",
+      "source_location": "L1845",
       "weight": 1.0
     },
     {
@@ -2147,7 +2453,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1765",
+      "source_location": "L1769",
       "weight": 1.0
     },
     {
@@ -2159,7 +2465,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1769",
+      "source_location": "L1773",
       "weight": 1.0
     },
     {
@@ -2171,7 +2477,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1432",
+      "source_location": "L1436",
       "weight": 1.0
     },
     {
@@ -2183,7 +2489,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1437",
+      "source_location": "L1441",
       "weight": 1.0
     },
     {
@@ -2195,7 +2501,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1476",
+      "source_location": "L1480",
       "weight": 1.0
     },
     {
@@ -2211,6 +2517,42 @@
       "weight": 1.0
     },
     {
+      "source": "insight_bake_engine_insightbakeengine_reformulate_dietary_safe_cake",
+      "target": "insight_bake_engine_insightbakeengine_execute",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2631",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_reformulate_dietary_safe_cake",
+      "target": "insight_bake_engine_insightbakeengine_sync_unified_pg17_or_local_ledger",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2723",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_render_catering_cutting_guide_pdf_bytes",
+      "target": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2408",
+      "weight": 1.0
+    },
+    {
       "source": "insight_bake_engine_insightbakeengine_render_counter_allergen_matrix_pdf",
       "target": "insight_bake_engine_insightbakeengine_execute",
       "relation": "calls",
@@ -2219,7 +2561,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1807",
+      "source_location": "L1811",
       "weight": 1.0
     },
     {
@@ -2231,7 +2573,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1809",
+      "source_location": "L1813",
       "weight": 1.0
     },
     {
@@ -2243,7 +2585,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1932",
+      "source_location": "L1936",
       "weight": 1.0
     },
     {
@@ -2255,7 +2597,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1695",
+      "source_location": "L1699",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_settle_stand_rental_return",
+      "target": "insight_bake_engine_insightbakeengine_sync_unified_pg17_or_local_ledger",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2611",
       "weight": 1.0
     },
     {
@@ -2267,7 +2621,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1989",
+      "source_location": "L1993",
       "weight": 1.0
     },
     {
@@ -2279,7 +2633,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1546",
+      "source_location": "L1550",
       "weight": 1.0
     },
     {
@@ -2291,7 +2645,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1554",
+      "source_location": "L1558",
       "weight": 1.0
     },
     {
@@ -2303,7 +2657,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1610",
+      "source_location": "L1614",
       "weight": 1.0
     },
     {
@@ -2315,7 +2669,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1244",
+      "source_location": "L1245",
       "weight": 1.0
     },
     {
@@ -2363,7 +2717,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1150",
+      "source_location": "L1196",
       "weight": 1.0
     },
     {
@@ -2375,7 +2729,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1151",
+      "source_location": "L1197",
       "weight": 1.0
     },
     {
@@ -2387,7 +2741,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1240",
+      "source_location": "L1286",
       "weight": 1.0
     },
     {
@@ -2399,7 +2753,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1261",
+      "source_location": "L1307",
       "weight": 1.0
     },
     {
@@ -2411,7 +2765,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1230",
+      "source_location": "L1276",
       "weight": 1.0
     },
     {
@@ -2423,7 +2777,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1240",
+      "source_location": "L1286",
       "weight": 1.0
     },
     {
@@ -2435,7 +2789,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1453",
+      "source_location": "L1547",
       "weight": 1.0
     },
     {
@@ -2459,7 +2813,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L130",
+      "source_location": "L165",
       "weight": 1.0
     },
     {
@@ -2471,7 +2825,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L133",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -2483,7 +2837,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L135",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -2495,7 +2849,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L123",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -2795,7 +3149,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2116",
+      "source_location": "L2126",
       "weight": 1.0
     },
     {
@@ -2807,7 +3161,19 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1627",
+      "source_location": "L1631",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "target": "any",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "generic_arg",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2294",
       "weight": 1.0
     },
     {
@@ -2819,7 +3185,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1407",
+      "source_location": "L1411",
       "weight": 1.0
     },
     {
@@ -2831,7 +3197,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2212",
+      "source_location": "L2247",
       "weight": 1.0
     },
     {
@@ -2843,7 +3209,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1356",
+      "source_location": "L1360",
       "weight": 1.0
     },
     {
@@ -2855,7 +3221,19 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2074",
+      "source_location": "L2078",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_create_stand_rental_deposit",
+      "target": "any",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "generic_arg",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2509",
       "weight": 1.0
     },
     {
@@ -2867,7 +3245,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2038",
+      "source_location": "L2042",
       "weight": 1.0
     },
     {
@@ -2879,7 +3257,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1860",
+      "source_location": "L1864",
       "weight": 1.0
     },
     {
@@ -2891,7 +3269,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2166",
+      "source_location": "L2201",
       "weight": 1.0
     },
     {
@@ -2903,7 +3281,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1819",
+      "source_location": "L1823",
       "weight": 1.0
     },
     {
@@ -2915,7 +3293,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1760",
+      "source_location": "L1764",
       "weight": 1.0
     },
     {
@@ -2927,7 +3305,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1427",
+      "source_location": "L1431",
       "weight": 1.0
     },
     {
@@ -2939,7 +3317,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1620",
+      "source_location": "L1624",
       "weight": 1.0
     },
     {
@@ -2951,7 +3329,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1303",
+      "source_location": "L1304",
       "weight": 1.0
     },
     {
@@ -2963,7 +3341,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2109",
+      "source_location": "L2119",
       "weight": 1.0
     },
     {
@@ -2975,7 +3353,31 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1320",
+      "source_location": "L1321",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_reformulate_dietary_safe_cake",
+      "target": "any",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "generic_arg",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2614",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_render_catering_cutting_guide_pdf_bytes",
+      "target": "any",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "generic_arg",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2395",
       "weight": 1.0
     },
     {
@@ -2987,7 +3389,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1931",
+      "source_location": "L1935",
       "weight": 1.0
     },
     {
@@ -2999,7 +3401,19 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1639",
+      "source_location": "L1643",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine_settle_stand_rental_return",
+      "target": "any",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "generic_arg",
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2554",
       "weight": 1.0
     },
     {
@@ -3011,7 +3425,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1943",
+      "source_location": "L1947",
       "weight": 1.0
     },
     {
@@ -3023,7 +3437,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1541",
+      "source_location": "L1545",
       "weight": 1.0
     },
     {
@@ -3035,7 +3449,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1239",
+      "source_location": "L1240",
       "weight": 1.0
     },
     {
@@ -3047,7 +3461,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1307",
+      "source_location": "L1308",
       "weight": 1.0
     },
     {
@@ -3119,7 +3533,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1149",
+      "source_location": "L1195",
       "weight": 1.0
     },
     {
@@ -3131,7 +3545,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1448",
+      "source_location": "L1542",
       "weight": 1.0
     },
     {
@@ -3371,7 +3785,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1448",
+      "source_location": "L1542",
       "weight": 1.0
     },
     {
@@ -3584,7 +3998,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1149",
+      "source_location": "L1195",
       "weight": 1.0
     },
     {
@@ -3595,7 +4009,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1448",
+      "source_location": "L1542",
       "weight": 1.0
     },
     {
@@ -3606,7 +4020,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1154",
+      "source_location": "L1200",
       "weight": 1.0
     },
     {
@@ -3617,7 +4031,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1158",
+      "source_location": "L1204",
       "weight": 1.0
     },
     {
@@ -3628,7 +4042,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1162",
+      "source_location": "L1208",
       "weight": 1.0
     },
     {
@@ -3639,7 +4053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1170",
+      "source_location": "L1216",
       "weight": 1.0
     },
     {
@@ -3650,7 +4064,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1175",
+      "source_location": "L1221",
       "weight": 1.0
     },
     {
@@ -3661,7 +4075,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1180",
+      "source_location": "L1226",
       "weight": 1.0
     },
     {
@@ -3672,7 +4086,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1186",
+      "source_location": "L1232",
       "weight": 1.0
     },
     {
@@ -3683,7 +4097,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1217",
+      "source_location": "L1263",
       "weight": 1.0
     },
     {
@@ -3694,7 +4108,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1248",
+      "source_location": "L1294",
       "weight": 1.0
     },
     {
@@ -3705,7 +4119,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1279",
+      "source_location": "L1325",
       "weight": 1.0
     },
     {
@@ -3716,7 +4130,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1294",
+      "source_location": "L1340",
       "weight": 1.0
     },
     {
@@ -3727,7 +4141,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1306",
+      "source_location": "L1352",
       "weight": 1.0
     },
     {
@@ -3738,7 +4152,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1311",
+      "source_location": "L1357",
       "weight": 1.0
     },
     {
@@ -3749,7 +4163,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1316",
+      "source_location": "L1362",
       "weight": 1.0
     },
     {
@@ -3760,7 +4174,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1324",
+      "source_location": "L1370",
       "weight": 1.0
     },
     {
@@ -3771,7 +4185,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1329",
+      "source_location": "L1375",
       "weight": 1.0
     },
     {
@@ -3782,7 +4196,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1334",
+      "source_location": "L1380",
       "weight": 1.0
     },
     {
@@ -3793,7 +4207,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1339",
+      "source_location": "L1385",
       "weight": 1.0
     },
     {
@@ -3804,7 +4218,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1344",
+      "source_location": "L1390",
       "weight": 1.0
     },
     {
@@ -3815,7 +4229,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1356",
+      "source_location": "L1402",
       "weight": 1.0
     },
     {
@@ -3826,7 +4240,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1369",
+      "source_location": "L1415",
       "weight": 1.0
     },
     {
@@ -3837,7 +4251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1374",
+      "source_location": "L1420",
       "weight": 1.0
     },
     {
@@ -3848,7 +4262,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1379",
+      "source_location": "L1425",
       "weight": 1.0
     },
     {
@@ -3859,7 +4273,62 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1384",
+      "source_location": "L1430",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_router_create_insight_bake_router",
+      "target": "insight_bake_router_create_insight_bake_router_build_catering_timeline_and_cutting_plan",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1441",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_router_create_insight_bake_router",
+      "target": "insight_bake_router_create_insight_bake_router_download_catering_cutting_guide_pdf",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1446",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_router_create_insight_bake_router",
+      "target": "insight_bake_router_create_insight_bake_router_create_stand_rental",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1461",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_router_create_insight_bake_router",
+      "target": "insight_bake_router_create_insight_bake_router_settle_stand_rental",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1473",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_router_create_insight_bake_router",
+      "target": "insight_bake_router_create_insight_bake_router_reformulate_dietary_cake",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/router.py",
+      "source_location": "L1483",
       "weight": 1.0
     },
     {
@@ -3870,7 +4339,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1394",
+      "source_location": "L1488",
       "weight": 1.0
     },
     {
@@ -3881,7 +4350,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1399",
+      "source_location": "L1493",
       "weight": 1.0
     },
     {
@@ -3892,7 +4361,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1410",
+      "source_location": "L1504",
       "weight": 1.0
     },
     {
@@ -3903,7 +4372,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/router.py",
-      "source_location": "L1414",
+      "source_location": "L1508",
       "weight": 1.0
     },
     {
@@ -3981,6 +4450,39 @@
       "confidence_score": 1.0,
       "source_file": "node_sdk/index.js",
       "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "node_sdk_index",
+      "target": "node_sdk_index_buildcateringcuttingtimeline",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "node_sdk/index.js",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "node_sdk_index",
+      "target": "node_sdk_index_createstandrentaldeposit",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "node_sdk/index.js",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "node_sdk_index",
+      "target": "node_sdk_index_reformulatedietarysafecake",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "node_sdk/index.js",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -4095,13 +4597,35 @@
     },
     {
       "source": "rust_core_src_lib",
+      "target": "rust_core_src_lib_verify_dietary_tier_stability",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "rust_core/src/lib.rs",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "rust_core_src_lib",
+      "target": "rust_core_src_lib_compute_stand_deposit_settlement_cents",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "rust_core/src/lib.rs",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "rust_core_src_lib",
       "target": "rust_core_src_lib_test_stability_and_dowels",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L120",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -4112,7 +4636,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "rust_core/src/lib.rs",
-      "source_location": "L129",
+      "source_location": "L164",
       "weight": 1.0
     },
     {
@@ -4244,7 +4768,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1239",
+      "source_location": "L1240",
       "weight": 1.0
     },
     {
@@ -4255,7 +4779,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1303",
+      "source_location": "L1304",
       "weight": 1.0
     },
     {
@@ -4266,7 +4790,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1307",
+      "source_location": "L1308",
       "weight": 1.0
     },
     {
@@ -4277,7 +4801,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1320",
+      "source_location": "L1321",
       "weight": 1.0
     },
     {
@@ -4288,7 +4812,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1356",
+      "source_location": "L1360",
       "weight": 1.0
     },
     {
@@ -4299,7 +4823,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1407",
+      "source_location": "L1411",
       "weight": 1.0
     },
     {
@@ -4310,7 +4834,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1427",
+      "source_location": "L1431",
       "weight": 1.0
     },
     {
@@ -4321,7 +4845,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1541",
+      "source_location": "L1545",
       "weight": 1.0
     },
     {
@@ -4332,7 +4856,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1620",
+      "source_location": "L1624",
       "weight": 1.0
     },
     {
@@ -4343,7 +4867,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1627",
+      "source_location": "L1631",
       "weight": 1.0
     },
     {
@@ -4354,7 +4878,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1639",
+      "source_location": "L1643",
       "weight": 1.0
     },
     {
@@ -4365,7 +4889,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1760",
+      "source_location": "L1764",
       "weight": 1.0
     },
     {
@@ -4376,7 +4900,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1792",
+      "source_location": "L1796",
       "weight": 1.0
     },
     {
@@ -4387,7 +4911,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1819",
+      "source_location": "L1823",
       "weight": 1.0
     },
     {
@@ -4398,7 +4922,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1860",
+      "source_location": "L1864",
       "weight": 1.0
     },
     {
@@ -4409,7 +4933,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1931",
+      "source_location": "L1935",
       "weight": 1.0
     },
     {
@@ -4420,7 +4944,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1943",
+      "source_location": "L1947",
       "weight": 1.0
     },
     {
@@ -4431,7 +4955,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2038",
+      "source_location": "L2042",
       "weight": 1.0
     },
     {
@@ -4442,7 +4966,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2074",
+      "source_location": "L2078",
       "weight": 1.0
     },
     {
@@ -4453,7 +4977,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2109",
+      "source_location": "L2119",
       "weight": 1.0
     },
     {
@@ -4464,7 +4988,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2116",
+      "source_location": "L2126",
       "weight": 1.0
     },
     {
@@ -4475,7 +4999,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2166",
+      "source_location": "L2201",
       "weight": 1.0
     },
     {
@@ -4486,7 +5010,73 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2212",
+      "source_location": "L2247",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine",
+      "target": "insight_bake_engine_insightbakeengine_minutes_to_hhmm",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2290",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine",
+      "target": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2294",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine",
+      "target": "insight_bake_engine_insightbakeengine_render_catering_cutting_guide_pdf_bytes",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2395",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine",
+      "target": "insight_bake_engine_insightbakeengine_create_stand_rental_deposit",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2509",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine",
+      "target": "insight_bake_engine_insightbakeengine_settle_stand_rental_return",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2554",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_insightbakeengine",
+      "target": "insight_bake_engine_insightbakeengine_reformulate_dietary_safe_cake",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2614",
       "weight": 1.0
     },
     {
@@ -4601,6 +5191,17 @@
     },
     {
       "source": "tests_test_insight_bake_testinsightbake",
+      "target": "tests_test_insight_bake_testinsightbake_test_12_catering_cutting_guide_pdf_golden_hour_timeline_and_stand_caucao_ledger",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L428",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_insight_bake_testinsightbake",
       "target": "tests_test_insight_bake_testinsightbake_test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes",
       "relation": "method",
       "_origin": "ast",
@@ -4608,6 +5209,17 @@
       "confidence_score": 1.0,
       "source_file": "tests/test_insight_bake.py",
       "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_test_insight_bake_testinsightbake",
+      "target": "tests_test_insight_bake_testinsightbake_test_13_dietary_reformulator_slenderness_guard_and_quote_to_pastelaria_kds_sync",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_insight_bake.py",
+      "source_location": "L481",
       "weight": 1.0
     },
     {
@@ -4732,135 +5344,190 @@
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1240",
+      "source": "insight_bake_engine_rationale_1241",
       "target": "insight_bake_engine_insightbakeengine_sync_unified_pg17_or_local_ledger",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1240",
+      "source_location": "L1241",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1357",
+      "source": "insight_bake_engine_rationale_1361",
       "target": "insight_bake_engine_insightbakeengine_create_deposit_payment_intent",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1357",
+      "source_location": "L1361",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1428",
+      "source": "insight_bake_engine_rationale_1432",
       "target": "insight_bake_engine_insightbakeengine_export_saft_pt_invoice_xml",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1428",
+      "source_location": "L1432",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1542",
+      "source": "insight_bake_engine_rationale_1546",
       "target": "insight_bake_engine_insightbakeengine_submit_comfyui_render_job",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1542",
+      "source_location": "L1546",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1647",
+      "source": "insight_bake_engine_rationale_1651",
       "target": "insight_bake_engine_insightbakeengine_search_safe_cake_configurations",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1647",
+      "source_location": "L1651",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1761",
+      "source": "insight_bake_engine_rationale_1765",
       "target": "insight_bake_engine_insightbakeengine_export_asae_ficha_artifacts",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1761",
+      "source_location": "L1765",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1793",
+      "source": "insight_bake_engine_rationale_1797",
       "target": "insight_bake_engine_insightbakeengine_render_counter_allergen_matrix_pdf",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1793",
+      "source_location": "L1797",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1865",
+      "source": "insight_bake_engine_rationale_1869",
       "target": "insight_bake_engine_insightbakeengine_dispatch_custom_cake_to_pastelaria",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1865",
+      "source_location": "L1869",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_1952",
+      "source": "insight_bake_engine_rationale_1956",
       "target": "insight_bake_engine_insightbakeengine_solve_cake_by_guests_and_budget",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1952",
+      "source_location": "L1956",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_2039",
+      "source": "insight_bake_engine_rationale_2043",
       "target": "insight_bake_engine_insightbakeengine_create_tasting_box_order",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2039",
+      "source_location": "L2043",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_2075",
+      "source": "insight_bake_engine_rationale_2079",
       "target": "insight_bake_engine_insightbakeengine_create_shareable_client_quote",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2075",
+      "source_location": "L2079",
       "weight": 1.0
     },
     {
-      "source": "insight_bake_engine_rationale_2167",
+      "source": "insight_bake_engine_rationale_2202",
       "target": "insight_bake_engine_insightbakeengine_dispatch_refrigerated_fleet_delivery",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "insight_bake/engine.py",
-      "source_location": "L2167",
+      "source_location": "L2202",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_rationale_2295",
+      "target": "insight_bake_engine_insightbakeengine_compute_venue_assembly_timeline_and_cutting_plan",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2295",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_rationale_2396",
+      "target": "insight_bake_engine_insightbakeengine_render_catering_cutting_guide_pdf_bytes",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2396",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_rationale_2517",
+      "target": "insight_bake_engine_insightbakeengine_create_stand_rental_deposit",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2517",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_rationale_2560",
+      "target": "insight_bake_engine_insightbakeengine_settle_stand_rental_return",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2560",
+      "weight": 1.0
+    },
+    {
+      "source": "insight_bake_engine_rationale_2615",
+      "target": "insight_bake_engine_insightbakeengine_reformulate_dietary_safe_cake",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "insight_bake/engine.py",
+      "source_location": "L2615",
       "weight": 1.0
     },
     {
@@ -5004,7 +5671,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "insight_bake/engine.py",
-      "source_location": "L1617",
+      "source_location": "L1621",
       "weight": 1.0
     },
     {
@@ -5016,7 +5683,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1171",
+      "source_location": "L1217",
       "weight": 1.0
     },
     {
@@ -5028,7 +5695,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "insight_bake/router.py",
-      "source_location": "L1236",
+      "source_location": "L1282",
       "weight": 1.0
     },
     {
@@ -5092,5 +5759,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b529dbd54cdd0a79f8c2f07d70fefa3f9bd9d631"
+  "built_at_commit": "84f0e7b05e7ca63b4cce5c448b924c1fb66657ab"
 }

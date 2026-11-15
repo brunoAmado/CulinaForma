@@ -425,6 +425,103 @@ class TestInsightBake(unittest.TestCase):
         self.assertEqual(r_ok_pod.status_code, 200)
         self.assertEqual(r_ok_pod.json()["delivery"]["status"], "DELIVERED_POD_SIGNED")
 
+    def test_12_catering_cutting_guide_pdf_golden_hour_timeline_and_stand_caucao_ledger(self) -> None:
+        from io import BytesIO
+        from pypdf import PdfReader
+
+        # Unhappy path: invalid cutting time format
+        r_bad_tl = self.client.post("/api/bake/catering-timeline", json={"cake_cutting_time_hhmm": "29:99"})
+        self.assertEqual(r_bad_tl.status_code, 400)
+
+        payload = {
+            "shape": "ROUND",
+            "tiers": [
+                {"diameter_cm": 30.0, "height_cm": 12.0},
+                {"diameter_cm": 22.0, "height_cm": 12.0},
+                {"diameter_cm": 15.0, "height_cm": 14.0},
+            ],
+            "cake_cutting_time_hhmm": "22:30",
+            "drive_minutes_to_venue": 45,
+            "venue_temp_c": 26.0,
+        }
+        r_tl = self.client.post("/api/bake/catering-timeline", json=payload)
+        self.assertEqual(r_tl.status_code, 200)
+        tl_data = r_tl.json()
+        self.assertGreater(tl_data["total_internal_dowels_to_account_for"], 0)
+        self.assertEqual(len(tl_data["tier_disassembly_and_cutting_steps"]), 3)
+
+        r_pdf = self.client.post("/api/bake/catering-cutting-guide/pdf", json=payload)
+        self.assertEqual(r_pdf.status_code, 200)
+        self.assertTrue(r_pdf.content.startswith(b"%PDF-"))
+        pdf_txt = "\n".join(p.extract_text() or "" for p in PdfReader(BytesIO(r_pdf.content)).pages)
+        self.assertIn("CAVILHAS", pdf_txt)
+        self.assertIn("22:30", pdf_txt)
+
+        # Reusable stand security deposit (Caução CIVA Art. 16.º n.º 6): intact 0% IVA vs damaged 23% IVA
+        r_c1 = self.client.post("/api/bake/stand-rentals", json={"stand_code": "SUP-GOLD-01", "deposit_eur": 90.0, "expected_return_date": "2026-12-05"})
+        self.assertEqual(r_c1.status_code, 200)
+        rid1 = r_c1.json()["rental"]["rental_id"]
+        r_s1 = self.client.post(f"/api/bake/stand-rentals/{rid1}/settle", json={"returned_intact": True})
+        self.assertEqual(r_s1.status_code, 200)
+        self.assertEqual(r_s1.json()["rental"]["status"], "REFUNDED_INTACT_0PCT_IVA")
+        self.assertEqual(r_s1.json()["rental"]["refunded_eur"], 90.0)
+
+        # Double-settle blocked
+        self.assertEqual(self.client.post(f"/api/bake/stand-rentals/{rid1}/settle", json={"returned_intact": True}).status_code, 400)
+
+        # Damaged stand converts withheld deposit to 23% IVA compensation invoice with ATCUD
+        r_c2 = self.client.post("/api/bake/stand-rentals", json={"stand_code": "SUP-ACRIL-02", "deposit_eur": 100.0, "expected_return_date": "2026-12-06"})
+        rid2 = r_c2.json()["rental"]["rental_id"]
+        r_s2 = self.client.post(f"/api/bake/stand-rentals/{rid2}/settle", json={"returned_intact": False, "damage_fee_eur": 61.50})
+        self.assertEqual(r_s2.status_code, 200)
+        self.assertEqual(r_s2.json()["rental"]["status"], "DAMAGE_INVOICED_23PCT_IVA")
+        self.assertEqual(r_s2.json()["rental"]["refunded_eur"], 38.50)
+        self.assertTrue(str(r_s2.json()["rental"]["damage_atcud"]).startswith("ATCUD:BAKECAU26-"))
+
+    def test_13_dietary_reformulator_slenderness_guard_and_quote_to_pastelaria_kds_sync(self) -> None:
+        # Tall narrow cake passes wheat (H/D = 38/20 = 1.90 <= 2.20), but fails Gluten-Free + Vegan (1.90 > 1.65)
+        tall_payload = {
+            "shape": "ROUND",
+            "tiers": [{"diameter_cm": 20.0, "height_cm": 20.0}, {"diameter_cm": 15.0, "height_cm": 18.0}],
+            "dietary_modes": ["GLUTEN_FREE_APC_20PPM", "VEGAN_100PCT"],
+        }
+        r_tall = self.client.post("/api/bake/dietary-reformulate", json=tall_payload)
+        self.assertEqual(r_tall.status_code, 400)
+        self.assertIn("DIETARY_SPONGE_SLENDERNESS_EXCEEDED", r_tall.json()["error"])
+
+        # Wider base (H/D = 24/28 = 0.857 <= 1.65) passes Gluten-Free + Vegan and removes GLUTEN, MILK, EGGS
+        safe_payload = {
+            "shape": "ROUND",
+            "tiers": [{"diameter_cm": 28.0, "height_cm": 12.0}, {"diameter_cm": 20.0, "height_cm": 12.0}],
+            "sponge_key": "pao_de_lo_tradicional",
+            "filling_key": "brigadeiro_gourmet",
+            "frosting_key": "swiss_meringue_buttercream",
+            "dietary_modes": ["GLUTEN_FREE_APC_20PPM", "VEGAN_100PCT"],
+        }
+        r_ref = self.client.post("/api/bake/dietary-reformulate", json=safe_payload)
+        self.assertEqual(r_ref.status_code, 200)
+        ref_data = r_ref.json()
+        self.assertEqual(sorted(ref_data["eliminated_allergen_codes"]), ["EGGS", "GLUTEN", "MILK"])
+        # Belgian dark chocolate lecithin in brigadeiro_gourmet keeps SOY properly declared
+        self.assertEqual(ref_data["remaining_allergen_codes"], ["SOY"])
+        self.assertIn(
+            "dietary_reinforcement_note",
+            ref_data["structural_slenderness_verified"]["upgraded_tier_dowel_blueprint"][0],
+        )
+
+        # Approving a quote automatically syncs a 24h production ticket into InsightPastelaria KDS
+        r_qt = self.client.post("/api/bake/quotes", json={"event_title": "Casamento Inês & Pedro", "tiers": [{"diameter_cm": 26.0, "height_cm": 12.0}]})
+        qtok = r_qt.json()["quote"]["quote_token"]
+        r_app = self.client.post(
+            f"/api/bake/quotes/{qtok}/approve",
+            json={"client_signature_name": "Inês Marques", "sync_to_pastelaria_kds": True},
+        )
+        self.assertEqual(r_app.status_code, 200)
+        kds_sync = r_app.json()["quote"]["pastelaria_kds_sync"]
+        self.assertIsNotNone(kds_sync)
+        self.assertTrue(kds_sync["synced"])
+        self.assertTrue(str(kds_sync["asae_ficha_id"]).startswith("FT-ASAE-BAKE-"))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1233,6 +1233,7 @@ class InsightBakeEngine:
         self.tasting_vouchers: Dict[str, Dict[str, Any]] = {}
         self.client_quotes: Dict[str, Dict[str, Any]] = {}
         self.fleet_deliveries: Dict[str, Dict[str, Any]] = {}
+        self.stand_rentals: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.Lock()
         self.pg17_last_sync_status: str = "STANDBY_LOCAL_FALLBACK"
 
@@ -1324,7 +1325,7 @@ class InsightBakeEngine:
             "product": self.CLIENT_BRAND,
             "member_id": self.MEMBER_ID,
             "internal_engine": self.INTERNAL_ENGINE,
-            "version": "1.5.0",
+            "version": "1.6.0",
             "port": self.DEFAULT_PORT,
             "api_prefix": self.API_PREFIX,
             "asae_normative_template": ASAE_NORMATIVE_TEMPLATE_BASIS["template_code"],
@@ -1333,7 +1334,8 @@ class InsightBakeEngine:
             "standalone_benefit": (
                 "Interactive Three.js 3D Multi-Tier Cake Configurator (Per-Tier Flavor Mixing + 3D Cutaway Cross-Section) "
                 "+ Arrhenius Q10 Sourdough Fermentation Lab + EU 1169/2011 Allergens & Nutritional Table "
-                "+ MB WAY / Multibanco 50% Deposit + SAF-T (PT) XML + Async ComfyUI Render Queue."
+                "+ MB WAY / Multibanco 50% Deposit + SAF-T (PT) XML + Async ComfyUI Render Queue "
+                "+ Catering Cutting & Dowel PDF + Stand Caução Ledger + Dietary Reformulator."
             ),
             "ecosystem_synergy": [
                 "Combined with SetMiddle Insight™ · Pastelaria (:4029): Dispatches 24h custom cake orders directly into the Owner Stock-Confirmation Gate, FEFO Lot Ledger & ASAE Ficha Dossier.",
@@ -1350,6 +1352,8 @@ class InsightBakeEngine:
             "active_deposit_intents": len(self.deposit_payments),
             "active_client_quotes": len(self.client_quotes),
             "active_fleet_deliveries": len(self.fleet_deliveries),
+            "active_stand_rentals": len(self.stand_rentals),
+            "dietary_profiles_supported": ["GLUTEN_FREE_APC_20PPM", "LACTOSE_FREE", "VEGAN_100PCT"],
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
 
@@ -2092,6 +2096,12 @@ class InsightBakeEngine:
             "allergens_eu_1169": design["allergens_eu_1169_2011"],
             "nutritional_declaration_eu_1169": design["nutritional_declaration_eu_1169"],
             "threejs_3d_scene": design["threejs_3d_scene"],
+            "design_input_snapshot": {
+                k: v
+                for k, v in (payload or {}).items()
+                if k in ("shape", "tiers", "sponge_key", "filling_key", "frosting_key", "consumption_mode", "topper_text", "venue_temp_c", "venue_rh_pct")
+            },
+            "pastelaria_kds_sync": None,
             "approved_by": None,
             "approved_at": None,
             "approval_receipt_sha256": None,
@@ -2118,6 +2128,7 @@ class InsightBakeEngine:
         quote_token: str,
         client_signature_name: str,
         tasting_voucher_code: Optional[str] = None,
+        sync_to_pastelaria_kds: bool = True,
     ) -> Dict[str, Any]:
         sig_clean = _normalize_scrubbed_text(str(client_signature_name or "").strip())[:64]
         if len(sig_clean) < 3:
@@ -2154,12 +2165,36 @@ class InsightBakeEngine:
             rec["approved_by"] = sig_clean
             rec["approved_at"] = now_iso
             rec["approval_receipt_sha256"] = receipt_sha
+            design_inp = dict(rec.get("design_input_snapshot") or {})
             snap = dict(rec)
+
+        if sync_to_pastelaria_kds:
+            bridge_payload = {
+                **design_inp,
+                "client_name": sig_clean,
+                "requested_pickup_time": f"Evento {snap.get('event_title') or tok} (24h)",
+                "lead_minutes_ahead": 1440,
+            }
+            bridge_res = self.dispatch_custom_cake_to_pastelaria(bridge_payload)
+            kds_summary = {
+                "synced": bool(bridge_res.get("ok")),
+                "bridge_mode": bridge_res.get("bridge_mode"),
+                "asae_ficha_id": bridge_res.get("asae_ficha_id"),
+                "reservation_id": (
+                    (bridge_res.get("pastelaria_reservation") or {}).get("reservation", {}).get("reservation_id")
+                    or (bridge_res.get("pastelaria_local_sync") or {}).get("reservation", {}).get("reservation_id")
+                ),
+            }
+            with self._lock:
+                if tok in self.client_quotes:
+                    self.client_quotes[tok]["pastelaria_kds_sync"] = kds_summary
+                    snap = dict(self.client_quotes[tok])
 
         self._sync_unified_pg17_or_local_ledger("client_quote_approved", tok, {
             "quote_token": tok,
             "net_deposit_due_eur": snap["net_deposit_due_eur"],
             "approval_receipt_sha256": snap["approval_receipt_sha256"],
+            "pastelaria_kds_sync": snap.get("pastelaria_kds_sync"),
         })
         return {"ok": True, "quote": snap}
 
@@ -2245,3 +2280,449 @@ class InsightBakeEngine:
 
         self._sync_unified_pg17_or_local_ledger("fleet_pod_signed", did, snap)
         return {"ok": True, "delivery": snap}
+
+    # =========================================================================
+    # ROUND-4 (v1.6.0) TRACKS: CATERING CUTTING & DOWEL EXTRACTION PDF + VENUE
+    # TIMELINE, STAND CAUÇÃO DEPOSIT LEDGER (CIVA ART. 16.º N.º 6), AND
+    # DIETARY SAFE REFORMULATOR (GLUTEN-FREE APC <=20PPM / LACTOSE-FREE / VEGAN)
+    # =========================================================================
+    @staticmethod
+    def _minutes_to_hhmm(total_mins: int) -> str:
+        mod = total_mins % 1440
+        return f"{mod // 60:02d}:{mod % 60:02d}"
+
+    def compute_venue_assembly_timeline_and_cutting_plan(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Computes backward-scheduled Golden-Hour venue assembly milestones from `cake_cutting_time_hhmm`,
+        strictly bounded by `summer_thermal_melt_countdown`, plus per-tier catering slice grids and
+        internal dowel extraction counts so catering staff never serve a slice containing a dowel.
+        """
+        data = payload or {}
+        cut_hhmm = str(data.get("cake_cutting_time_hhmm") or "22:30").strip()
+        m_time = re.match(r"^([01]?\d|2[0-3]):([0-5]\d)$", cut_hhmm)
+        if not m_time:
+            return {"ok": False, "error": f"INVALID_CUTTING_TIME_HHMM({cut_hhmm}): expected HH:MM"}
+
+        drive_mins = max(5, int(data.get("drive_minutes_to_venue", 45)))
+        assembly_mins = max(10, int(data.get("assembly_minutes_on_site", 25)))
+
+        design = self.execute(data)
+        if not design.get("ok"):
+            return design
+
+        cut_total = int(m_time.group(1)) * 60 + int(m_time.group(2))
+        melt_info = design["logistics_and_haccp_cold_chain"]["summer_thermal_melt_countdown"]
+        safe_display_mins = max(20, int(melt_info["minutes_until_structural_softening"]) - 15)
+
+        latest_staging_mins = cut_total - min(safe_display_mins, 60)
+        venue_fridge_arrival_mins = latest_staging_mins - assembly_mins - 30
+        bakery_van_departure_mins = venue_fridge_arrival_mins - drive_mins
+
+        scene_tiers = design["threejs_3d_scene"]["tiers"]
+        dowels_map = {
+            int(d["tier_index"]): d
+            for d in design["portions_and_structure"]["tier_dowel_blueprint"]
+        }
+        flavor_map = {
+            int(f.get("tier_number") or f.get("tier_index") or 1): f
+            for f in design["recipe_bom_grams"].get("per_tier_flavors", [])
+        }
+        shape_code = str(design["threejs_3d_scene"]["shape"])
+        center_skewer = bool(design["portions_and_structure"]["center_sharpened_dowel_skewer_required"])
+
+        cutting_instructions: List[Dict[str, Any]] = []
+        # Caterers disassemble & cut from TOP tier down to BASE tier (reverse order)
+        for t_mesh in sorted(scene_tiers, key=lambda x: int(x.get("tier_number") or x.get("tier_index") or 1), reverse=True):
+            idx = int(t_mesh.get("tier_number") or t_mesh.get("tier_index") or 1)
+            d_info = dowels_map.get(idx, {})
+            fl_info = flavor_map.get(idx, {})
+            dowel_count = int(
+                d_info.get("polypropylene_dowel_rods_count")
+                or d_info.get("internal_support_dowels_count")
+                or t_mesh.get("internal_dowels_count")
+                or 0
+            )
+            diam = float(t_mesh["diameter_cm"])
+            grid_note = (
+                f"Corte em grelha retangular paralela (tiras de 5,0 cm subdivididas a cada 2,5 cm) — diâmetro/lado {diam} cm"
+                if shape_code in ("ROUND", "HEART", "HEXAGON")
+                else f"Corte linear em grelha ortogonal (2,5 cm x 5,0 cm evento / 5,0 cm x 5,0 cm festa) — lado {diam} cm"
+            )
+            cutting_instructions.append({
+                "disassembly_step": len(cutting_instructions) + 1,
+                "tier_index": idx,
+                "tier_label_pt": f"{idx}.º Andar ({diam} cm × {t_mesh['height_cm']} cm · {shape_code})",
+                "sponge_and_filling": f"{fl_info.get('sponge_name', design['recipe_bom_grams']['sponge_type'])} + {fl_info.get('filling_name', design['recipe_bom_grams']['filling_type'])}",
+                "wedding_slices_2_5x5cm": int(t_mesh.get("wedding_portions") or t_mesh.get("wedding_portions_2_5x5cm") or 0),
+                "party_slices_5x5cm": int(t_mesh.get("party_portions") or t_mesh.get("party_portions_5x5cm") or 0),
+                "dowels_to_extract_before_slicing": dowel_count,
+                "center_skewer_alert": center_skewer,
+                "catering_action_pt": (
+                    f"Extrair {dowel_count} estacas internas PP alimentar"
+                    + (" + 1 cavilha central afiada" if center_skewer and idx == len(scene_tiers) else "")
+                    + " ANTES de fatiar."
+                    if (dowel_count > 0 or (center_skewer and idx == len(scene_tiers)))
+                    else "Andar de topo livre de estacas internas de suporte; retirar prato separador inferior."
+                ),
+                "cutting_grid_instruction_pt": grid_note,
+                "tier_allergen_codes": fl_info.get("allergens", design["allergens_eu_1169_2011"]["allergen_codes"]),
+            })
+
+        return {
+            "ok": True,
+            "design_sha256": design["design_sha256"],
+            "event_topper": design["threejs_3d_scene"]["topper_text"],
+            "venue_golden_hour_timeline": {
+                "bakery_cold_van_departure_hhmm": self._minutes_to_hhmm(bakery_van_departure_mins),
+                "venue_chiller_arrival_hhmm": self._minutes_to_hhmm(venue_fridge_arrival_mins),
+                "room_staging_start_hhmm": self._minutes_to_hhmm(latest_staging_mins),
+                "cake_cutting_ceremony_hhmm": cut_hhmm,
+                "max_safe_out_of_fridge_minutes": safe_display_mins,
+                "venue_temp_c": melt_info["venue_temp_c"],
+                "venue_rh_pct": melt_info["venue_rh_pct"],
+                "frosting_max_safe_ambient_c": melt_info["frosting_max_safe_ambient_c"],
+            },
+            "total_wedding_portions": design["portions_and_structure"]["wedding_portions_2_5x5cm"],
+            "total_party_portions": design["portions_and_structure"]["party_portions_5x5cm"],
+            "center_skewer_installed": center_skewer,
+            "total_internal_dowels_to_account_for": sum(
+                c["dowels_to_extract_before_slicing"] for c in cutting_instructions
+            ),
+            "tier_disassembly_and_cutting_steps": cutting_instructions,
+            "allergens_eu_1169": design["allergens_eu_1169_2011"],
+        }
+
+    def render_catering_cutting_guide_pdf_bytes(self, payload: Dict[str, Any]) -> bytes:
+        """
+        Renders a native ReportLab Vector A4 Portrait PDF (`Guia de Corte para Catering & Controlo de Cavilhas`)
+        for wedding/event venues (`Quintas` & hotels).
+        """
+        from io import BytesIO
+        from xml.sax.saxutils import escape as xml_esc
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+        from reportlab.lib.units import mm
+        from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+        plan = self.compute_venue_assembly_timeline_and_cutting_plan(payload)
+        if not plan.get("ok"):
+            raise ValueError(str(plan.get("error") or "FAILED_TO_BUILD_CATERING_CUTTING_PLAN"))
+
+        try:
+            from insight_pastelaria.asae_ficha_tecnica import _register_unicode_pdf_fonts, coerce_establishment_profile
+
+            est = coerce_establishment_profile(load_establishment_profile(self.establishment_profile_path))
+            font_reg, font_bold = _register_unicode_pdf_fonts()
+        except Exception:
+            est = load_establishment_profile(self.establishment_profile_path)
+            font_reg, font_bold = "Helvetica", "Helvetica-Bold"
+
+        buf = BytesIO()
+        doc = SimpleDocTemplate(
+            buf,
+            pagesize=A4,
+            leftMargin=12 * mm,
+            rightMargin=12 * mm,
+            topMargin=12 * mm,
+            bottomMargin=12 * mm,
+            title=f"Guia de Corte Catering & Cavilhas - {plan['event_topper']}",
+        )
+        styles = getSampleStyleSheet()
+        st_title = ParagraphStyle("CatTitle", parent=styles["Heading1"], fontName=font_bold, fontSize=11.5, leading=14, textColor=colors.HexColor("#0f172a"))
+        st_sub = ParagraphStyle("CatSub", parent=styles["Normal"], fontName=font_reg, fontSize=8.0, leading=10.5, textColor=colors.HexColor("#334155"))
+        st_sec = ParagraphStyle("CatSec", parent=styles["Heading2"], fontName=font_bold, fontSize=9.2, leading=12, textColor=colors.HexColor("#1e293b"))
+        st_cell = ParagraphStyle("CatCell", parent=styles["Normal"], fontName=font_reg, fontSize=7.5, leading=9.5, textColor=colors.HexColor("#0f172a"))
+        st_hdr = ParagraphStyle("CatHdr", parent=styles["Normal"], fontName=font_bold, fontSize=7.5, leading=9.5, textColor=colors.white)
+
+        usable_w = A4[0] - 24 * mm
+        tl = plan["venue_golden_hour_timeline"]
+
+        tl_rows = [
+            [Paragraph("Saída Carrinha Frio (+2..+5°C)", st_hdr), Paragraph("Chegada Câmara Quinta", st_hdr), Paragraph("Montagem em Sala", st_hdr), Paragraph("Hora Corte Bolo", st_hdr), Paragraph("Janela Máx. Fora Frio", st_hdr)],
+            [
+                Paragraph(xml_esc(tl["bakery_cold_van_departure_hhmm"]), st_cell),
+                Paragraph(xml_esc(tl["venue_chiller_arrival_hhmm"]), st_cell),
+                Paragraph(xml_esc(tl["room_staging_start_hhmm"]), st_cell),
+                Paragraph(xml_esc(tl["cake_cutting_ceremony_hhmm"]), st_cell),
+                Paragraph(xml_esc(f"{tl['max_safe_out_of_fridge_minutes']} min ({tl['venue_temp_c']}°C)"), st_cell),
+            ],
+        ]
+        tl_tbl = Table(tl_rows, colWidths=[usable_w * 0.22, usable_w * 0.20, usable_w * 0.18, usable_w * 0.18, usable_w * 0.22])
+        tl_tbl.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+        ]))
+
+        step_rows: List[List[Any]] = [[
+            Paragraph("Ordem Desmontagem", st_hdr),
+            Paragraph("Andar / Sabores", st_hdr),
+            Paragraph("Fatias (Evento / Festa)", st_hdr),
+            Paragraph("Controlo Estacas & Cavilhas (HACCP Físico)", st_hdr),
+            Paragraph("Instrução de Corte & Alergénios", st_hdr),
+        ]]
+        for stp in plan["tier_disassembly_and_cutting_steps"]:
+            step_rows.append([
+                Paragraph(xml_esc(f"Passo {stp['disassembly_step']}"), st_cell),
+                Paragraph(xml_esc(f"{stp['tier_label_pt']} — {stp['sponge_and_filling']}"), st_cell),
+                Paragraph(xml_esc(f"{stp['wedding_slices_2_5x5cm']} / {stp['party_slices_5x5cm']}"), st_cell),
+                Paragraph(xml_esc(stp["catering_action_pt"]), st_cell),
+                Paragraph(xml_esc(f"{stp['cutting_grid_instruction_pt']} | Alergénios: {', '.join(stp['tier_allergen_codes'])}"), st_cell),
+            ])
+        step_tbl = Table(step_rows, colWidths=[usable_w * 0.12, usable_w * 0.24, usable_w * 0.13, usable_w * 0.25, usable_w * 0.26], repeatRows=1)
+        step_tbl.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e293b")),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+        ]))
+
+        story = [
+            Paragraph(f"GUIA TÉCNICO DE CORTE PARA CATERING &amp; EXTRAÇÃO DE CAVILHAS — {xml_esc(plan['event_topper'])}", st_title),
+            Paragraph(
+                f"<b>Atelier Produtor:</b> {xml_esc(est.nome_comercial)} (NIF {xml_esc(est.nif)}) &nbsp;|&nbsp; "
+                f"<b>Total Fatias Evento (2,5×5 cm):</b> {plan['total_wedding_portions']} &nbsp;|&nbsp; "
+                f"<b>Total Estacas PP a Contabilizar:</b> {plan['total_internal_dowels_to_account_for']}"
+                f"{' + 1 Cavilha Central' if plan['center_skewer_installed'] else ''}",
+                st_sub,
+            ),
+            Spacer(1, 3 * mm),
+            Paragraph("1. Cronograma Inverso de Cadeia de Frio &amp; Exposição em Sala (Prevenção de Colapso Térmico)", st_sec),
+            tl_tbl,
+            Spacer(1, 4 * mm),
+            Paragraph("2. Sequência de Desmontagem (Topo -> Base), Remoção de Estacas PP e Grelha de Corte", st_sec),
+            step_tbl,
+            Spacer(1, 4 * mm),
+            Paragraph(
+                f"<b>3. Declaração Obrigatória de Alergénios (Reg. UE 1169/2011 &amp; DL 26/2016):</b> "
+                f"{xml_esc(plan['allergens_eu_1169']['allergen_counter_signage_pt'])} &nbsp;|&nbsp; "
+                f"<b>SHA-256:</b> {plan['design_sha256'][:16]}",
+                st_sub,
+            ),
+        ]
+        doc.build(story)
+        return buf.getvalue()
+
+    def create_stand_rental_deposit(
+        self,
+        stand_code: str,
+        stand_description: str,
+        deposit_eur: float,
+        expected_return_date: str,
+        quote_token: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Registers a refundable security deposit (`Caução de Suporte / Pedestal`) in exact integer minor units (`cents`)
+        exempt from IVA upon issue under `CIVA Art. 16.º n.º 6 alínea c)`.
+        """
+        dep_cents = int(round(float(deposit_eur) * 100))
+        if dep_cents <= 0:
+            return {"ok": False, "error": "STAND_DEPOSIT_MUST_BE_POSITIVE"}
+        ret_date = str(expected_return_date or "").strip()
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", ret_date):
+            return {"ok": False, "error": "INVALID_EXPECTED_RETURN_DATE_ISO"}
+
+        rental_id = f"CAU-BAKE-{uuid.uuid4().hex[:8].upper()}"
+        now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        receipt_sha = hashlib.sha256(f"CAUCAO-OPEN:{rental_id}:{dep_cents}:{ret_date}:{now_iso}".encode("utf-8")).hexdigest()
+        rec = {
+            "rental_id": rental_id,
+            "stand_code": str(stand_code or "SUP-ACRIL-GOLD-01").strip().upper(),
+            "stand_description": _normalize_scrubbed_text(str(stand_description or "Base Acrílica / Latão Dourado"))[:80],
+            "quote_token": str(quote_token).strip().upper() if quote_token else None,
+            "deposit_cents": dep_cents,
+            "deposit_eur": round(dep_cents / 100.0, 2),
+            "iva_on_deposit_pct": 0.0,
+            "fiscal_basis_pt": "CIVA Art. 16.º n.º 6 alínea c) — Caução reembolsável excluída do valor tributável",
+            "expected_return_date": ret_date,
+            "status": "HELD_IN_ESCROW",
+            "refunded_cents": 0,
+            "taxable_damage_invoice_cents": 0,
+            "damage_atcud": None,
+            "sha256_receipt": receipt_sha,
+            "created_at": now_iso,
+            "settled_at": None,
+        }
+        with self._lock:
+            self.stand_rentals[rental_id] = rec
+        self._sync_unified_pg17_or_local_ledger("stand_caucao_created", rental_id, rec)
+        return {"ok": True, "rental": dict(rec)}
+
+    def settle_stand_rental_return(
+        self,
+        rental_id: str,
+        returned_intact: bool = True,
+        damage_fee_eur: float = 0.0,
+    ) -> Dict[str, Any]:
+        """
+        Settles a reusable stand security deposit (`Caução`):
+        - Intact return -> 100% refund (`0% IVA`, balanced minor-unit cents `refund_cents == deposit_cents`).
+        - Damaged / lost -> withholds `min(deposit_cents, damage_fee_cents)` and issues a `23% IVA` compensation invoice (`ATCUD`).
+        """
+        rid = str(rental_id or "").strip().upper()
+        dmg_cents = max(0, int(round(float(damage_fee_eur) * 100)))
+        with self._lock:
+            rec = self.stand_rentals.get(rid)
+            if not rec:
+                return {"ok": False, "error": f"STAND_RENTAL_NOT_FOUND({rid})"}
+            if rec["status"] != "HELD_IN_ESCROW":
+                return {"ok": False, "error": f"STAND_RENTAL_ALREADY_SETTLED({rid})"}
+
+            dep_cents = int(rec["deposit_cents"])
+            if returned_intact or dmg_cents == 0:
+                refund_cents = dep_cents
+                withheld_cents = 0
+                status = "REFUNDED_INTACT_0PCT_IVA"
+                damage_atcud = None
+                net_eur = 0.0
+                iva_eur = 0.0
+            else:
+                withheld_cents = min(dep_cents, dmg_cents)
+                refund_cents = dep_cents - withheld_cents
+                status = "DAMAGE_INVOICED_23PCT_IVA"
+                seq = int(hashlib.sha256(rid.encode("utf-8")).hexdigest()[:6], 16) % 900000 + 100000
+                damage_atcud = f"ATCUD:BAKECAU26-{seq}"
+                gross_dmg = withheld_cents / 100.0
+                net_eur = round(gross_dmg / 1.23, 2)
+                iva_eur = round(gross_dmg - net_eur, 2)
+
+            assert refund_cents + withheld_cents == dep_cents, "Minor-unit accounting balance violation"
+            now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            settle_sha = hashlib.sha256(
+                f"CAUCAO-SETTLE:{rid}:{refund_cents}:{withheld_cents}:{status}:{now_iso}".encode("utf-8")
+            ).hexdigest()
+            rec.update({
+                "status": status,
+                "refunded_cents": refund_cents,
+                "refunded_eur": round(refund_cents / 100.0, 2),
+                "taxable_damage_invoice_cents": withheld_cents,
+                "taxable_damage_gross_eur": round(withheld_cents / 100.0, 2),
+                "taxable_damage_net_eur": net_eur,
+                "taxable_damage_iva_23pct_eur": iva_eur,
+                "damage_atcud": damage_atcud,
+                "settlement_sha256": settle_sha,
+                "settled_at": now_iso,
+            })
+            snap = dict(rec)
+
+        self._sync_unified_pg17_or_local_ledger("stand_caucao_settled", rid, snap)
+        return {"ok": True, "rental": snap}
+
+    def reformulate_dietary_safe_cake(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Deterministically reformulates a 3D multi-tier cake for strict dietary regimes:
+        - `GLUTEN_FREE_APC_20PPM` (`Regulamento (UE) n.º 828/2014` <= 20 mg/kg glúten)
+        - `LACTOSE_FREE` (`0,01g/100g` lactose)
+        - `VEGAN_100PCT` (0% ingredientes de origem animal — isento de Ovos e Leite)
+        Enforces tighter Euler slenderness bounds (`<= 1.75` for Gluten-Free; `<= 1.65` for Gluten-Free + Vegan)
+        and adds `+2` extra PP support dowels per load-bearing tier.
+        """
+        data = dict(payload or {})
+        raw_modes = data.get("dietary_modes") or ["GLUTEN_FREE_APC_20PPM"]
+        modes = sorted({str(m).strip().upper() for m in raw_modes if str(m).strip()})
+        valid_modes = {"GLUTEN_FREE_APC_20PPM", "LACTOSE_FREE", "VEGAN_100PCT"}
+        unknown = [m for m in modes if m not in valid_modes]
+        if not modes or unknown:
+            return {"ok": False, "error": f"INVALID_DIETARY_MODES({unknown}): supported={sorted(valid_modes)}"}
+
+        base_res = self.execute(data)
+        if not base_res.get("ok"):
+            return base_res
+
+        gf = "GLUTEN_FREE_APC_20PPM" in modes
+        vegan = "VEGAN_100PCT" in modes
+        lac_free = ("LACTOSE_FREE" in modes) or vegan
+
+        tiers = base_res["threejs_3d_scene"]["tiers"]
+        base_d = float(tiers[0]["diameter_cm"])
+        total_h = sum(float(t["height_cm"]) for t in tiers)
+        ratio = round(total_h / max(base_d, 0.1), 3)
+        max_ratio = 1.65 if (gf and vegan) else (1.75 if gf else (1.90 if vegan else 2.20))
+        if ratio > max_ratio:
+            return {
+                "ok": False,
+                "error": (
+                    f"DIETARY_SPONGE_SLENDERNESS_EXCEEDED(H/D={ratio} > {max_ratio}): "
+                    "massas sem glúten / aquafaba exigem base mais larga ou menor altura total para evitar fissura estrutural."
+                ),
+            }
+
+        substitutions: List[Dict[str, str]] = []
+        removed_allergens: set[str] = set()
+        if gf:
+            removed_allergens.add("GLUTEN")
+            substitutions.append({
+                "original": "Farinha de trigo T55",
+                "substitute": "Blend certificado Sem Glúten (Farinha de Arroz Fina 65% + Amido de Milho 25% + Casca de Psyllium 10% — <= 20 mg/kg Reg. UE 828/2014)",
+                "structural_note": "Módulo de corte inferior ao trigo; reforço automático +2 estacas PP por andar.",
+            })
+        if lac_free:
+            removed_allergens.add("MILK")
+            substitutions.append({
+                "original": "Manteiga 82% M.G. / Leite / Natas / Leite Condensado",
+                "substitute": (
+                    "Manteiga Vegetal de Karité & Coco + Creme Culinário de Coco Reduzido (100% Plant-Based)"
+                    if vegan
+                    else "Manteiga e Natas Deslactosadas (< 0,01% lactose — Enzima Lactase)"
+                ),
+                "structural_note": "Estabilizar emulsão a +19°C antes de bater cobertura.",
+            })
+        if vegan:
+            removed_allergens.add("EGGS")
+            substitutions.append({
+                "original": "Ovos inteiros pasteurizados / Claras merengue",
+                "substitute": "Redução de Aquafaba Pastorizada + Proteína de Batata (2% p/p para merengue estável)",
+                "structural_note": "Arrefecer formas 25 min antes de desenformar para fixar rede proteica vegetal.",
+            })
+
+        remaining_allergens = [
+            code for code in base_res["allergens_eu_1169_2011"]["allergen_codes"]
+            if code not in removed_allergens
+        ]
+        upgraded_dowels = []
+        for dw in base_res["portions_and_structure"]["tier_dowel_blueprint"]:
+            dw_copy = dict(dw)
+            rod_cnt = int(dw_copy.get("polypropylene_dowel_rods_count", 0))
+            if rod_cnt > 0 and (gf or vegan):
+                dw_copy["polypropylene_dowel_rods_count"] = rod_cnt + 2
+                dw_copy["dietary_reinforcement_note"] = "+2 estacas PP alimentar adicionais para massa especial"
+            upgraded_dowels.append(dw_copy)
+
+        clean_bench_protocol = [
+            "Higienizar bancada inox dedicada com PPHO validado (200 ppm) antes da pesagem.",
+            "Utilizar batedeira, espátulas, formas e bicos identificados por código de cor ROXO (Alergénios).",
+        ]
+        if gf:
+            clean_bench_protocol.append(
+                "Cumprir Regulamento de Execução (UE) n.º 828/2014 (<= 20 mg/kg glúten) e separação temporal face a farinhas de trigo."
+            )
+
+        now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        cert_sha = hashlib.sha256(
+            f"DIETARY-REFORM:{base_res['design_sha256']}:{','.join(modes)}:{ratio}:{now_iso}".encode("utf-8")
+        ).hexdigest()
+        out = {
+            "ok": True,
+            "dietary_modes": modes,
+            "regulation_pt_eu": "Regulamento (UE) n.º 828/2014 (Sem Glúten <= 20 ppm) & Reg. (UE) n.º 1169/2011",
+            "structural_slenderness_verified": {
+                "h_over_d_ratio": ratio,
+                "max_allowed_for_dietary_matrix": max_ratio,
+                "upgraded_tier_dowel_blueprint": upgraded_dowels,
+            },
+            "ingredient_substitutions": substitutions,
+            "eliminated_allergen_codes": sorted(removed_allergens),
+            "remaining_allergen_codes": remaining_allergens,
+            "clean_bench_cross_contamination_protocol_pt": clean_bench_protocol,
+            "base_design_sha256": base_res["design_sha256"],
+            "reformulation_certificate_sha256": cert_sha,
+        }
+        self._sync_unified_pg17_or_local_ledger("dietary_reformulation", cert_sha[:16], {
+            "modes": modes,
+            "eliminated": sorted(removed_allergens),
+            "remaining": remaining_allergens,
+        })
+        return out

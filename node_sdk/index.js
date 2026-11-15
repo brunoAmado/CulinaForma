@@ -125,3 +125,30 @@ export async function dispatchRefrigeratedFleet(baseUrl = "http://127.0.0.1:4030
   });
   return res.json();
 }
+
+export async function buildCateringCuttingTimeline(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/catering-timeline`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function createStandRentalDeposit(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/stand-rentals`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function reformulateDietarySafeCake(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/dietary-reformulate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}

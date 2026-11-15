@@ -112,6 +112,41 @@ pub fn is_fleet_delivery_telemetry_safe(van_temp_c: f64, max_lateral_g: f64) -> 
     (2.0..=5.0).contains(&van_temp_c) && (0.0..=0.35).contains(&max_lateral_g)
 }
 
+/// Validates stricter Euler slenderness bounds for gluten-free (`<= 1.75`) and gluten-free + vegan (`<= 1.65`)
+/// sponges compared to standard wheat gluten networks (`<= 2.20`).
+pub fn verify_dietary_tier_stability(
+    base_diameter_cm: f64,
+    total_height_cm: f64,
+    gluten_free: bool,
+    vegan_aquafaba: bool,
+) -> bool {
+    if base_diameter_cm <= 0.0 || total_height_cm <= 0.0 {
+        return false;
+    }
+    let max_ratio = match (gluten_free, vegan_aquafaba) {
+        (true, true) => 1.65,
+        (true, false) => 1.75,
+        (false, true) => 1.90,
+        (false, false) => 2.20,
+    };
+    (total_height_cm / base_diameter_cm) <= max_ratio
+}
+
+/// Computes integer minor-unit (`cents`) settlement for reusable cake stand security deposits (`Caução`)
+/// under Portuguese `CIVA Art. 16.º n.º 6`: `(refund_cents, taxable_damage_invoice_cents)`.
+pub fn compute_stand_deposit_settlement_cents(
+    deposit_cents: u64,
+    returned_intact: bool,
+    damage_fee_cents: u64,
+) -> (u64, u64) {
+    if returned_intact || damage_fee_cents == 0 {
+        (deposit_cents, 0)
+    } else {
+        let withheld = damage_fee_cents.min(deposit_cents);
+        (deposit_cents.saturating_sub(withheld), withheld)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -137,5 +172,9 @@ mod tests {
         assert!(estimate_out_of_fridge_safe_minutes(24.0, 31.0, 75.0, 3) < 90);
         assert!(is_fleet_delivery_telemetry_safe(3.4, 0.22));
         assert!(!is_fleet_delivery_telemetry_safe(3.4, 0.48));
+        assert!(verify_dietary_tier_stability(30.0, 48.0, true, false));
+        assert!(!verify_dietary_tier_stability(20.0, 40.0, true, false));
+        assert_eq!(compute_stand_deposit_settlement_cents(8000, true, 0), (8000, 0));
+        assert_eq!(compute_stand_deposit_settlement_cents(8000, false, 5000), (3000, 5000));
     }
 }

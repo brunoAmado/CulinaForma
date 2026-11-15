@@ -321,6 +321,12 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#14b8a6;color:#5eead4;" onclick="dispatchFleetColdChain()">
               🚚 Guia AT &amp; Frota Frio
             </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#f97316;color:#fdba74;" onclick="downloadCateringCuttingPdf()">
+              🍽️ PDF Guia Corte &amp; Cavilhas
+            </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#a855f7;color:#d8b4fe;" onclick="runDietarySafeReformulation()">
+              🌾 Sem Glúten / Vegan
+            </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#4f46e5;color:#c7d2fe;" onclick="sendToPastelaria24h()">
               📦 Reservar 24h (:4029)
             </button>
@@ -1139,6 +1145,46 @@ async function dispatchFleetColdChain() {
   }
 }
 
+async function downloadCateringCuttingPdf() {
+  const fb = document.getElementById('bridge-feedback');
+  fb.textContent = 'A gerar PDF Guia de Corte para Catering & Extração de Cavilhas…';
+  try {
+    const r = await fetch('/api/bake/catering-cutting-guide/pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...collectCakePayload(), cake_cutting_time_hhmm: '22:30', drive_minutes_to_venue: 45 })
+    });
+    if (!r.ok) throw new Error('Falha ao gerar PDF Guia de Corte');
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank', 'noopener');
+    fb.style.color = '#fdba74';
+    fb.textContent = '✓ PDF Guia de Corte & Controlo de Cavilhas pronto para a equipa de sala.';
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro Guia Corte: ' + e.message;
+  }
+}
+
+async function runDietarySafeReformulation() {
+  const fb = document.getElementById('bridge-feedback');
+  fb.textContent = 'A validar reformulação Sem Glúten (<=20 ppm Reg. UE 828/2014) & Sem Lactose…';
+  try {
+    const r = await fetch('/api/bake/dietary-reformulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...collectCakePayload(), dietary_modes: ['GLUTEN_FREE_APC_20PPM', 'LACTOSE_FREE'] })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Erro na reformulação');
+    fb.style.color = '#d8b4fe';
+    fb.textContent = `✓ Reformulação segura validada (H/D=${d.structural_slenderness_verified.h_over_d_ratio}) · Eliminados: ${d.eliminated_allergen_codes.join(', ')}`;
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Alerta Estrutural / Dietético: ' + e.message;
+  }
+}
+
 renderTiersEditor();
 recalcCake();
 </script>
@@ -1387,7 +1433,55 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
             quote_token=quote_token,
             client_signature_name=str(data.get("client_signature_name") or ""),
             tasting_voucher_code=data.get("tasting_voucher_code"),
+            sync_to_pastelaria_kds=bool(data.get("sync_to_pastelaria_kds", True)),
         )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/catering-timeline")
+    def build_catering_timeline_and_cutting_plan(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.compute_venue_assembly_timeline_and_cutting_plan(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/catering-cutting-guide/pdf")
+    def download_catering_cutting_guide_pdf(payload: Dict[str, Any] = Body(default={})) -> Response:
+        try:
+            pdf_bytes = engine.render_catering_cutting_guide_pdf_bytes(payload)
+        except ValueError as exc:
+            return JSONResponse(status_code=400, content={"ok": False, "error": str(exc)})
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": 'inline; filename="Guia_Corte_Catering_Cavilhas_InsightBake.pdf"',
+                "Cache-Control": "no-store",
+            },
+        )
+
+    @router.post("/stand-rentals")
+    def create_stand_rental(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        data = payload or {}
+        res = engine.create_stand_rental_deposit(
+            stand_code=str(data.get("stand_code") or "SUP-ACRIL-GOLD-01"),
+            stand_description=str(data.get("stand_description") or "Pedestal Acrílico & Latão Dourado"),
+            deposit_eur=float(data.get("deposit_eur", 80.0)),
+            expected_return_date=str(data.get("expected_return_date") or "2026-12-01"),
+            quote_token=data.get("quote_token"),
+        )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/stand-rentals/{rental_id}/settle")
+    def settle_stand_rental(rental_id: str, payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        data = payload or {}
+        res = engine.settle_stand_rental_return(
+            rental_id=rental_id,
+            returned_intact=bool(data.get("returned_intact", True)),
+            damage_fee_eur=float(data.get("damage_fee_eur", 0.0)),
+        )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/dietary-reformulate")
+    def reformulate_dietary_cake(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.reformulate_dietary_safe_cake(payload)
         return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
 
     @router.post("/fleet-dispatch")
