@@ -522,6 +522,61 @@ class TestInsightBake(unittest.TestCase):
         self.assertTrue(kds_sync["synced"])
         self.assertTrue(str(kds_sync["asae_ficha_id"]).startswith("FT-ASAE-BAKE-"))
 
+    def test_14_locale_ready_exempt_invoicing_gross_cmv_cliff_blocker_and_simulator(self) -> None:
+        # 1. Supported locales endpoint lists multi-country profiles (PT, FR, DE, GB, BR, US...)
+        r_loc = self.client.get("/api/bake/fiscal/locales")
+        self.assertEqual(r_loc.status_code, 200)
+        codes = {p["country_code"] for p in r_loc.json()["supported_locales"]}
+        self.assertTrue({"PT", "ES", "FR", "DE", "IT", "GB", "BR", "US"}.issubset(codes))
+
+        # 2. Unhappy path: invalid tax_regime rejected
+        r_bad = self.client.post("/api/bake/fiscal/config", json={"country_code": "DE", "tax_regime": "BOGUS"})
+        self.assertEqual(r_bad.status_code, 400)
+
+        # 3. Exempt 3D cake design includes non-recoverable supplier tax inside CMV and charges 0% output tax
+        r_std = self.client.post("/api/bake/design", json={"country_code": "DE", "consumption_mode": "RESTAURACAO_13"}).json()
+        r_ex = self.client.post("/api/bake/design", json={"country_code": "DE", "consumption_mode": "EXEMPT_SMALL_BUSINESS"}).json()
+        self.assertEqual(r_std["pricing_and_at_invoicing"]["iva_rate_pct"], 19.0)
+        self.assertEqual(r_ex["pricing_and_at_invoicing"]["iva_rate_pct"], 0.0)
+        self.assertEqual(r_ex["pricing_and_at_invoicing"]["tax_exemption_code"], "USTG-19")
+        self.assertGreater(r_ex["pricing_and_at_invoicing"]["non_recoverable_input_tax_included_in_cmv_eur"], 0.0)
+        self.assertGreater(
+            r_ex["pricing_and_at_invoicing"]["raw_ingredients_and_packaging_cost_eur"],
+            r_std["pricing_and_at_invoicing"]["raw_ingredients_and_packaging_cost_eur"],
+        )
+
+        # 4. SAF-T XML emits <TaxExemptionCode> below cliff and BLOCKS when crossing intra-year hard cliff
+        r_saft_ok = self.client.post(
+            "/api/bake/fiscal/saft-xml",
+            json={"country_code": "BR", "consumption_mode": "EXEMPT_SMALL_BUSINESS", "ytd_turnover_override": 50000.0},
+        )
+        self.assertEqual(r_saft_ok.status_code, 200)
+        self.assertEqual(r_saft_ok.json()["currency_code"], "BRL")
+        self.assertIn("<TaxExemptionCode>CRT-4</TaxExemptionCode>", r_saft_ok.json()["xml"])
+
+        r_saft_cliff = self.client.post(
+            "/api/bake/fiscal/saft-xml",
+            json={"country_code": "PT", "consumption_mode": "EXEMPT_SMALL_BUSINESS", "ytd_turnover_override": 18700.0},
+        )
+        self.assertEqual(r_saft_cliff.status_code, 400)
+        self.assertIn("HARD_TAX_CLIFF_BREACH", r_saft_cliff.json()["error"])
+
+        # 5. Pre-quote cliff guard + Stay-Exempt vs Opt-In Simulator across UK (GBP) & PT (EUR)
+        r_cliff_gb = self.client.post(
+            "/api/bake/fiscal/cliff-check",
+            json={"country_code": "GB", "tax_regime": "EXEMPT_SMALL_BUSINESS", "ytd_domestic_turnover": 75000.0, "proposed_order_amount": 800.0},
+        )
+        self.assertEqual(r_cliff_gb.status_code, 200)
+        self.assertEqual(r_cliff_gb.json()["currency_code"], "GBP")
+        self.assertEqual(r_cliff_gb.json()["status"], "APPROACHING_SOFT_THRESHOLD_80PCT")
+
+        r_sim = self.client.post(
+            "/api/bake/fiscal/simulate-regime",
+            json={"country_code": "FR", "projected_annual_revenue": 42000.0, "b2b_revenue_share_pct": 10.0, "planned_capex_equipment_net": 500.0},
+        )
+        self.assertEqual(r_sim.status_code, 200)
+        self.assertEqual(r_sim.json()["recommendation"], "STAY_EXEMPT")
+
 
 if __name__ == "__main__":
     unittest.main()

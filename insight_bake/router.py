@@ -274,10 +274,23 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
         </div>
       </div>
 
-      <label for="iva-sel">Regime Fiscal IVA (Autoridade Tributária PT)</label>
+      <label for="country-sel">Jurisdição / Locale Fiscal</label>
+      <select id="country-sel" onchange="recalcCake()">
+        <option value="PT">PT — Portugal (EUR · CIVA / Art. 53.º)</option>
+        <option value="ES">ES — España (EUR · Franquicia PYMES)</option>
+        <option value="FR">FR — France (EUR · Art. 293 B CGI)</option>
+        <option value="DE">DE — Deutschland (EUR · § 19 UStG)</option>
+        <option value="IT">IT — Italia (EUR · Regime Forfettario)</option>
+        <option value="GB">GB — United Kingdom (GBP · HMRC SME)</option>
+        <option value="BR">BR — Brasil (BRL · MEI SIMEI)</option>
+        <option value="US">US — United States (USD · Small Seller)</option>
+      </select>
+
+      <label for="iva-sel">Regime Fiscal (Standard vs. Isenção PME / ENI)</label>
       <select id="iva-sel" onchange="recalcCake()">
-        <option value="RESTAURACAO_13">IVA 13% — Serviço de Restauração / Catering (CIVA Lista II)</option>
-        <option value="TAKEAWAY_23">IVA 23% — Encomenda Take-Away / Entrega (CIVA Art. 18.º)</option>
+        <option value="RESTAURACAO_13">Taxa Restauração / Catering (PT 13% / Local)</option>
+        <option value="TAKEAWAY_23">Taxa Standard / Take-Away (PT 23% / Local)</option>
+        <option value="EXEMPT_SMALL_BUSINESS">Isento PME / ENI 0% (M10 / Art. 293B / §19 / MEI + CMV Bruto)</option>
       </select>
 
       <label for="topper-inp">Texto do Topo (Topper Acrílico)</label>
@@ -575,6 +588,7 @@ function collectCakePayload() {
     primary_color_hex: document.getElementById('primary-color').value || '#FFFDF9',
     accent_color_hex: document.getElementById('accent-color').value || '#D4AF37',
     consumption_mode: document.getElementById('iva-sel').value,
+    country_code: (document.getElementById('country-sel') ? document.getElementById('country-sel').value : 'PT'),
     topper_text: document.getElementById('topper-inp').value || 'Sofia & Miguel'
   };
 }
@@ -1367,6 +1381,7 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
         return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
 
     @router.post("/saft-pt-preview")
+    @router.post("/fiscal/saft-xml")
     def export_saft_pt_preview(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
         res = engine.export_saft_pt_invoice_xml(payload)
         return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
@@ -1482,6 +1497,25 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
     @router.post("/dietary-reformulate")
     def reformulate_dietary_cake(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
         res = engine.reformulate_dietary_safe_cake(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.get("/fiscal/locales")
+    def get_bake_fiscal_locales() -> Dict[str, Any]:
+        return engine.get_supported_fiscal_locales()
+
+    @router.post("/fiscal/config")
+    def post_bake_fiscal_config(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.configure_locale_fiscal_regime(payload or {})
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/fiscal/cliff-check")
+    def post_bake_fiscal_cliff_check(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.check_turnover_cliff_for_quote(payload or {})
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/fiscal/simulate-regime")
+    def post_bake_fiscal_simulate_regime(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.simulate_regime_breakeven(payload or {})
         return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
 
     @router.post("/fleet-dispatch")

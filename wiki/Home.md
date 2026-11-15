@@ -1,4 +1,4 @@
-# 📚 InsightBake Project Wiki (`v1.6.0`)
+# 📚 InsightBake Project Wiki (`v1.7.0`)
 
 - **Workspace**: `PycharmProjects/InsightBake` (`:4030 /api/bake`)
 - **System Architecture**: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
@@ -20,7 +20,9 @@
 | `POST /api/bake/fleet-dispatch` & `/{id}/pod` | `InsightFleet` Cold-Chain + G-Force (`<=0.35g`) + AT `Guia de Transporte` (`DL 198/2012`) + `cas://` POD |
 | `POST /api/bake/fermentation` | Arrhenius $Q_{10}$ sourdough fermentation kinetics, Baker's % & DDT water temperature |
 | `POST /api/bake/deposit-checkout` & `/deposit-confirm` | SIBS `MB WAY` / `Multibanco` (`Modulo-97`) 50% deposit checkout & settlement receipt |
-| `POST /api/bake/saft-pt-preview` | Portugal AT `SAF-T (PT) v1.04_01` (`DL n.º 28/2019`) SalesInvoice XML export (`13%` / `23%` IVA) |
+| `POST /api/bake/saft-pt-preview` & `/fiscal/saft-xml` | Locale-ready `SAF-T v1.04_01` SalesInvoice XML export (`PT`, `ES`, `FR`, `DE`, `IT`, `GB`, `BR`, `US`, custom — Standard VAT & `0%` SME Exemption with hard-cliff blocker) |
+| `GET /api/bake/fiscal/locales` & `POST /fiscal/config` | Multi-jurisdiction fiscal profile catalog & active tax regime configuration (`STANDARD_VAT` vs. `EXEMPT_SMALL_BUSINESS`) |
+| `POST /api/bake/fiscal/cliff-check` & `/fiscal/simulate-regime` | Pre-quote turnover cliff thermometer (`80%` / soft / hard cliff + EU SME cap) & Stay-Exempt vs. Voluntary VAT Opt-In CFO Simulator |
 | `POST /api/bake/render-jobs` & `/{job_id}/cancel` | Non-blocking abortable `ComfyUI` ControlNet Z-depth render queue (`RULE-10`, `EU AI Act Art. 14`, `cas://`) |
 | `POST /api/bake/search-recipes` | Allergen-safe & ambient-temperature constraint recipe ranker (Zero `ChromaDB` `RULE-16`) |
 | `GET / POST /api/bake/ficha-asae/pdf` | Native Vector A4 Portrait PDF (`MOD-FT-ASAE-DGAV-ACIP-v2.0`) for 3D Cakes & Sourdough |

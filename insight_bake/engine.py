@@ -67,6 +67,14 @@ except Exception:  # pragma: no cover
         cleaned = _re.sub(r"\b\d{9}\b", "[PT-NIF-REDACTED]", str(text or ""))
         return {"scrubbed_text": cleaned, "redactions": 1 if cleaned != text else 0}
 
+from insight_pastelaria.locale_fiscal_engine import (
+    compute_locale_aware_recipe_cmv,
+    evaluate_turnover_cliff_and_quote_guard,
+    list_supported_locale_profiles,
+    resolve_locale_fiscal_profile,
+    simulate_exemption_vs_voluntary_vat_opt_in,
+)
+
 
 ASAE_HACCP_BITEMPORAL_LOT_AND_COST_TABLE: List[Dict[str, Any]] = [
     {
@@ -531,6 +539,8 @@ def design_3d_cake_and_production_sheet(
     point_in_time_date: Optional[str] = None,
     venue_temp_c: float = 22.0,
     venue_rh_pct: float = 55.0,
+    country_code: str = "PT",
+    custom_fiscal_overrides: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Computes the complete `Three.js` 3D scene graph (including per-tier flavor mixing & 3D cutaway slice layers),
@@ -739,27 +749,67 @@ def design_3d_cake_and_production_sheet(
     unique_filling_names = list(dict.fromkeys(tb["filling_name"] for tb in per_tier_flavor_breakdown))
     is_mixed_tier_flavors = len(unique_sponge_names) > 1 or len(unique_filling_names) > 1
 
-    # Costing & Portugal AT Fiscal Pricing (CIVA Lista II Verba 3.1 Restauração 13% vs. Take-Away/Entrega 23%)
-    raw_materials_eur = (
-        (
-            sponge_cost_raw_eur
-            + filling_cost_raw_eur
-            + (frosting_weight_g / 1000.0) * float(frosting["cost_eur_per_kg"])
-        )
-        * lot_cost_multiplier
-        + (len(tier_specs) * 4.50)
+    # Costing & Locale-Ready Fiscal Pricing (Standard VAT vs. Small-Business Tax Exemption + True Gross-Input CMV)
+    net_ingredients_only = (
+        sponge_cost_raw_eur
+        + filling_cost_raw_eur
+        + (frosting_weight_g / 1000.0) * float(frosting["cost_eur_per_kg"])
+    ) * lot_cost_multiplier
+    net_packaging_only = len(tier_specs) * 4.50
+    raw_materials_net_eur = net_ingredients_only + net_packaging_only
+
+    locale_prof = resolve_locale_fiscal_profile(country_code, custom_fiscal_overrides)
+    mode_upper = str(consumption_mode or "RESTAURACAO_13").strip().upper()
+    is_exempt_mode = mode_upper in (
+        "EXEMPT_SMALL_BUSINESS",
+        "ISENTO_ART53",
+        "EXEMPT",
+        "EXEMPT_0",
+        "ISE",
+        "MEI",
+        "KLEIN",
     )
+
+    if is_exempt_mode and not locale_prof.input_tax_deductible_when_exempt:
+        non_recoverable_input_tax_eur = round(
+            net_ingredients_only * (locale_prof.reduced_raw_ingredients_rate_pct / 100.0)
+            + net_packaging_only * (locale_prof.takeaway_or_standard_rate_pct / 100.0),
+            2,
+        )
+    else:
+        non_recoverable_input_tax_eur = 0.0
+
+    raw_materials_eur = raw_materials_net_eur + non_recoverable_input_tax_eur
     estimated_labor_hours = round(2.5 + (len(tier_specs) * 1.8) + (total_wedding_portions * 0.025), 1)
     labor_cost_eur = estimated_labor_hours * float(hourly_rate_eur)
     subtotal_net_eur = round((raw_materials_eur * 1.35) + labor_cost_eur, 2)
 
-    mode_upper = str(consumption_mode or "RESTAURACAO_13").strip().upper()
-    if mode_upper in ("TAKEAWAY_23", "ENTREGA_23", "23"):
-        iva_rate_pct = 23.0
-        iva_regime_label = "Taxa Normal IVA 23% (Take-Away / Entrega de Bolo Decorado — CIVA Art. 18.º)"
+    if is_exempt_mode:
+        iva_rate_pct = 0.0
+        resolved_tax_code = locale_prof.exemption_tax_code
+        tax_exemption_code = locale_prof.exemption_reason_code
+        tax_exemption_reason = locale_prof.exemption_legal_mention
+        iva_regime_label = f"{locale_prof.exemption_scheme_name} ({locale_prof.exemption_reason_code})"
+    elif mode_upper in ("TAKEAWAY_23", "ENTREGA_23", "23", "TAKEAWAY", "STANDARD"):
+        iva_rate_pct = float(locale_prof.takeaway_or_standard_rate_pct)
+        resolved_tax_code = locale_prof.standard_tax_code
+        tax_exemption_code = None
+        tax_exemption_reason = None
+        iva_regime_label = (
+            "Taxa Normal IVA 23% (Take-Away / Entrega de Bolo Decorado — CIVA Art. 18.º)"
+            if locale_prof.country_code == "PT"
+            else f"{locale_prof.jurisdiction_name} Standard/Takeaway Tax {iva_rate_pct:.2f}% ({resolved_tax_code})"
+        )
     else:
-        iva_rate_pct = 13.0
-        iva_regime_label = "Taxa Intermédia IVA 13% (Serviço de Restauração / Catering — CIVA Lista II Verba 3.1)"
+        iva_rate_pct = float(locale_prof.dine_in_or_catering_rate_pct)
+        resolved_tax_code = locale_prof.dine_in_tax_code
+        tax_exemption_code = None
+        tax_exemption_reason = None
+        iva_regime_label = (
+            "Taxa Intermédia IVA 13% (Serviço de Restauração / Catering — CIVA Lista II Verba 3.1)"
+            if locale_prof.country_code == "PT"
+            else f"{locale_prof.jurisdiction_name} Catering/Hospitality Tax {iva_rate_pct:.2f}% ({resolved_tax_code})"
+        )
 
     total_gross_eur = round(subtotal_net_eur * (1.0 + (iva_rate_pct / 100.0)), 2)
     deposit_50pct_eur = round(total_gross_eur * 0.50, 2)
@@ -873,11 +923,18 @@ def design_3d_cake_and_production_sheet(
         },
         "nutritional_declaration_eu_1169": nutritional_table,
         "pricing_and_at_invoicing": {
+            "country_code": locale_prof.country_code,
+            "currency_code": locale_prof.currency_code,
+            "raw_ingredients_and_packaging_net_cost_eur": round(raw_materials_net_eur, 2),
+            "non_recoverable_input_tax_included_in_cmv_eur": non_recoverable_input_tax_eur,
             "raw_ingredients_and_packaging_cost_eur": round(raw_materials_eur, 2),
             "estimated_baker_labor_hours": estimated_labor_hours,
             "labor_cost_eur": round(labor_cost_eur, 2),
             "recommended_net_price_eur": subtotal_net_eur,
             "consumption_mode": mode_upper,
+            "tax_code": resolved_tax_code,
+            "tax_exemption_code": tax_exemption_code,
+            "tax_exemption_reason": tax_exemption_reason,
             "iva_rate_pct": iva_rate_pct,
             "iva_regime_label_pt": iva_regime_label,
             "recommended_client_total_gross_eur": total_gross_eur,
@@ -1234,6 +1291,13 @@ class InsightBakeEngine:
         self.client_quotes: Dict[str, Dict[str, Any]] = {}
         self.fleet_deliveries: Dict[str, Dict[str, Any]] = {}
         self.stand_rentals: Dict[str, Dict[str, Any]] = {}
+        self.locale_fiscal_config: Dict[str, Any] = {
+            "country_code": "PT",
+            "tax_regime": "STANDARD_VAT",
+            "ytd_domestic_turnover": 0.0,
+            "ytd_eu_cross_border_turnover": 0.0,
+            "custom_overrides": {},
+        }
         self._lock = threading.Lock()
         self.pg17_last_sync_status: str = "STANDBY_LOCAL_FALLBACK"
 
@@ -1325,7 +1389,7 @@ class InsightBakeEngine:
             "product": self.CLIENT_BRAND,
             "member_id": self.MEMBER_ID,
             "internal_engine": self.INTERNAL_ENGINE,
-            "version": "1.6.0",
+            "version": "1.7.0",
             "port": self.DEFAULT_PORT,
             "api_prefix": self.API_PREFIX,
             "asae_normative_template": ASAE_NORMATIVE_TEMPLATE_BASIS["template_code"],
@@ -1430,33 +1494,69 @@ class InsightBakeEngine:
 
     def export_saft_pt_invoice_xml(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Exports a valid Portugal Autoridade Tributária `SAF-T (PT) v1.04_01` (`Decreto-Lei n.º 28/2019`
-        & `Portaria n.º 302/2016`) SalesInvoice XML snippet with `ATCUD`, Modulo-11 NIF check, and IVA `13%`/`23%`.
+        Exports a locale-ready `SAF-T v1.04_01` SalesInvoice XML snippet supporting any jurisdiction
+        (`PT`, `ES`, `FR`, `DE`, `IT`, `GB`, `BR`, `US`, or custom), Standard VAT vs. Small-Business
+        Tax Exemption (`M10` / `CGI-293B` / `USTG-19` / `CRT-4`), and intra-year hard-cliff blocking.
         """
-        design = self.execute(payload)
+        data = payload or {}
+        eff_country = str(data.get("country_code") or self.locale_fiscal_config.get("country_code") or "PT").strip().upper()
+        design = self.execute(data)
         if not design.get("ok"):
             return design
 
-        raw_nif = "".join(ch for ch in str(payload.get("client_nif") or "") if ch.isdigit())
-        if raw_nif and not validate_portuguese_nif_modulo11(raw_nif):
+        raw_nif = "".join(ch for ch in str(data.get("client_nif") or "") if ch.isdigit())
+        if raw_nif and eff_country == "PT" and not validate_portuguese_nif_modulo11(raw_nif):
             return {"ok": False, "error": f"INVALID_CLIENT_NIF_MODULO11({raw_nif})"}
-        customer_tax_id = raw_nif if raw_nif else "999999990"  # Consumidor Final AT statutory code
+        customer_tax_id = raw_nif if raw_nif else "999999990"
 
         est = load_establishment_profile(self.establishment_profile_path)
         pricing = design["pricing_and_at_invoicing"]
         scene = design["threejs_3d_scene"]
+        country_code = str(pricing.get("country_code") or eff_country)
+        currency_code = str(pricing.get("currency_code") or "EUR")
+        iva_pct = float(pricing["iva_rate_pct"])
+        tax_code = str(pricing.get("tax_code") or ("INT" if iva_pct == 13.0 else ("ISE" if iva_pct == 0.0 else "NOR")))
+        exemption_code = pricing.get("tax_exemption_code")
+        exemption_reason = pricing.get("tax_exemption_reason")
+        net_total = float(pricing["recommended_net_price_eur"])
+        gross_total = float(pricing["recommended_client_total_gross_eur"])
+        tax_payable = round(gross_total - net_total, 2)
+
+        cliff_eval = None
+        if iva_pct == 0.0 and exemption_code:
+            eff_ytd = (
+                float(data["ytd_turnover_override"])
+                if data.get("ytd_turnover_override") is not None
+                else float(self.locale_fiscal_config.get("ytd_domestic_turnover", 0.0))
+            )
+            cliff_eval = evaluate_turnover_cliff_and_quote_guard(
+                country_code=country_code,
+                tax_regime="EXEMPT_SMALL_BUSINESS",
+                ytd_domestic_turnover=eff_ytd,
+                proposed_order_amount=gross_total,
+                ytd_eu_cross_border_turnover=float(self.locale_fiscal_config.get("ytd_eu_cross_border_turnover", 0.0)),
+                custom_overrides=data.get("custom_fiscal_overrides") or self.locale_fiscal_config.get("custom_overrides"),
+            )
+            if bool(data.get("enforce_cliff_guard", True)) and not cliff_eval["allow_exempt_invoice"]:
+                return {
+                    "ok": False,
+                    "error": f"HARD_TAX_CLIFF_BREACH_SWITCH_TO_STANDARD_VAT: {cliff_eval['action_required']}",
+                    "cliff_guard": cliff_eval,
+                }
+
         now_dt = datetime.now(timezone.utc)
         date_str = now_dt.strftime("%Y-%m-%d")
         sys_entry = now_dt.strftime("%Y-%m-%dT%H:%M:%S")
         inv_seq = int(design["design_sha256"][:6], 16) % 90000 + 10000
         invoice_no = f"FT IB2026/{inv_seq}"
         atcud_clean = str(pricing["atcud_preview"]).replace("ATCUD:", "")
-        iva_pct = float(pricing["iva_rate_pct"])
-        tax_code = "INT" if iva_pct == 13.0 else "NOR"
-        net_total = float(pricing["recommended_net_price_eur"])
-        gross_total = float(pricing["recommended_client_total_gross_eur"])
-        tax_payable = round(gross_total - net_total, 2)
         doc_hash = hashlib.sha256(f"{date_str};{sys_entry};{invoice_no};{gross_total:.2f};".encode("utf-8")).hexdigest()[:32]
+        exemption_xml_block = (
+            f"\n          <TaxExemptionReason>{html.escape(str(exemption_reason))}</TaxExemptionReason>"
+            f"\n          <TaxExemptionCode>{html.escape(str(exemption_code))}</TaxExemptionCode>"
+            if exemption_code
+            else ""
+        )
 
         xml_str = f"""<?xml version="1.0" encoding="UTF-8"?>
 <AuditFile xmlns="urn:OECD:StandardAuditFile-Tax:PT_1.04_01">
@@ -1467,18 +1567,18 @@ class InsightBakeEngine:
     <TaxAccountingBasis>F</TaxAccountingBasis>
     <CompanyName>{html.escape(est.denominacao_social)}</CompanyName>
     <FiscalYear>{now_dt.year}</FiscalYear>
-    <CurrencyCode>EUR</CurrencyCode>
+    <CurrencyCode>{html.escape(currency_code)}</CurrencyCode>
     <DateCreated>{date_str}</DateCreated>
     <ProductID>SetMiddle InsightBake/InsightCore</ProductID>
-    <ProductVersion>1.4.0</ProductVersion>
+    <ProductVersion>1.7.0</ProductVersion>
   </Header>
   <MasterFiles>
     <Customer>
       <CustomerID>CLI-{customer_tax_id[:4]}</CustomerID>
       <AccountID>21110001</AccountID>
       <CustomerTaxID>{customer_tax_id}</CustomerTaxID>
-      <CompanyName>{html.escape("Consumidor Final" if customer_tax_id == "999999990" else _normalize_scrubbed_text(str(payload.get("client_name") or "Cliente Particular")))}</CompanyName>
-      <BillingAddress><Country>PT</Country></BillingAddress>
+      <CompanyName>{html.escape("Consumidor Final" if customer_tax_id == "999999990" else _normalize_scrubbed_text(str(data.get("client_name") or "Cliente Particular")))}</CompanyName>
+      <BillingAddress><Country>{html.escape(country_code)}</Country></BillingAddress>
       <SelfBillingIndicator>0</SelfBillingIndicator>
     </Customer>
   </MasterFiles>
@@ -1515,10 +1615,10 @@ class InsightBakeEngine:
           <CreditAmount>{net_total:.2f}</CreditAmount>
           <Tax>
             <TaxType>IVA</TaxType>
-            <TaxCountryRegion>PT</TaxCountryRegion>
-            <TaxCode>{tax_code}</TaxCode>
+            <TaxCountryRegion>{html.escape(country_code)}</TaxCountryRegion>
+            <TaxCode>{html.escape(tax_code)}</TaxCode>
             <TaxPercentage>{iva_pct:.2f}</TaxPercentage>
-          </Tax>
+          </Tax>{exemption_xml_block}
         </Line>
         <DocumentTotals>
           <TaxPayable>{tax_payable:.2f}</TaxPayable>
@@ -1531,9 +1631,13 @@ class InsightBakeEngine:
 </AuditFile>"""
         return {
             "ok": True,
+            "country_code": country_code,
+            "currency_code": currency_code,
             "invoice_no": invoice_no,
             "atcud": pricing["atcud_preview"],
             "tax_code": tax_code,
+            "tax_exemption_code": exemption_code,
+            "cliff_guard": cliff_eval,
             "iva_rate_pct": iva_pct,
             "net_total_eur": net_total,
             "tax_payable_eur": tax_payable,
@@ -1842,6 +1946,11 @@ class InsightBakeEngine:
                 point_in_time=data.get("point_in_time"),
             )
 
+        default_mode = (
+            "EXEMPT_SMALL_BUSINESS"
+            if self.locale_fiscal_config.get("tax_regime") == "EXEMPT_SMALL_BUSINESS"
+            else "RESTAURACAO_13"
+        )
         return design_3d_cake_and_production_sheet(
             tiers=data.get("tiers"),
             shape=str(data.get("shape", "ROUND")),
@@ -1853,12 +1962,14 @@ class InsightBakeEngine:
             accent_color_hex=str(data.get("accent_color_hex") or data.get("accentColorHex") or "#D4AF37"),
             topper_text=str(data.get("topper_text") or data.get("topperText") or "Sofia & Miguel"),
             hourly_rate_eur=float(data.get("hourly_rate_eur", 22.0)),
-            consumption_mode=str(data.get("consumption_mode") or "RESTAURACAO_13"),
+            consumption_mode=str(data.get("consumption_mode") or default_mode),
             may_contain_trace_codes=data.get("may_contain_trace_codes"),
             client_nif=data.get("client_nif"),
             point_in_time_date=data.get("point_in_time_date"),
             venue_temp_c=float(data.get("venue_temp_c", 22.0)),
             venue_rh_pct=float(data.get("venue_rh_pct", 55.0)),
+            country_code=str(data.get("country_code") or self.locale_fiscal_config.get("country_code") or "PT"),
+            custom_fiscal_overrides=data.get("custom_fiscal_overrides") or self.locale_fiscal_config.get("custom_overrides"),
         )
 
     def dispatch_custom_cake_to_pastelaria(
@@ -2726,3 +2837,86 @@ class InsightBakeEngine:
             "remaining": remaining_allergens,
         })
         return out
+
+    def get_supported_fiscal_locales(self) -> Dict[str, Any]:
+        active = resolve_locale_fiscal_profile(
+            self.locale_fiscal_config.get("country_code", "PT"),
+            self.locale_fiscal_config.get("custom_overrides"),
+        )
+        return {
+            "ok": True,
+            "active_config": dict(self.locale_fiscal_config),
+            "active_profile": active.to_dict(),
+            "supported_locales": list_supported_locale_profiles(),
+        }
+
+    def configure_locale_fiscal_regime(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        data = payload or {}
+        regime_raw = str(data.get("tax_regime") or "STANDARD_VAT").strip().upper()
+        if regime_raw in ("ISENTO_ART53", "EXEMPT", "ISE", "MEI", "KLEIN"):
+            regime_clean = "EXEMPT_SMALL_BUSINESS"
+        elif regime_raw in ("EXEMPT_SMALL_BUSINESS", "STANDARD_VAT"):
+            regime_clean = regime_raw
+        else:
+            return {"ok": False, "error": f"UNSUPPORTED_TAX_REGIME({regime_raw})"}
+        prof = resolve_locale_fiscal_profile(
+            str(data.get("country_code") or "PT"),
+            data.get("custom_overrides"),
+        )
+        self.locale_fiscal_config = {
+            "country_code": prof.country_code,
+            "tax_regime": regime_clean,
+            "ytd_domestic_turnover": max(0.0, float(data.get("ytd_domestic_turnover", 0.0))),
+            "ytd_eu_cross_border_turnover": max(0.0, float(data.get("ytd_eu_cross_border_turnover", 0.0))),
+            "custom_overrides": dict(data.get("custom_overrides") or {}),
+        }
+        self._sync_unified_pg17_or_local_ledger("bake_locale_fiscal_config", prof.country_code, self.locale_fiscal_config)
+        return {
+            "ok": True,
+            "active_config": dict(self.locale_fiscal_config),
+            "resolved_profile": prof.to_dict(),
+        }
+
+    def check_turnover_cliff_for_quote(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        data = payload or {}
+        open_quotes = sum(
+            float(q.get("total_gross_eur", 0.0))
+            for q in self.client_quotes.values()
+            if q.get("status") == "APPROVED"
+        )
+        return evaluate_turnover_cliff_and_quote_guard(
+            country_code=str(data.get("country_code") or self.locale_fiscal_config.get("country_code", "PT")),
+            tax_regime=str(data.get("tax_regime") or self.locale_fiscal_config.get("tax_regime", "EXEMPT_SMALL_BUSINESS")),
+            ytd_domestic_turnover=(
+                float(data["ytd_domestic_turnover"])
+                if data.get("ytd_domestic_turnover") is not None
+                else float(self.locale_fiscal_config.get("ytd_domestic_turnover", 0.0))
+            ),
+            open_approved_quotes_total=(
+                float(data["open_approved_quotes_total"])
+                if data.get("open_approved_quotes_total") is not None
+                else open_quotes
+            ),
+            proposed_order_amount=float(data.get("proposed_order_amount", 0.0)),
+            ytd_eu_cross_border_turnover=(
+                float(data["ytd_eu_cross_border_turnover"])
+                if data.get("ytd_eu_cross_border_turnover") is not None
+                else float(self.locale_fiscal_config.get("ytd_eu_cross_border_turnover", 0.0))
+            ),
+            custom_overrides=data.get("custom_overrides") or self.locale_fiscal_config.get("custom_overrides"),
+        )
+
+    def simulate_regime_breakeven(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        data = payload or {}
+        return simulate_exemption_vs_voluntary_vat_opt_in(
+            projected_annual_revenue=float(data.get("projected_annual_revenue", 14500.0)),
+            b2b_revenue_share_pct=float(data.get("b2b_revenue_share_pct", 10.0)),
+            raw_ingredients_share_of_rev_pct=float(data.get("raw_ingredients_share_of_rev_pct", 24.0)),
+            packaging_and_utilities_share_of_rev_pct=float(data.get("packaging_and_utilities_share_of_rev_pct", 8.0)),
+            planned_capex_equipment_net=float(data.get("planned_capex_equipment_net", 0.0)),
+            startup_year=int(data.get("startup_year", 1)),
+            revenue_mix_goods_pct=float(data.get("revenue_mix_goods_pct", 85.0)),
+            effective_personal_income_tax_rate_pct=float(data.get("effective_personal_income_tax_rate_pct", 20.0)),
+            country_code=str(data.get("country_code") or self.locale_fiscal_config.get("country_code", "PT")),
+            custom_overrides=data.get("custom_overrides") or self.locale_fiscal_config.get("custom_overrides"),
+        )
