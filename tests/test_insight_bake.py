@@ -601,6 +601,16 @@ class TestInsightBake(unittest.TestCase):
         self.assertIn("/api/fresco/reservations/custom-cake", res_json["target_url"])
         self.assertIn("fresco_reservation", res_json)
         self.assertIn("pastelaria_reservation", res_json)
+        self.assertTrue(callable(self.engine.dispatch_custom_cake_to_fresco))
+
+        r_qt = self.client.post("/api/bake/quotes", json={"event_title": "Evento Fresco", "tiers": [{"diameter_cm": 22.0, "height_cm": 12.0}]})
+        qtok = r_qt.json()["quote"]["quote_token"]
+        r_app = self.client.post(
+            f"/api/bake/quotes/{qtok}/approve",
+            json={"client_signature_name": "Bruno Fresco", "sync_to_pastelaria_kds": True},
+        )
+        self.assertEqual(r_app.status_code, 200)
+        self.assertTrue(r_app.json()["quote"]["fresco_kds_sync"]["synced"])
 
 
 if __name__ == "__main__":

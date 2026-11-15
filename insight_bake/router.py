@@ -1063,9 +1063,9 @@ async function saveEstablishmentBake() {
 async function sendToPastelaria24h() {
   const fb = document.getElementById('bridge-feedback');
   fb.style.color = '#a5b4fc';
-  fb.textContent = 'A enviar encomenda 24h e Ficha ASAE para InsightPastelaria (:4029)...';
+  fb.textContent = 'A enviar encomenda 24h e Ficha ASAE para InsightFresco (:4029 /api/fresco)...';
   try {
-    const r = await fetch('/api/bake/reserve-pastelaria', {
+    const r = await fetch('/api/bake/reserve-fresco', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(collectCakePayload())
@@ -1073,9 +1073,10 @@ async function sendToPastelaria24h() {
     const d = await r.json();
     if (!r.ok || !d.ok) throw new Error(d.error || 'Falha na ponte');
     fb.style.color = '#6ee7b7';
+    const resObj = (d.fresco_reservation || d.pastelaria_reservation || {}).reservation || {};
     const modeMsg = d.bridge_mode === 'LIVE_HTTP_4029'
-      ? `✓ Encomenda 24h registada ao vivo na InsightPastelaria (${d.pastelaria_reservation.reservation.reservation_id})!`
-      : `✓ Pacote 24h & PDF A4 ASAE (${d.asae_ficha_id}) sincronizados no Dossier!`;
+      ? `✓ Encomenda 24h registada ao vivo na InsightFresco (${resObj.reservation_id || 'OK'})!`
+      : `✓ Pacote 24h & PDF A4 ASAE (${d.asae_ficha_id}) sincronizados no Dossier InsightFresco!`;
     fb.textContent = modeMsg;
     announce(modeMsg);
   } catch (e) {

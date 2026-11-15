@@ -27,5 +27,5 @@
 | `POST /api/bake/search-recipes` | Allergen-safe & ambient-temperature constraint recipe ranker (Zero `ChromaDB` `RULE-16`) |
 | `GET / POST /api/bake/ficha-asae/pdf` | Native Vector A4 Portrait PDF (`MOD-FT-ASAE-DGAV-ACIP-v2.0`) for 3D Cakes & Sourdough |
 | `GET /api/bake/fichas-tecnicas/caderno-alergenios.pdf` | Native Vector A4 Landscape 14-Allergen Counter Matrix PDF (`Decreto-Lei n.º 26/2016`) |
-| `POST /api/bake/reserve-pastelaria` | Dispatches 24h custom cake order + HTML/PDF ASAE Ficha into `InsightPastelaria` (`:4029`) |
+| `POST /api/bake/reserve-fresco` (legacy: `/reserve-pastelaria`) | Dispatches 24h custom cake order + HTML/PDF ASAE Ficha into `InsightFresco` (`:4029 /api/fresco`) |
 | `POST /api/bake/scrub` | CNPD / GDPR (`Lei n.º 58/2019`) PII & Portuguese NIF scrubber |

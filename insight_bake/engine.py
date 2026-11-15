@@ -9,8 +9,8 @@ Combines:
    - Scales flour, sugar, eggs, butter, chocolate, filling, and frosting in grams (`g`) from exact 3D tier volumes (`cm³`), computes all 14 statutory Annex II allergens + Portuguese counter signage (`DL n.º 26/2016`), validates Portuguese NIF (`Modulo-11`), and distinguishes `13%` (*Restauração*) vs. `23%` (*Take-Away / Entrega*) IVA with 50% `ATCUD` deposit preview.
 3. **Arrhenius Sourdough Fermentation ($Q_{10}$ Kinetics), Baker's Percentage & Desired Dough Temperature (`DDT`)**:
    - Models temperature-dependent bulk fermentation and `+4 °C` cold-retard kinetics, exact Baker's % gram scaling, psychrometric hydration adjustments, and bi-temporal ASAE HACCP lot traceability.
-4. **Zero-Hallucination `ComfyUI` ControlNet Depth/Canny Studio Spec + `InsightPastelaria` (`:4029`) & ASAE Ficha Bridge**:
-   - Locks `Three.js` 3D tier aspect ratios (`controlnet_depth_strength=0.88`), generates printable A4 ASAE Technical Data Sheets (`FT-ASAE-BAKE-*`), and dispatches `day_before` (`24h`) custom cake orders into `InsightPastelaria` (`:4029`).
+4. **Zero-Hallucination `ComfyUI` ControlNet Depth/Canny Studio Spec + `InsightFresco` (`:4029 /api/fresco`) & ASAE Ficha Bridge**:
+   - Locks `Three.js` 3D tier aspect ratios (`controlnet_depth_strength=0.88`), generates printable A4 ASAE Technical Data Sheets (`FT-ASAE-BAKE-*`), and dispatches `day_before` (`24h`) custom cake orders into `InsightFresco` (`:4029 /api/fresco`).
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 _PROJECTS_ROOT = Path(__file__).resolve().parent.parent.parent
-for _sibling in ("InsightCore", "InsightPastelaria", "InsightActivity", "InsightBackup"):
+for _sibling in ("InsightCore", "InsightFresco", "InsightPastelaria", "InsightActivity", "InsightBackup"):
     _cand_dir = _PROJECTS_ROOT / _sibling
     if _cand_dir.exists() and str(_cand_dir) not in sys.path:
         sys.path.insert(0, str(_cand_dir))
@@ -67,7 +67,7 @@ except Exception:  # pragma: no cover
         cleaned = _re.sub(r"\b\d{9}\b", "[PT-NIF-REDACTED]", str(text or ""))
         return {"scrubbed_text": cleaned, "redactions": 1 if cleaned != text else 0}
 
-from insight_pastelaria.locale_fiscal_engine import (
+from insight_fresco.locale_fiscal_engine import (
     compute_locale_aware_recipe_cmv,
     evaluate_turnover_cliff_and_quote_guard,
     list_supported_locale_profiles,
@@ -969,7 +969,7 @@ def design_3d_cake_and_production_sheet(
     }
 
 
-from insight_pastelaria.asae_ficha_tecnica import (
+from insight_fresco.asae_ficha_tecnica import (
     ASAE_NORMATIVE_TEMPLATE_BASIS,
     ASAEEstablishmentProfile,
     ASAEFichaTecnica,
@@ -1279,8 +1279,11 @@ class InsightBakeEngine:
         self.base_dir = base_dir
         self.asae_fichas_dir = base_dir / "fichas_tecnicas_asae"
         self.unified_ledger_path = base_dir / "bake_unified_ledger.json"
+        fresco_prof_dir = _PROJECTS_ROOT / "InsightFresco" / "pipeline_data" / "fichas_tecnicas_asae"
         pastelaria_prof_dir = _PROJECTS_ROOT / "InsightPastelaria" / "pipeline_data" / "fichas_tecnicas_asae"
-        if storage_dir is None and pastelaria_prof_dir.exists():
+        if storage_dir is None and fresco_prof_dir.exists():
+            self.establishment_profile_path = fresco_prof_dir / "establishment_profile.json"
+        elif storage_dir is None and pastelaria_prof_dir.exists():
             self.establishment_profile_path = pastelaria_prof_dir / "establishment_profile.json"
         else:
             self.establishment_profile_path = self.asae_fichas_dir / "establishment_profile.json"
@@ -1972,14 +1975,14 @@ class InsightBakeEngine:
             custom_fiscal_overrides=data.get("custom_fiscal_overrides") or self.locale_fiscal_config.get("custom_overrides"),
         )
 
-    def dispatch_custom_cake_to_pastelaria(
+    def dispatch_custom_cake_to_fresco(
         self,
         payload: Dict[str, Any],
         pastelaria_base_url: str = "http://127.0.0.1:4029",
     ) -> Dict[str, Any]:
         """
         Designs the 3D cake, builds the `day_before` (`24h`) production & ASAE handoff packet,
-        and forwards it to `InsightPastelaria` (`:4029 /api/pastelaria/reservations/custom-cake`)
+        and forwards it to `InsightFresco` (`:4029 /api/fresco/reservations/custom-cake`)
         when online, or returns a verified offline handoff envelope if `:4029` is unreachable.
         """
         export_bundle = self.export_asae_ficha_artifacts(payload)
@@ -2023,10 +2026,10 @@ class InsightBakeEngine:
         except (urllib.error.URLError, TimeoutError, OSError, ValueError):
             local_sync_info: Optional[Dict[str, Any]] = None
             try:
-                from insight_pastelaria.engine import InsightPastelariaEngine
+                from insight_fresco.engine import InsightFrescoEngine
 
-                local_past = InsightPastelariaEngine(load_persisted_state=True)
-                local_sync_info = local_past.register_custom_cake_reservation_from_bake(
+                local_fresco = InsightFrescoEngine(load_persisted_state=True)
+                local_sync_info = local_fresco.register_custom_cake_reservation_from_bake(
                     client_name=client_name,
                     requested_pickup_time=requested_pickup,
                     cake_design=design,
@@ -2040,9 +2043,11 @@ class InsightBakeEngine:
                 "bridge_mode": "QUEUED_HANDOFF_PACKET",
                 "target_product": "InsightFresco",
                 "target_url": target_url,
+                "local_fresco_ledger_synced": bool(local_sync_info),
                 "local_pastelaria_ledger_synced": bool(local_sync_info),
                 "asae_ficha_id": ficha_obj.ficha_id,
                 "bake_pdf_path": export_bundle["pdf_path"],
+                "fresco_local_sync": local_sync_info,
                 "pastelaria_local_sync": local_sync_info,
                 "fresco_reservation": local_sync_info,
                 "pastelaria_reservation": local_sync_info,
@@ -2050,6 +2055,8 @@ class InsightBakeEngine:
                 "handoff_packet": handoff_packet,
                 "cake_design": design,
             }
+
+    dispatch_custom_cake_to_pastelaria = dispatch_custom_cake_to_fresco
 
     def scrub_input(self, text: str) -> Dict[str, Any]:
         res = scrub_pt_eu_pii_and_byok_secrets(text)
@@ -2294,18 +2301,19 @@ class InsightBakeEngine:
                 "requested_pickup_time": f"Evento {snap.get('event_title') or tok} (24h)",
                 "lead_minutes_ahead": 1440,
             }
-            bridge_res = self.dispatch_custom_cake_to_pastelaria(bridge_payload)
+            bridge_res = self.dispatch_custom_cake_to_fresco(bridge_payload)
             kds_summary = {
                 "synced": bool(bridge_res.get("ok")),
                 "bridge_mode": bridge_res.get("bridge_mode"),
                 "asae_ficha_id": bridge_res.get("asae_ficha_id"),
                 "reservation_id": (
-                    (bridge_res.get("pastelaria_reservation") or {}).get("reservation", {}).get("reservation_id")
-                    or (bridge_res.get("pastelaria_local_sync") or {}).get("reservation", {}).get("reservation_id")
+                    (bridge_res.get("fresco_reservation") or bridge_res.get("pastelaria_reservation") or {}).get("reservation", {}).get("reservation_id")
+                    or (bridge_res.get("fresco_local_sync") or bridge_res.get("pastelaria_local_sync") or {}).get("reservation", {}).get("reservation_id")
                 ),
             }
             with self._lock:
                 if tok in self.client_quotes:
+                    self.client_quotes[tok]["fresco_kds_sync"] = kds_summary
                     self.client_quotes[tok]["pastelaria_kds_sync"] = kds_summary
                     snap = dict(self.client_quotes[tok])
 
@@ -2313,6 +2321,7 @@ class InsightBakeEngine:
             "quote_token": tok,
             "net_deposit_due_eur": snap["net_deposit_due_eur"],
             "approval_receipt_sha256": snap["approval_receipt_sha256"],
+            "fresco_kds_sync": snap.get("fresco_kds_sync"),
             "pastelaria_kds_sync": snap.get("pastelaria_kds_sync"),
         })
         return {"ok": True, "quote": snap}
