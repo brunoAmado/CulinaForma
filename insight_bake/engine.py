@@ -460,6 +460,15 @@ def compute_arrhenius_fermentation_and_bakers_pct(
                 {"code": "GLUTEN", "anexo_ii_num": 1, "statutory_label_pt": EU_14_MANDATORY_ALLERGENS["GLUTEN"]["label_pt"]}
             ],
         },
+        "nutritional_declaration_eu_1169": compute_eu_1169_nutritional_declaration(
+            weighted_components=[
+                (flour_g + starter_g * 0.5, {"fat_g": 1.6, "saturates_g": 0.3, "carbs_g": 71.0, "sugars_g": 1.4, "protein_g": 11.8, "salt_g": 0.02}),
+                (water_g + starter_g * 0.5, {"fat_g": 0.0, "saturates_g": 0.0, "carbs_g": 0.0, "sugars_g": 0.0, "protein_g": 0.0, "salt_g": 0.0}),
+                (salt_g, {"fat_g": 0.0, "saturates_g": 0.0, "carbs_g": 0.0, "sugars_g": 0.0, "protein_g": 0.0, "salt_g": 100.0}),
+            ],
+            portions_count=max(1, int(round(total_dough_g / 60.0))),
+            portion_label_pt="Fatia de Pão (60 g)",
+        ),
         "haccp_and_bitemporal_traceability": {
             "regulation": "Regulamento (CE) n.º 852/2004 (HACCP) & Reg. (CE) n.º 178/2002 Art. 18.º",
             "point_in_time_date": pit_date,
@@ -487,8 +496,9 @@ def design_3d_cake_and_production_sheet(
     point_in_time_date: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
-    Computes the complete `Three.js` 3D scene graph, wedding/party portions, structural dowel blueprint,
-    slenderness stability check, gram-exact ingredient recipe BOM, full 14 EU Reg. 1169/2011 allergen declaration,
+    Computes the complete `Three.js` 3D scene graph (including per-tier flavor mixing & 3D cutaway slice layers),
+    wedding/party portions, structural dowel blueprint, slenderness stability check, gram-exact ingredient BOM,
+    full 14 EU Reg. 1169/2011 allergen declaration, statutory EU Reg. 1169/2011 Art. 30.º nutritional table,
     ComfyUI ControlNet prompt, Portuguese AT (`13%` vs `23%` IVA + `ATCUD`) pricing, and `InsightFleet` cold-chain plan.
     """
     tier_specs = tiers if isinstance(tiers, list) and tiers else [
@@ -503,20 +513,34 @@ def design_3d_cake_and_production_sheet(
     if shape_clean not in ("ROUND", "SQUARE", "HEART", "HEXAGON"):
         shape_clean = "ROUND"
 
-    sponge = SPONGE_RECIPES.get(sponge_key, SPONGE_RECIPES["red_velvet"])
-    filling = FILLING_RECIPES.get(filling_key, FILLING_RECIPES["brigadeiro_gourmet"])
-    frosting = FROSTING_RECIPES.get(frosting_key, FROSTING_RECIPES["swiss_meringue_buttercream"])
+    default_sponge_key = sponge_key if sponge_key in SPONGE_RECIPES else "red_velvet"
+    default_filling_key = filling_key if filling_key in FILLING_RECIPES else "brigadeiro_gourmet"
+    resolved_frosting_key = frosting_key if frosting_key in FROSTING_RECIPES else "swiss_meringue_buttercream"
+
+    sponge = SPONGE_RECIPES[default_sponge_key]
+    filling = FILLING_RECIPES[default_filling_key]
+    frosting = FROSTING_RECIPES[resolved_frosting_key]
 
     safe_topper = _normalize_scrubbed_text(str(topper_text or "Sofia & Miguel"))[:64]
 
     threejs_meshes: List[Dict[str, Any]] = []
     structural_dowels: List[Dict[str, Any]] = []
+    per_tier_flavor_breakdown: List[Dict[str, Any]] = []
     current_y_cm = 0.0
     total_volume_cm3 = 0.0
     total_surface_cm2 = 0.0
     total_wedding_portions = 0
     total_party_portions = 0
     max_diameter_cm = 0.0
+
+    sponge_weight_g = 0.0
+    filling_weight_g = 0.0
+    sponge_ingredients_g: Dict[str, float] = {}
+    filling_breakdown_g: Dict[str, float] = {}
+    sponge_cost_raw_eur = 0.0
+    filling_cost_raw_eur = 0.0
+    raw_allergen_codes: set[str] = set(frosting["allergens"])
+    nutrition_weighted: List[tuple[float, Dict[str, float]]] = []
 
     for idx, t in enumerate(tier_specs):
         diam = float(t.get("diameter_cm", 20.0))
@@ -532,6 +556,18 @@ def design_3d_cake_and_production_sheet(
                 "error": f"INVERTED_UNSTABLE_TIER_AT_TIER_{idx + 1}({diam}cm_ON_TOP_OF_{tier_specs[idx - 1].get('diameter_cm')}cm)",
             }
 
+        t_sponge_key = str(t.get("sponge_key") or default_sponge_key)
+        if t_sponge_key not in SPONGE_RECIPES:
+            t_sponge_key = default_sponge_key
+        t_filling_key = str(t.get("filling_key") or default_filling_key)
+        if t_filling_key not in FILLING_RECIPES:
+            t_filling_key = default_filling_key
+
+        t_sponge = SPONGE_RECIPES[t_sponge_key]
+        t_filling = FILLING_RECIPES[t_filling_key]
+        raw_allergen_codes.update(t_sponge["allergens"])
+        raw_allergen_codes.update(t_filling["allergens"])
+
         max_diameter_cm = max(max_diameter_cm, diam)
         radius = diam / 2.0
         if shape_clean == "SQUARE":
@@ -545,7 +581,6 @@ def design_3d_cake_and_production_sheet(
             geom_type = "CylinderGeometry"
             radial_segs = 6
         elif shape_clean == "HEART":
-            # Parametric cardioid/bezier heart inscribed in a `diam x diam` bounding box (~82% of square area)
             base_area_cm2 = 0.82 * (diam ** 2)
             perimeter_cm = 3.36 * diam
             geom_type = "ExtrudeHeartGeometry"
@@ -561,14 +596,26 @@ def design_3d_cake_and_production_sheet(
         total_volume_cm3 += vol_cm3
         total_surface_cm2 += surf_cm2
 
-        # Wedding slice: 2.5cm x 5cm base (~12.5 cm2), Party slice: 5cm x 5cm (~22-25 cm2)
+        t_sponge_g = round(vol_cm3 * 0.68 * float(t_sponge["density_g_per_cm3"]), 1)
+        t_filling_g = round(vol_cm3 * 0.24 * 0.95, 1)
+        sponge_weight_g = round(sponge_weight_g + t_sponge_g, 1)
+        filling_weight_g = round(filling_weight_g + t_filling_g, 1)
+        sponge_cost_raw_eur += (t_sponge_g / 1000.0) * float(t_sponge["cost_eur_per_kg"])
+        filling_cost_raw_eur += (t_filling_g / 1000.0) * float(t_filling["cost_eur_per_kg"])
+
+        for ing_k, ratio in t_sponge["ratios"].items():
+            sponge_ingredients_g[ing_k] = round(sponge_ingredients_g.get(ing_k, 0.0) + (t_sponge_g * float(ratio)), 1)
+        filling_breakdown_g[t_filling["name"]] = round(filling_breakdown_g.get(t_filling["name"], 0.0) + t_filling_g, 1)
+
+        nutrition_weighted.append((t_sponge_g, t_sponge["nutrition_per_100g"]))
+        nutrition_weighted.append((t_filling_g, t_filling["nutrition_per_100g"]))
+
         height_factor = 1.25 if height >= 13.0 else 1.0
         w_slices = max(4, int(round((base_area_cm2 / 12.5) * height_factor)))
         p_slices = max(3, int(round((base_area_cm2 / 22.0) * height_factor)))
         total_wedding_portions += w_slices
         total_party_portions += p_slices
 
-        # Structural dowels needed if another tier sits above this tier
         dowels_in_tier = 0
         if idx < len(tier_specs) - 1:
             upper_diam = float(tier_specs[idx + 1].get("diameter_cm", 15.0))
@@ -582,6 +629,27 @@ def design_3d_cake_and_production_sheet(
                 "cake_board_under_upper_tier_cm": upper_diam,
             })
 
+        # Cutaway internal cross-section layers (3 sponge discs + 2 filling bands)
+        disc_h = round((height * 0.72) / 3.0, 2)
+        fill_h = round((height * 0.28) / 2.0, 2)
+        cutaway_layers = [
+            {"layer": "sponge_1", "height_cm": disc_h, "color_hex": t_sponge["sponge_color_hex"]},
+            {"layer": "filling_1", "height_cm": fill_h, "color_hex": t_filling["filling_color_hex"]},
+            {"layer": "sponge_2", "height_cm": disc_h, "color_hex": t_sponge["sponge_color_hex"]},
+            {"layer": "filling_2", "height_cm": fill_h, "color_hex": t_filling["filling_color_hex"]},
+            {"layer": "sponge_3", "height_cm": disc_h, "color_hex": t_sponge["sponge_color_hex"]},
+        ]
+
+        per_tier_flavor_breakdown.append({
+            "tier_number": idx + 1,
+            "sponge_key": t_sponge_key,
+            "sponge_name": t_sponge["name"],
+            "sponge_grams": t_sponge_g,
+            "filling_key": t_filling_key,
+            "filling_name": t_filling["name"],
+            "filling_grams": t_filling_g,
+        })
+
         threejs_meshes.append({
             "tier_number": idx + 1,
             "geometry_type": geom_type,
@@ -591,6 +659,13 @@ def design_3d_cake_and_production_sheet(
             "position_y_cm": round(current_y_cm + (height / 2.0), 2),
             "base_color_hex": primary_color_hex,
             "piping_accent_color_hex": accent_color_hex,
+            "sponge_key": t_sponge_key,
+            "sponge_name": t_sponge["name"],
+            "sponge_color_hex": t_sponge["sponge_color_hex"],
+            "filling_key": t_filling_key,
+            "filling_name": t_filling["name"],
+            "filling_color_hex": t_filling["filling_color_hex"],
+            "cutaway_layers": cutaway_layers,
             "wedding_portions": w_slices,
             "party_portions": p_slices,
             "internal_dowels_count": dowels_in_tier,
@@ -613,25 +688,29 @@ def design_3d_cake_and_production_sheet(
     )
     lot_cost_multiplier = float(bitemporal_lots[0].get("ingredient_cost_multiplier", 1.0)) if bitemporal_lots else 1.0
 
-    # Gram-exact Ingredient Scaling
-    sponge_weight_g = round(total_volume_cm3 * 0.68 * float(sponge["density_g_per_cm3"]), 1)
-    filling_weight_g = round(total_volume_cm3 * 0.24 * 0.95, 1)
     frosting_weight_g = round(total_surface_cm2 * 0.85, 1)
+    nutrition_weighted.append((frosting_weight_g, frosting["nutrition_per_100g"]))
     total_cake_weight_kg = round((sponge_weight_g + filling_weight_g + frosting_weight_g) / 1000.0, 2)
 
-    sponge_ingredients_g = {
-        k: round(sponge_weight_g * ratio, 1) for k, ratio in sponge["ratios"].items()
-    }
+    nutritional_table = compute_eu_1169_nutritional_declaration(
+        weighted_components=nutrition_weighted,
+        portions_count=total_wedding_portions,
+        portion_label_pt="Fatia Casamento (2,5×5 cm)",
+    )
+
+    unique_sponge_names = list(dict.fromkeys(tb["sponge_name"] for tb in per_tier_flavor_breakdown))
+    unique_filling_names = list(dict.fromkeys(tb["filling_name"] for tb in per_tier_flavor_breakdown))
+    is_mixed_tier_flavors = len(unique_sponge_names) > 1 or len(unique_filling_names) > 1
 
     # Costing & Portugal AT Fiscal Pricing (CIVA Lista II Verba 3.1 Restauração 13% vs. Take-Away/Entrega 23%)
     raw_materials_eur = (
         (
-            (sponge_weight_g / 1000.0) * float(sponge["cost_eur_per_kg"])
-            + (filling_weight_g / 1000.0) * float(filling["cost_eur_per_kg"])
+            sponge_cost_raw_eur
+            + filling_cost_raw_eur
             + (frosting_weight_g / 1000.0) * float(frosting["cost_eur_per_kg"])
         )
         * lot_cost_multiplier
-        + (len(tier_specs) * 4.50)  # Cake drums, polypropylene dowels, reinforced transport box
+        + (len(tier_specs) * 4.50)
     )
     estimated_labor_hours = round(2.5 + (len(tier_specs) * 1.8) + (total_wedding_portions * 0.025), 1)
     labor_cost_eur = estimated_labor_hours * float(hourly_rate_eur)
@@ -655,14 +734,16 @@ def design_3d_cake_and_production_sheet(
         nif_valid = validate_portuguese_nif_modulo11(digits)
         nif_masked = f"{digits[:2]}*****{digits[-2:]}" if len(digits) == 9 else "NIF-INVALID"
 
-    sig_seed = f"{shape_clean}:{len(tier_specs)}:{sponge_key}:{filling_key}:{frosting_key}:{total_gross_eur}"
+    tier_flavor_sig = "|".join(f"{tb['sponge_key']}+{tb['filling_key']}" for tb in per_tier_flavor_breakdown)
+    sig_seed = f"{shape_clean}:{len(tier_specs)}:{tier_flavor_sig}:{resolved_frosting_key}:{total_gross_eur}"
     design_sha256 = hashlib.sha256(sig_seed.encode("utf-8")).hexdigest()
     atcud_preview = f"ATCUD:JJ7B4K30-{int(design_sha256[:6], 16) % 90000 + 10000}"
+    multibanco_seed_7d = int(design_sha256[:7], 16) % 10_000_000
+    multibanco_ref_50pct = format_multibanco_ref_mod97("21403", multibanco_seed_7d, int(round(deposit_50pct_eur * 100)))
 
     # Mandatory EU Reg. 1169/2011 Annex II Allergen Union (sorted by statutory Annex II number 1..14)
-    raw_codes = set(sponge["allergens"]) | set(filling["allergens"]) | set(frosting["allergens"])
     allergen_codes = sorted(
-        raw_codes,
+        raw_allergen_codes,
         key=lambda c: int(EU_14_MANDATORY_ALLERGENS.get(c, {}).get("anexo_ii_num", 99)),
     )
     allergen_declarations = [
@@ -684,11 +765,11 @@ def design_3d_cake_and_production_sheet(
         + (f". Pode conter vestígios de: {', '.join(trace_codes)}." if trace_codes else ".")
     )
 
-    # ComfyUI ControlNet Photorealistic Studio Prompt (Sovereign domain phrasing per RULE-18)
     comfyui_controlnet_spec = {
         "engine": "ComfyUI Flux.1-dev / SDXL + ControlNet Depth & Canny Lock",
         "controlnet_depth_strength": 0.88,
         "controlnet_canny_strength": 0.65,
+        "z_depth_cas_uri": f"cas://insight-bake/zdepth/{design_sha256[:16]}.exr",
         "anti_hallucination_geometry_lock": f"Locked to exact {len(tier_specs)}-tier Three.js Z-depth map ({total_wedding_portions} portions, {round(current_y_cm, 1)}cm total height)",
         "positive_prompt": (
             f"Commercial studio pastry photography of a {len(tier_specs)}-tier {shape_clean.lower()} celebration cake, "
@@ -700,7 +781,6 @@ def design_3d_cake_and_production_sheet(
         "negative_prompt": "lopsided tiers, floating elements, collapsed cake, plastic look, cartoon, watermark, deformed text, extra tiers",
     }
 
-    # Refrigerated Logistics & ASAE HACCP Cold-Chain Spec (`InsightFleet` + `InsightSensor`)
     box_width_cm = round(max_diameter_cm + 10.0, 1)
     box_height_cm = round(current_y_cm + 14.0, 1)
     center_skewer_required = len(tier_specs) >= 2
@@ -714,6 +794,8 @@ def design_3d_cake_and_production_sheet(
         "threejs_3d_scene": {
             "shape": shape_clean,
             "tier_count": len(tier_specs),
+            "mixed_tier_flavors": is_mixed_tier_flavors,
+            "cutaway_slice_ready": True,
             "total_height_cm": round(current_y_cm, 1),
             "max_base_diameter_cm": round(max_diameter_cm, 1),
             "slenderness_ratio": slenderness_ratio,
@@ -730,16 +812,18 @@ def design_3d_cake_and_production_sheet(
             "tier_dowel_blueprint": structural_dowels,
         },
         "recipe_bom_grams": {
-            "sponge_key": sponge_key if sponge_key in SPONGE_RECIPES else "red_velvet",
-            "sponge_type": sponge["name"],
+            "sponge_key": default_sponge_key,
+            "sponge_type": " + ".join(unique_sponge_names),
             "sponge_total_g": sponge_weight_g,
             "sponge_ingredients_g": sponge_ingredients_g,
             "sponge_baking_temp_c": sponge["baking_temp_c"],
             "sponge_baking_time_minutes": sponge["baking_time_minutes"],
-            "filling_key": filling_key if filling_key in FILLING_RECIPES else "brigadeiro_gourmet",
-            "filling_type": filling["name"],
+            "filling_key": default_filling_key,
+            "filling_type": " + ".join(unique_filling_names),
             "filling_total_g": filling_weight_g,
-            "frosting_key": frosting_key if frosting_key in FROSTING_RECIPES else "swiss_meringue_buttercream",
+            "filling_breakdown_g": filling_breakdown_g,
+            "per_tier_flavors": per_tier_flavor_breakdown,
+            "frosting_key": resolved_frosting_key,
             "frosting_type": frosting["name"],
             "frosting_total_g": frosting_weight_g,
         },
@@ -750,6 +834,7 @@ def design_3d_cake_and_production_sheet(
             "mandatory_client_label": allergen_declarations,
             "allergen_counter_signage_pt": counter_signage_pt,
         },
+        "nutritional_declaration_eu_1169": nutritional_table,
         "pricing_and_at_invoicing": {
             "raw_ingredients_and_packaging_cost_eur": round(raw_materials_eur, 2),
             "estimated_baker_labor_hours": estimated_labor_hours,
@@ -761,6 +846,8 @@ def design_3d_cake_and_production_sheet(
             "recommended_client_total_gross_eur": total_gross_eur,
             "deposit_50pct_atcud_invoice_eur": deposit_50pct_eur,
             "atcud_preview": atcud_preview,
+            "multibanco_entity": "21403",
+            "multibanco_ref_50pct": multibanco_ref_50pct,
             "client_nif_masked": nif_masked,
             "client_nif_modulo11_valid": nif_valid,
         },
