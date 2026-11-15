@@ -225,10 +225,15 @@ export class InsightBakeElement extends HTMLElement {
       } else {
         const st = result.portions_and_structure;
         const pr = result.pricing_and_at_invoicing;
+        const nut = result.nutritional_declaration_eu_1169;
+        const nutLine = nut
+          ? `<div style="margin-top:4px;font-size:12px;color:#94a3b8;">EU 1169/2011: ${nut.per_100g.energy_kcal} kcal/100g (${nut.per_portion.energy_kcal} kcal/slice) · MB ${this.escapeHtml(pr.multibanco_entity || "21403")}/${this.escapeHtml(pr.multibanco_ref_50pct || "")}</div>`
+          : "";
         outputEl.innerHTML = `<div style="background:#172033;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;font-size:13px;">
           <strong>${this.escapeHtml(result.threejs_3d_scene.shape)} (${result.threejs_3d_scene.tier_count} Tiers):</strong>
           ${st.wedding_portions_2_5x5cm} slices · ${st.total_assembled_weight_kg} kg ·
           <strong>€${pr.recommended_client_total_gross_eur}</strong> (50% Deposit: €${pr.deposit_50pct_atcud_invoice_eur} · ${this.escapeHtml(pr.atcud_preview)})
+          ${nutLine}
         </div>`;
       }
     } catch (err) {

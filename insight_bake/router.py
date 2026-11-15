@@ -210,7 +210,16 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
   <!-- VIEW 1: 3D MULTI-TIER CAKE CONFIGURATOR -->
   <div id="view-cake" role="tabpanel" aria-labelledby="tab-cake" class="grid-studio">
     <section class="panel" aria-label="Configurador Paramétrico de Andares e Sabores">
-      <h2>1. Geometria 3D (1 a 6 Andares) &amp; Receita</h2>
+      <h2>1. Geometria 3D (1 a 6 Andares) &amp; Sabores por Andar</h2>
+
+      <div class="tile" style="margin-bottom:12px;">
+        <label for="recipe-search-inp" style="margin-top:0;">🔍 Pesquisa Semântica &amp; Restrições (ex.: sem glúten verão 26°C 60 pessoas)</label>
+        <div style="display:flex;gap:6px;">
+          <input id="recipe-search-inp" type="text" placeholder="Ex: sem glúten casamento 60 pessoas" />
+          <button type="button" class="secondary" style="white-space:nowrap;" onclick="runSemanticRecipeSearch()">Pesquisar</button>
+        </div>
+        <div id="recipe-search-results" style="margin-top:8px;font-size:12px;color:#94a3b8;"></div>
+      </div>
 
       <label for="shape-sel">Formato Geométrico 3D</label>
       <select id="shape-sel" onchange="recalcCake()">
@@ -221,7 +230,7 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
       </select>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
-        <span style="font-size:12px;font-weight:600;color:#cbd5e1;">Andares Empilhados (Base → Topo)</span>
+        <span style="font-size:12px;font-weight:600;color:#cbd5e1;">Andares Empilhados (Base → Topo · Sabores Mistos)</span>
         <div style="display:flex;gap:6px;">
           <button type="button" class="secondary" style="padding:5px 10px;font-size:12px;" onclick="addTier()">+ Andar</button>
           <button type="button" class="secondary" style="padding:5px 10px;font-size:12px;" onclick="removeTier()">− Andar</button>
@@ -229,7 +238,7 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
       </div>
       <div id="tiers-editor" style="margin-top:8px;"></div>
 
-      <label for="sponge-sel">Massa Base (Sponge)</label>
+      <label for="sponge-sel">Massa Base Padrão (Sponge)</label>
       <select id="sponge-sel" onchange="recalcCake()">
         <option value="red_velvet">Red Velvet Artisanal (Buttermilk &amp; Cacau)</option>
         <option value="pao_de_lo_tradicional">Pão de Ló Tradicional Português</option>
@@ -238,7 +247,7 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
         <option value="nozes_vinho_porto">Bolo Nobre de Noz &amp; Vinho do Porto</option>
       </select>
 
-      <label for="filling-sel">Recheio Refrigerado</label>
+      <label for="filling-sel">Recheio Refrigerado Padrão</label>
       <select id="filling-sel" onchange="recalcCake()">
         <option value="brigadeiro_gourmet">Brigadeiro Gourmet de Chocolate Nobre</option>
         <option value="ovos_moles_doces_conventuais">Doce de Ovos Conventual Português</option>
@@ -280,25 +289,34 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
     </section>
 
     <div style="display:grid;gap:18px;">
-      <!-- Interactive 3D Stage (Three.js WebGL + Isometric Fallback + X-Ray Dowels Toggle) -->
+      <!-- Interactive 3D Stage (Three.js WebGL + Cutaway Cross-Section + X-Ray Dowels + Async Render + Fiscal Checkout) -->
       <section class="panel" aria-label="Palco Interativo 3D e Engenharia de Estacas">
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;">
-          <h2 style="margin:0;">2. Palco 3D Interativo &amp; Raio-X de Estacas Internas</h2>
+          <h2 style="margin:0;">2. Palco 3D, Corte Transversal &amp; Faturação Sinal 50%</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;" onclick="toggleCutawaySlice()" id="btn-cutaway">
+              🔪 Corte Transversal: OFF
+            </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;" onclick="toggleXrayDowels()" id="btn-xray">
               🦴 Raio-X Estacas: OFF
             </button>
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#0284c7;color:#7dd3fc;" onclick="enqueueAsyncComfyRender()" id="btn-render-async">
+              🎨 Render Studio Assíncrono
+            </button>
+            <button type="button" class="secondary hidden" style="padding:6px 10px;font-size:12px;border-color:#f43f5e;color:#fda4af;" onclick="cancelActiveRenderJob()" id="btn-render-cancel">
+              ⏹ Cancelar Render
+            </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;" onclick="openPrintableASAE()">
-              🖨️ Ficha Técnica ASAE A4 ↗
+              🖨️ Ficha ASAE A4 ↗
             </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#059669;color:#6ee7b7;" onclick="downloadBakeAsaePdf()">
               ⬇️ PDF A4 ASAE
             </button>
-            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;" onclick="window.open('/api/bake/fichas-tecnicas/caderno-alergenios.pdf', '_blank', 'noopener')">
-              📋 Quadro 14 Alergénios (PDF)
+            <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#eab308;color:#fde047;" onclick="generateDepositMultibanco()">
+              💳 Sinal 50% MB / SAF-T PT
             </button>
             <button type="button" class="secondary" style="padding:6px 10px;font-size:12px;border-color:#4f46e5;color:#c7d2fe;" onclick="sendToPastelaria24h()">
-              📦 Reservar 24h na InsightPastelaria (:4029)
+              📦 Reservar 24h (:4029)
             </button>
           </div>
         </div>
@@ -391,11 +409,13 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer onerror="window.__threeOffline=true"></script>
 <script>
 let tiersState = [
-  { diameter_cm: 25, height_cm: 12 },
-  { diameter_cm: 20, height_cm: 12 },
-  { diameter_cm: 15, height_cm: 14 }
+  { diameter_cm: 25, height_cm: 12, sponge_key: '', filling_key: '' },
+  { diameter_cm: 20, height_cm: 12, sponge_key: '', filling_key: '' },
+  { diameter_cm: 15, height_cm: 14, sponge_key: '', filling_key: '' }
 ];
 let xrayDowels = false;
+let cutawaySlice = false;
+let activeRenderJobId = null;
 let lastDesignData = null;
 let threeCtx = null;
 
@@ -447,17 +467,44 @@ function renderTiersEditor() {
   host.innerHTML = '';
   tiersState.forEach((t, i) => {
     const row = document.createElement('div');
-    row.className = 'tier-row';
+    row.className = 'tile';
+    row.style.marginBottom = '8px';
     row.innerHTML = `
-      <div>
-        <label for="tdiam-${i}" style="margin-top:2px;">Andar ${i + 1} Ø (cm)</label>
-        <input id="tdiam-${i}" type="number" min="8" max="60" value="${t.diameter_cm}" onchange="updateTier(${i}, 'diameter_cm', this.value)" />
+      <div class="tier-row" style="margin-bottom:4px;">
+        <div>
+          <label for="tdiam-${i}" style="margin-top:2px;">Andar ${i + 1} Ø (cm)</label>
+          <input id="tdiam-${i}" type="number" min="8" max="60" value="${t.diameter_cm}" onchange="updateTier(${i}, 'diameter_cm', this.value)" />
+        </div>
+        <div>
+          <label for="theight-${i}" style="margin-top:2px;">Altura (cm)</label>
+          <input id="theight-${i}" type="number" min="5" max="30" value="${t.height_cm}" onchange="updateTier(${i}, 'height_cm', this.value)" />
+        </div>
+        <span style="font-size:11px;color:#94a3b8;padding-bottom:10px;">#${i + 1}</span>
       </div>
-      <div>
-        <label for="theight-${i}" style="margin-top:2px;">Altura (cm)</label>
-        <input id="theight-${i}" type="number" min="5" max="30" value="${t.height_cm}" onchange="updateTier(${i}, 'height_cm', this.value)" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div>
+          <label for="tsponge-${i}" style="margin-top:2px;font-size:11px;">Massa Andar #${i + 1}</label>
+          <select id="tsponge-${i}" style="font-size:12px;padding:6px;" onchange="updateTierStr(${i}, 'sponge_key', this.value)">
+            <option value="" ${!t.sponge_key ? 'selected' : ''}>Padrão Geral</option>
+            <option value="red_velvet" ${t.sponge_key === 'red_velvet' ? 'selected' : ''}>Red Velvet</option>
+            <option value="pao_de_lo_tradicional" ${t.sponge_key === 'pao_de_lo_tradicional' ? 'selected' : ''}>Pão de Ló</option>
+            <option value="chocolate_belga_70" ${t.sponge_key === 'chocolate_belga_70' ? 'selected' : ''}>Choc. Belga 70%</option>
+            <option value="amendoa_sem_gluten" ${t.sponge_key === 'amendoa_sem_gluten' ? 'selected' : ''}>Amêndoa S/ Glúten</option>
+            <option value="nozes_vinho_porto" ${t.sponge_key === 'nozes_vinho_porto' ? 'selected' : ''}>Noz &amp; Porto</option>
+          </select>
+        </div>
+        <div>
+          <label for="tfill-${i}" style="margin-top:2px;font-size:11px;">Recheio Andar #${i + 1}</label>
+          <select id="tfill-${i}" style="font-size:12px;padding:6px;" onchange="updateTierStr(${i}, 'filling_key', this.value)">
+            <option value="" ${!t.filling_key ? 'selected' : ''}>Padrão Geral</option>
+            <option value="brigadeiro_gourmet" ${t.filling_key === 'brigadeiro_gourmet' ? 'selected' : ''}>Brigadeiro</option>
+            <option value="ovos_moles_doces_conventuais" ${t.filling_key === 'ovos_moles_doces_conventuais' ? 'selected' : ''}>Doce de Ovos</option>
+            <option value="curd_limao_frutos_vermelhos" ${t.filling_key === 'curd_limao_frutos_vermelhos' ? 'selected' : ''}>Lemon Curd</option>
+            <option value="praline_avela_crocante" ${t.filling_key === 'praline_avela_crocante' ? 'selected' : ''}>Praliné Avelã</option>
+            <option value="pistacio_tahini_crocante" ${t.filling_key === 'pistacio_tahini_crocante' ? 'selected' : ''}>Pistácio &amp; Sésamo</option>
+          </select>
+        </div>
       </div>
-      <span style="font-size:11px;color:#94a3b8;padding-bottom:10px;">#${i + 1}</span>
     `;
     host.appendChild(row);
   });
@@ -468,10 +515,15 @@ function updateTier(idx, field, val) {
   recalcCake();
 }
 
+function updateTierStr(idx, field, val) {
+  tiersState[idx][field] = String(val || '');
+  recalcCake();
+}
+
 function addTier() {
   if (tiersState.length >= 6) return;
   const topDiam = tiersState[tiersState.length - 1].diameter_cm;
-  tiersState.push({ diameter_cm: Math.max(10, topDiam - 5), height_cm: 12 });
+  tiersState.push({ diameter_cm: Math.max(10, topDiam - 5), height_cm: 12, sponge_key: '', filling_key: '' });
   renderTiersEditor();
   recalcCake();
 }
@@ -483,6 +535,12 @@ function removeTier() {
   recalcCake();
 }
 
+function toggleCutawaySlice() {
+  cutawaySlice = !cutawaySlice;
+  document.getElementById('btn-cutaway').textContent = cutawaySlice ? '🔪 Corte Transversal: ON' : '🔪 Corte Transversal: OFF';
+  if (lastDesignData) renderViewport(lastDesignData);
+}
+
 function toggleXrayDowels() {
   xrayDowels = !xrayDowels;
   document.getElementById('btn-xray').textContent = xrayDowels ? '🦴 Raio-X Estacas: ON' : '🦴 Raio-X Estacas: OFF';
@@ -490,9 +548,15 @@ function toggleXrayDowels() {
 }
 
 function collectCakePayload() {
+  const cleanTiers = tiersState.map(t => {
+    const item = { diameter_cm: t.diameter_cm, height_cm: t.height_cm };
+    if (t.sponge_key) item.sponge_key = t.sponge_key;
+    if (t.filling_key) item.filling_key = t.filling_key;
+    return item;
+  });
   return {
     shape: document.getElementById('shape-sel').value,
-    tiers: tiersState,
+    tiers: cleanTiers,
     sponge_key: document.getElementById('sponge-sel').value,
     filling_key: document.getElementById('filling-sel').value,
     frosting_key: document.getElementById('frosting-sel').value,
@@ -518,6 +582,16 @@ function renderIsometricSvgFallback(data) {
     const fillOp = xrayDowels ? '0.28' : '1';
     const rx = scene.shape === 'SQUARE' ? 3 : (scene.shape === 'HEXAGON' ? 6 : 12);
     shapesSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${rx}" fill="${t.base_color_hex}" fill-opacity="${fillOp}" stroke="${t.piping_accent_color_hex}" stroke-width="2.5"/>`;
+    if (cutawaySlice && Array.isArray(t.cutaway_layers)) {
+      let ly = y + 3;
+      const innerH = h - 6;
+      const totalCm = t.cutaway_layers.reduce((acc, c) => acc + c.height_cm, 0) || 1;
+      t.cutaway_layers.forEach(cl => {
+        const bandH = (cl.height_cm / totalCm) * innerH;
+        shapesSvg += `<rect x="220" y="${ly.toFixed(1)}" width="${(w / 2 - 4).toFixed(1)}" height="${bandH.toFixed(1)}" fill="${cl.color_hex}" opacity="0.95"/>`;
+        ly += bandH;
+      });
+    }
     if (scene.shape === 'HEART') {
       shapesSvg += `<text x="220" y="${(y + h / 2 + 5).toFixed(1)}" text-anchor="middle" fill="${t.piping_accent_color_hex}" font-size="14">♥</text>`;
     }
@@ -584,10 +658,11 @@ function renderViewport(data) {
     const sc = data.threejs_3d_scene;
     (sc.tiers || []).forEach(t => {
       const r = t.diameter_cm * 0.5;
+      const thetaLen = cutawaySlice ? Math.PI * 1.52 : Math.PI * 2;
       let geom;
-      if (sc.shape === 'SQUARE') {
+      if (sc.shape === 'SQUARE' && !cutawaySlice) {
         geom = new THREE.BoxGeometry(t.diameter_cm, t.height_cm, t.diameter_cm);
-      } else if (sc.shape === 'HEART') {
+      } else if (sc.shape === 'HEART' && !cutawaySlice) {
         const hs = new THREE.Shape();
         const s = r * 0.095;
         hs.moveTo(0, -5 * s);
@@ -600,7 +675,7 @@ function renderViewport(data) {
         geom.translate(0, t.height_cm / 2, 0);
       } else {
         const segs = sc.shape === 'HEXAGON' ? 6 : 64;
-        geom = new THREE.CylinderGeometry(r, r, t.height_cm, segs);
+        geom = new THREE.CylinderGeometry(r, r, t.height_cm, segs, 1, false, 0, thetaLen);
       }
       const mat = new THREE.MeshStandardMaterial({
         color: t.base_color_hex || '#FFFDF9',
@@ -611,6 +686,19 @@ function renderViewport(data) {
       const mesh = new THREE.Mesh(geom, mat);
       mesh.position.y = t.position_y_cm;
       group.add(mesh);
+
+      if (cutawaySlice && Array.isArray(t.cutaway_layers)) {
+        let localY = t.position_y_cm - (t.height_cm / 2) + 0.25;
+        t.cutaway_layers.forEach(cl => {
+          const innerDisc = new THREE.Mesh(
+            new THREE.CylinderGeometry(r * 0.94, r * 0.94, cl.height_cm * 0.95, 48),
+            new THREE.MeshStandardMaterial({ color: cl.color_hex, roughness: 0.7 })
+          );
+          innerDisc.position.y = localY + (cl.height_cm / 2);
+          group.add(innerDisc);
+          localY += cl.height_cm;
+        });
+      }
 
       const ring = new THREE.Mesh(
         new THREE.TorusGeometry(r * 0.99, 0.32, 12, sc.shape === 'HEXAGON' ? 6 : 48),
@@ -666,11 +754,12 @@ async function recalcCake() {
     const p = data.pricing_and_at_invoicing;
     const st = data.portions_and_structure;
     const al = data.allergens_eu_1169_2011;
+    const nut = data.nutritional_declaration_eu_1169;
     const bom = data.recipe_bom_grams;
     const cold = data.logistics_and_haccp_cold_chain;
 
     document.getElementById('hero-price').textContent = '€' + p.recommended_client_total_gross_eur.toFixed(2);
-    document.getElementById('hero-atcud').textContent = `Sinal 50%: €${p.deposit_50pct_atcud_invoice_eur.toFixed(2)} · IVA ${p.iva_rate_pct}% · ${p.atcud_preview}`;
+    document.getElementById('hero-atcud').textContent = `Sinal 50%: €${p.deposit_50pct_atcud_invoice_eur.toFixed(2)} · MB ${p.multibanco_entity}/${p.multibanco_ref_50pct} · ${p.atcud_preview}`;
     document.getElementById('kpi-portions').textContent = `${st.wedding_portions_2_5x5cm} / ${st.party_portions_5x5cm}`;
     document.getElementById('kpi-weight').textContent = `${st.total_assembled_weight_kg} kg`;
     document.getElementById('kpi-box').textContent = cold.required_transport_box_cm;
@@ -687,6 +776,21 @@ async function recalcCake() {
     const allergenPills = (al.mandatory_client_label || []).map(a =>
       `<span class="badge badge-allergen">Anexo II #${a.anexo_ii_num}: ${escapeHtml(a.code)}</span>`
     ).join('');
+
+    const nutHtml = nut ? `
+      <div class="tile">
+        <div style="font-size:12px;font-weight:600;color:#e2e8f0;">Declaração Nutricional Obrigatória (${escapeHtml(nut.regulation)})</div>
+        <table class="bom-table mobile-card-table">
+          <thead><tr><th>Nutriente</th><th style="text-align:right;">Por 100 g</th><th style="text-align:right;">${escapeHtml(nut.portion_label_pt)} (${nut.portion_weight_g} g)</th></tr></thead>
+          <tbody>
+            <tr><td>Energia</td><td style="text-align:right;font-weight:600;">${nut.per_100g.energy_kj} kJ / ${nut.per_100g.energy_kcal} kcal</td><td style="text-align:right;">${nut.per_portion.energy_kj} kJ / ${nut.per_portion.energy_kcal} kcal</td></tr>
+            <tr><td>Lípidos (dos quais saturados)</td><td style="text-align:right;">${nut.per_100g.fat_g} g (${nut.per_100g.saturates_g} g)</td><td style="text-align:right;">${nut.per_portion.fat_g} g (${nut.per_portion.saturates_g} g)</td></tr>
+            <tr><td>Hidratos de Carbono (açúcares)</td><td style="text-align:right;">${nut.per_100g.carbs_g} g (${nut.per_100g.sugars_g} g)</td><td style="text-align:right;">${nut.per_portion.carbs_g} g (${nut.per_portion.sugars_g} g)</td></tr>
+            <tr><td>Proteínas · Sal</td><td style="text-align:right;">${nut.per_100g.protein_g} g · ${nut.per_100g.salt_g} g</td><td style="text-align:right;">${nut.per_portion.protein_g} g · ${nut.per_portion.salt_g} g</td></tr>
+          </tbody>
+        </table>
+      </div>
+    ` : '';
 
     out.innerHTML = `
       <div class="tile">
@@ -705,6 +809,7 @@ async function recalcCake() {
           </tbody>
         </table>
       </div>
+      ${nutHtml}
       <div class="tile">
         <div style="font-size:12px;font-weight:600;color:#e2e8f0;">Planta de Estacas Internas &amp; Transporte Refrigerado</div>
         <ul style="margin:6px 0 0;padding-left:18px;font-size:12px;color:#cbd5e1;">
@@ -713,7 +818,7 @@ async function recalcCake() {
         </ul>
       </div>
       <div class="tile">
-        <div style="font-size:12px;font-weight:600;color:#e2e8f0;">Especificação Studio Render (ControlNet Depth ${data.comfyui_controlnet_render.controlnet_depth_strength})</div>
+        <div style="font-size:12px;font-weight:600;color:#e2e8f0;">Especificação Studio Render (ControlNet Depth ${data.comfyui_controlnet_render.controlnet_depth_strength} · ${escapeHtml(data.comfyui_controlnet_render.z_depth_cas_uri)})</div>
         <p style="margin:6px 0 0;font-size:12px;color:#94a3b8;max-width:68ch;line-height:1.5;">${escapeHtml(data.comfyui_controlnet_render.positive_prompt)}</p>
       </div>
     `;
@@ -727,6 +832,109 @@ async function recalcCake() {
   } finally {
     skel.classList.add('hidden');
     btn.disabled = false;
+  }
+}
+
+async function runSemanticRecipeSearch() {
+  const q = document.getElementById('recipe-search-inp').value || '';
+  const box = document.getElementById('recipe-search-results');
+  box.textContent = 'A pesquisar combinações seguras (Zero ChromaDB · Reg. UE 1169/2011)...';
+  try {
+    const r = await fetch('/api/bake/search-recipes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q, limit: 3 })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Falha na pesquisa');
+    if (!d.matches || !d.matches.length) {
+      box.textContent = 'Nenhuma receita cumpre todas as restrições indicadas.';
+      return;
+    }
+    window.__bakeSearchMatches = d.matches;
+    box.innerHTML = d.matches.map((m, idx) => `
+      <div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;gap:6px;">
+        <span><strong>${escapeHtml(m.sponge_name)}</strong> + ${escapeHtml(m.filling_name)} (${m.wedding_portions} fatias · €${m.total_gross_eur.toFixed(2)})</span>
+        <button type="button" class="secondary" style="padding:4px 8px;font-size:11px;" onclick="applySearchedDesign(${idx})">Aplicar</button>
+      </div>
+    `).join('');
+  } catch (e) {
+    box.textContent = 'Erro na pesquisa: ' + e.message;
+  }
+}
+
+function applySearchedDesign(idx) {
+  const m = (window.__bakeSearchMatches || [])[idx];
+  if (!m) return;
+  const dp = m.design_payload;
+  document.getElementById('shape-sel').value = dp.shape;
+  document.getElementById('sponge-sel').value = dp.sponge_key;
+  document.getElementById('filling-sel').value = dp.filling_key;
+  document.getElementById('frosting-sel').value = dp.frosting_key;
+  tiersState = dp.tiers.map(t => ({ diameter_cm: t.diameter_cm, height_cm: t.height_cm, sponge_key: '', filling_key: '' }));
+  renderTiersEditor();
+  recalcCake();
+}
+
+async function enqueueAsyncComfyRender() {
+  const fb = document.getElementById('bridge-feedback');
+  const cancelBtn = document.getElementById('btn-render-cancel');
+  fb.style.color = '#7dd3fc';
+  fb.textContent = 'A agendar tarefa assíncrona ControlNet Depth (RULE-10)...';
+  try {
+    const payload = Object.assign({}, collectCakePayload(), { simulate_delay_ms: 180 });
+    const r = await fetch('/api/bake/render-jobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Falha ao criar render job');
+    activeRenderJobId = d.job.job_id;
+    cancelBtn.classList.remove('hidden');
+    for (let i = 0; i < 15; i++) {
+      await new Promise(res => setTimeout(res, 120));
+      const jr = await fetch('/api/bake/render-jobs/' + encodeURIComponent(activeRenderJobId));
+      const jd = await jr.json();
+      if (!jd.ok) break;
+      fb.textContent = `[${jd.job.progress_pct}%] ${jd.job.stage_pt}`;
+      if (jd.job.status === 'COMPLETED' || jd.job.status === 'ABORTED') {
+        fb.style.color = jd.job.status === 'COMPLETED' ? '#6ee7b7' : '#fda4af';
+        break;
+      }
+    }
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro Render Job: ' + e.message;
+  } finally {
+    cancelBtn.classList.add('hidden');
+  }
+}
+
+async function cancelActiveRenderJob() {
+  if (!activeRenderJobId) return;
+  await fetch('/api/bake/render-jobs/' + encodeURIComponent(activeRenderJobId) + '/cancel', { method: 'POST' });
+}
+
+async function generateDepositMultibanco() {
+  const fb = document.getElementById('bridge-feedback');
+  fb.style.color = '#fde047';
+  fb.textContent = 'A emitir Referência Multibanco Sinal 50% + Fatura SAF-T (PT) v1.04_01...';
+  try {
+    const payload = Object.assign({}, collectCakePayload(), { payment_method: 'MULTIBANCO' });
+    const [rDep, rSaft] = await Promise.all([
+      fetch('/api/bake/deposit-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }),
+      fetch('/api/bake/saft-pt-preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    ]);
+    const dep = await rDep.json();
+    const saft = await rSaft.json();
+    if (!dep.ok || !saft.ok) throw new Error(dep.error || saft.error || 'Erro fiscal');
+    fb.style.color = '#6ee7b7';
+    fb.textContent = `✓ Sinal 50% (€${dep.payment.deposit_amount_eur.toFixed(2)}) · Entidade ${dep.payment.multibanco_entity} · Ref ${dep.payment.multibanco_reference} · SAF-T ${saft.invoice_no} (${saft.atcud})`;
+    announce(fb.textContent);
+  } catch (e) {
+    fb.style.color = '#fda4af';
+    fb.textContent = 'Erro fiscal: ' + e.message;
   }
 }
 
@@ -1056,6 +1264,51 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
     def reserve_custom_cake_in_pastelaria(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
         res = engine.dispatch_custom_cake_to_pastelaria(payload)
         return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/deposit-checkout")
+    def create_deposit_checkout(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.create_deposit_payment_intent(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/deposit-confirm")
+    def confirm_deposit_checkout(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.confirm_deposit_payment(
+            payment_id=str((payload or {}).get("payment_id") or ""),
+            transaction_ref=str((payload or {}).get("transaction_ref") or "SIBS-ACK-OK"),
+        )
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/saft-pt-preview")
+    def export_saft_pt_preview(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.export_saft_pt_invoice_xml(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.post("/render-jobs")
+    def submit_async_render_job(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        res = engine.submit_comfyui_render_job(payload)
+        return JSONResponse(status_code=200 if res.get("ok") else 400, content=res)
+
+    @router.get("/render-jobs/{job_id}")
+    def get_async_render_job(job_id: str) -> JSONResponse:
+        res = engine.get_comfyui_render_job(job_id)
+        return JSONResponse(status_code=200 if res.get("ok") else 404, content=res)
+
+    @router.post("/render-jobs/{job_id}/cancel")
+    def cancel_async_render_job(job_id: str) -> JSONResponse:
+        res = engine.cancel_comfyui_render_job(job_id)
+        return JSONResponse(status_code=200 if res.get("ok") else 404, content=res)
+
+    @router.post("/search-recipes")
+    def search_safe_recipes(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
+        data = payload or {}
+        res = engine.search_safe_cake_configurations(
+            query=str(data.get("query") or ""),
+            exclude_allergens=data.get("exclude_allergens"),
+            min_portions=int(data.get("min_portions", 30)),
+            ambient_temp_c=float(data.get("ambient_temp_c", 21.0)),
+            limit=int(data.get("limit", 5)),
+        )
+        return JSONResponse(status_code=200, content=res)
 
     @router.post("/scrub")
     def scrub_text(payload: Dict[str, Any] = Body(default={})) -> Dict[str, Any]:

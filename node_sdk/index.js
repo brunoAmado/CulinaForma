@@ -44,3 +44,48 @@ export async function reserveCustomCakeInPastelaria(baseUrl = "http://127.0.0.1:
   });
   return res.json();
 }
+
+export async function createDepositCheckout(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/deposit-checkout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function confirmDepositPayment(baseUrl = "http://127.0.0.1:4030", { payment_id, transaction_ref = "SIBS-ACK-OK" } = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/deposit-confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ payment_id, transaction_ref }),
+  });
+  return res.json();
+}
+
+export async function exportSaftPtPreview(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/saft-pt-preview`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function submitAsyncComfyRenderJob(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/render-jobs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+export async function searchSafeCakeRecipes(baseUrl = "http://127.0.0.1:4030", payload = {}) {
+  const res = await fetch(`${baseUrl}/api/bake/search-recipes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}

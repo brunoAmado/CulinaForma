@@ -227,6 +227,120 @@ class TestInsightBake(unittest.TestCase):
             )
             self.assertEqual(r_bad_pdf.status_code, 400)
 
+    def test_07_per_tier_flavors_cutaway_and_eu1169_nutrition(self) -> None:
+        res = self.client.post(
+            "/api/bake/execute",
+            json={
+                "shape": "ROUND",
+                "tiers": [
+                    {"diameter_cm": 28.0, "height_cm": 12.0, "sponge_key": "chocolate_belga_70", "filling_key": "brigadeiro_gourmet"},
+                    {"diameter_cm": 20.0, "height_cm": 12.0, "sponge_key": "amendoa_sem_gluten", "filling_key": "pistacio_tahini_crocante"},
+                ],
+                "frosting_key": "swiss_meringue_buttercream",
+            },
+        )
+        self.assertEqual(res.status_code, 200)
+        body = res.json()
+        self.assertTrue(body["ok"])
+        self.assertTrue(body["threejs_3d_scene"]["mixed_tier_flavors"])
+        self.assertTrue(body["threejs_3d_scene"]["cutaway_slice_ready"])
+        tiers = body["threejs_3d_scene"]["tiers"]
+        self.assertEqual(len(tiers[0]["cutaway_layers"]), 5)
+        self.assertEqual(len(body["recipe_bom_grams"]["per_tier_flavors"]), 2)
+        alg = set(body["allergens_eu_1169_2011"]["allergen_codes"])
+        self.assertTrue({"GLUTEN", "NUTS", "SESAME", "MILK", "EGGS"}.issubset(alg))
+        nutr = body["nutritional_declaration_eu_1169"]
+        self.assertGreater(nutr["per_100g"]["energy_kcal"], 200.0)
+        self.assertGreater(nutr["per_portion"]["energy_kj"], nutr["per_portion"]["energy_kcal"])
+
+    def test_08_mbway_multibanco_deposit_and_saft_pt_xml(self) -> None:
+        # 1. Unhappy path: invalid MB WAY phone rejected
+        bad_mbw = self.client.post(
+            "/api/bake/deposit-checkout",
+            json={"payment_method": "MBWAY", "mbway_phone": "12345"},
+        )
+        self.assertEqual(bad_mbw.status_code, 400)
+
+        # 2. Valid MB WAY & Multibanco Modulo-97 + settlement + double-settle unhappy path
+        ok_mbw = self.client.post(
+            "/api/bake/deposit-checkout",
+            json={"payment_method": "MBWAY", "mbway_phone": "+351 912345678"},
+        )
+        self.assertEqual(ok_mbw.status_code, 200)
+        self.assertIn("***", ok_mbw.json()["payment"]["mbway_phone_masked"])
+
+        ok_mb = self.client.post("/api/bake/deposit-checkout", json={"payment_method": "MULTIBANCO"})
+        self.assertEqual(ok_mb.status_code, 200)
+        pay = ok_mb.json()["payment"]
+        self.assertEqual(pay["multibanco_entity"], "21403")
+        self.assertRegex(pay["multibanco_reference"], r"^\d{3} \d{3} \d{3}$")
+        pid = pay["payment_id"]
+
+        conf1 = self.client.post("/api/bake/deposit-confirm", json={"payment_id": pid, "transaction_ref": "SIBS-7788"})
+        self.assertEqual(conf1.status_code, 200)
+        self.assertEqual(conf1.json()["payment"]["status"], "SETTLED_50PCT_DEPOSIT")
+
+        conf2 = self.client.post("/api/bake/deposit-confirm", json={"payment_id": pid})
+        self.assertEqual(conf2.status_code, 400)
+
+        # 3. SAF-T (PT) v1.04_01 XML preview + invalid NIF unhappy path
+        bad_saft = self.client.post("/api/bake/saft-pt-preview", json={"client_nif": "501964840"})
+        self.assertEqual(bad_saft.status_code, 400)
+
+        ok_saft = self.client.post(
+            "/api/bake/saft-pt-preview",
+            json={"client_nif": "501964843", "consumption_mode": "TAKEAWAY_23"},
+        )
+        self.assertEqual(ok_saft.status_code, 200)
+        saft = ok_saft.json()
+        self.assertEqual(saft["saft_pt_version"], "1.04_01")
+        self.assertIn("urn:OECD:StandardAuditFile-Tax:PT_1.04_01", saft["xml"])
+        self.assertIn("<TaxPercentage>23.00</TaxPercentage>", saft["xml"])
+
+    def test_09_async_comfyui_render_queue_abort_and_semantic_recipe_search(self) -> None:
+        import time
+
+        # 1. Unhappy path: non-CAS URI rejected
+        bad_uri = self.client.post(
+            "/api/bake/render-jobs",
+            json={"z_depth_cas_uri": "http://example.com/depth.png"},
+        )
+        self.assertEqual(bad_uri.status_code, 400)
+
+        # 2. Async render job completes with CAS URI
+        r_job = self.client.post("/api/bake/render-jobs", json={"simulate_delay_ms": 15})
+        self.assertEqual(r_job.status_code, 200)
+        jid = r_job.json()["job"]["job_id"]
+        deadline = time.time() + 4.0
+        cur = r_job.json()["job"]
+        while time.time() < deadline:
+            cur = self.client.get(f"/api/bake/render-jobs/{jid}").json()["job"]
+            if cur["status"] in ("COMPLETED", "ABORTED"):
+                break
+            time.sleep(0.03)
+        self.assertEqual(cur["status"], "COMPLETED")
+        self.assertTrue(cur["output_render_cas_uri"].startswith("cas://insight-bake/renders/"))
+
+        # 3. EU AI Act Art. 14 abortable render job
+        r_slow = self.client.post("/api/bake/render-jobs", json={"simulate_delay_ms": 400})
+        slow_id = r_slow.json()["job"]["job_id"]
+        r_cancel = self.client.post(f"/api/bake/render-jobs/{slow_id}/cancel")
+        self.assertEqual(r_cancel.status_code, 200)
+        self.assertEqual(r_cancel.json()["job"]["status"], "ABORTED")
+
+        # 4. Semantic & allergen/thermal constraint search (Zero ChromaDB RULE-16)
+        r_search = self.client.post(
+            "/api/bake/search-recipes",
+            json={"query": "casamento sem glúten verão 27C 50 pessoas"},
+        )
+        self.assertEqual(r_search.status_code, 200)
+        sdata = r_search.json()
+        self.assertGreaterEqual(sdata["total_matches"], 1)
+        for m in sdata["matches"]:
+            self.assertNotIn("GLUTEN", m["allergen_codes"])
+            self.assertGreaterEqual(m["max_safe_ambient_temp_c"], 27.0)
+            self.assertGreaterEqual(m["wedding_portions"], 50)
+
 
 if __name__ == "__main__":
     unittest.main()

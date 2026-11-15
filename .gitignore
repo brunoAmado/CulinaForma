@@ -12,3 +12,4 @@ target/
 rust_core/target/
 *.bak
 pipeline_data/fichas_tecnicas_asae/*.pdf
+pipeline_data/bake_unified_ledger.json
