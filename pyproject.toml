@@ -3,9 +3,9 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "insight-bake"
-version = "1.8.0"
-description = "SetMiddle Insight™ · Bake (:4030) — Interactive Three.js 3D Multi-Tier Cake Configurator, Arrhenius Q10 Sourdough Lab, Full 14 EU 1169/2011 Allergens, Locale-Ready Fiscal Engine, Printable ASAE Fichas & InsightFresco (:4029 /api/fresco) Bridge"
+name = "culina-forma"
+version = "1.9.0"
+description = "CulinaForma™ (:4030 /api/culinaforma) — Interactive Three.js 3D Food & Multi-Tier Cake Design Studio, Arrhenius Q10 Sourdough Lab, Full 14 EU 1169/2011 Allergens, Locale-Ready Fiscal Engine, Printable ASAE Fichas & InsightFresco (:4029 /api/fresco) Bridge"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -15,4 +15,10 @@ dependencies = [
 ]
 
 [project.scripts]
+culina-forma = "culina_forma.server:main"
+culina-forma-server = "culina_forma.server:main"
 insight-bake = "insight_bake.server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["culina_forma*", "insight_bake*"]

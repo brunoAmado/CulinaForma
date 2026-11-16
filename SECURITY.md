@@ -1,4 +1,4 @@
-# Security & Statutory Governance Policy — `SetMiddle Insight™ · Bake` (`InsightBake`)
+# Security & Statutory Governance Policy — `CulinaForma™` (`CulinaForma` · legacy alias `InsightBake`)
 
 ## Statutory & Cybersecurity Enforcement (`RULE-11`)
 - **CNPD / GDPR & Lei n.º 58/2019**: Automatic scrubbing of Portuguese NIF (`9` digits), phone numbers, IBAN (`PT50...`), and BYOK secrets via `scrub_pt_eu_pii_and_byok_secrets` + Modulo-11 NIF verification without plaintext PII persistence.

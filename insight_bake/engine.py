@@ -1,11 +1,11 @@
 """
-`SetMiddle Insight™ · Bake` (`InsightBake` · `insight_bake.engine`).
+`CulinaForma™` (`CulinaForma` · `culina_forma.engine` / backward-compatible `insight_bake.engine`).
 Internal Engine: `InsightCore` (`insightCoreIO` + `insightCoreAI`).
 
 Combines:
-1. **Parametric `Three.js` 3D Cake Scene Graph & Structural Engineering**:
+1. **Parametric `Three.js` 3D Food & Cake Scene Graph & Structural Engineering**:
    - Multi-tier (`1..6` tiers) geometry (`ROUND`, `SQUARE`, `HEART`, `HEXAGON`), exact Wedding (`2.5cm x 5cm`) vs. Party (`5cm x 5cm`) slice calculator, center-of-mass slenderness verification (`H / D_base <= 2.2`), total mass (`kg`), and **Internal Dowel Rod + Center Skewer Structural Blueprint** so stacked tiers never collapse.
-2. **Exact Ingredient BOM Scaling, Full 14 EU Reg. 1169/2011 Allergens & Portuguese AT (`ATCUD` / IVA 13% vs. 23%) Pricing**:
+2. **Exact Ingredient BOM Scaling, Full 14 EU Reg. 1169/2011 Allergens & Multi-Locale (`ATCUD` / IVA 13% vs. 23%) Pricing**:
    - Scales flour, sugar, eggs, butter, chocolate, filling, and frosting in grams (`g`) from exact 3D tier volumes (`cm³`), computes all 14 statutory Annex II allergens + Portuguese counter signage (`DL n.º 26/2016`), validates Portuguese NIF (`Modulo-11`), and distinguishes `13%` (*Restauração*) vs. `23%` (*Take-Away / Entrega*) IVA with 50% `ATCUD` deposit preview.
 3. **Arrhenius Sourdough Fermentation ($Q_{10}$ Kinetics), Baker's Percentage & Desired Dough Temperature (`DDT`)**:
    - Models temperature-dependent bulk fermentation and `+4 °C` cold-retard kinetics, exact Baker's % gram scaling, psychrometric hydration adjustments, and bi-temporal ASAE HACCP lot traceability.
@@ -79,7 +79,7 @@ from insight_fresco.locale_fiscal_engine import (
 ASAE_HACCP_BITEMPORAL_LOT_AND_COST_TABLE: List[Dict[str, Any]] = [
     {
         "record_id": "BAKE-LOT-2025-H1",
-        "service_domain": "InsightBake",
+        "service_domain": "CulinaForma",
         "country_code": "PT",
         "title": "Lote ASAE HACCP 2025 & Custos Matérias-Primas 2025 (Chocolate Belga €14.50/kg, Manteiga €7.80/kg)",
         "effective_from": "2025-01-01",
@@ -90,7 +90,7 @@ ASAE_HACCP_BITEMPORAL_LOT_AND_COST_TABLE: List[Dict[str, Any]] = [
     },
     {
         "record_id": "BAKE-LOT-2026-ACTIVE",
-        "service_domain": "InsightBake",
+        "service_domain": "CulinaForma",
         "country_code": "PT",
         "title": "Lote ASAE HACCP 2026 & Custos Matérias-Primas 2026 (Chocolate Belga €16.80/kg, Manteiga €8.90/kg)",
         "effective_from": "2026-01-01",
@@ -436,7 +436,7 @@ def compute_arrhenius_fermentation_and_bakers_pct(
 
     return {
         "ok": True,
-        "member": "InsightBake",
+        "member": "CulinaForma",
         "mode": "arrhenius_fermentation_and_bakers_pct",
         "bakers_percentage_bom_grams": {
             "flour_100pct_g": round(flour_g, 1),
@@ -856,7 +856,7 @@ def design_3d_cake_and_production_sheet(
         "engine": "ComfyUI Flux.1-dev / SDXL + ControlNet Depth & Canny Lock",
         "controlnet_depth_strength": 0.88,
         "controlnet_canny_strength": 0.65,
-        "z_depth_cas_uri": f"cas://insight-bake/zdepth/{design_sha256[:16]}.exr",
+        "z_depth_cas_uri": f"cas://culina-forma/zdepth/{design_sha256[:16]}.exr",
         "anti_hallucination_geometry_lock": f"Locked to exact {len(tier_specs)}-tier Three.js Z-depth map ({total_wedding_portions} portions, {round(current_y_cm, 1)}cm total height)",
         "positive_prompt": (
             f"Commercial studio pastry photography of a {len(tier_specs)}-tier {shape_clean.lower()} celebration cake, "
@@ -874,8 +874,8 @@ def design_3d_cake_and_production_sheet(
 
     return {
         "ok": True,
-        "member": "InsightBake",
-        "client_brand": "SetMiddle Insight™ · Bake (Cake & Pastry 3D Studio)",
+        "member": "CulinaForma",
+        "client_brand": "CulinaForma™ (3D Food Design & Formulation Studio)",
         "internal_engine": "InsightCore",
         "design_sha256": design_sha256,
         "threejs_3d_scene": {
@@ -950,7 +950,7 @@ def design_3d_cake_and_production_sheet(
             "powered_by": [
                 "SetMiddle Insight™ · Fleet (:4026)",
                 "SetMiddle Insight™ · Sensor (:4025)",
-                "SetMiddle Insight™ · Pastelaria (:4029 — Reserva 24h & Dossier ASAE)",
+                "SetMiddle Insight™ · Fresco (:4029 — Reserva 24h & Dossier ASAE)",
                 "SetMiddle Insight™ · Timeline (Bi-Temporal ASAE Lot & Cost Traceability)",
             ],
             "required_transport_box_cm": f"{box_width_cm} x {box_width_cm} x {box_height_cm} cm",
@@ -984,7 +984,7 @@ from insight_fresco.asae_ficha_tecnica import (
 
 def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnica:
     """
-    Converts any `InsightBake` 3D Multi-Tier Cake Design (`design_3d_cake_and_production_sheet`)
+    Converts any `CulinaForma` 3D Multi-Tier Cake Design (`design_3d_cake_and_production_sheet`)
     OR Arrhenius Q10 Sourdough Batch (`compute_arrhenius_fermentation_and_bakers_pct`)
     into a 100% validated `MOD-FT-ASAE-DGAV-ACIP-v2.0` `ASAEFichaTecnica`.
     """
@@ -1002,7 +1002,7 @@ def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnic
             ficha_id=ficha_id,
             sku=f"pao_levain_{f_hash.lower()}",
             product_name=f"Pão de Fermentação Natural (Levain {b['starter_pct']}% · Hidratação {b['hydration_pct']}%)",
-            category="Panificação Artesanal de Longa Fermentação (Arrhenius Q10 · InsightBake)",
+            category="Panificação Artesanal de Longa Fermentação (Arrhenius Q10 · CulinaForma)",
             batch_yield_units=loaves,
             unit_raw_weight_g=unit_raw,
             unit_cooked_weight_g=unit_cooked,
@@ -1093,7 +1093,7 @@ def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnic
             suggested_unit_gross_price_eur=4.20,
             iva_rate_pct=6.0,
             chronicle_book_id=f"FERM-{f_hash}",
-            source_creator="SetMiddle Insight™ · Bake Arrhenius Lab",
+            source_creator="CulinaForma™ Arrhenius Lab",
         )
 
     scene = result_res["threejs_3d_scene"]
@@ -1172,7 +1172,7 @@ def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnic
         ficha_id=ficha_id,
         sku=sku,
         product_name=f"Bolo Celebrativo 3D {scene['tier_count']} Andares ({scene['shape']}) — \"{scene['topper_text']}\"",
-        category="Cake Design Multi-Andar por Encomenda (SetMiddle Insight™ · Bake)",
+        category="Cake Design Multi-Andar por Encomenda (CulinaForma™)",
         batch_yield_units=1,
         unit_raw_weight_g=raw_g,
         unit_cooked_weight_g=cooked_g,
@@ -1202,7 +1202,7 @@ def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnic
                 "critical_limit": "Temperatura no centro térmico de cada disco >= +82,0°C.",
                 "monitoring_method": "Sonda de penetração calibrada à saída do forno.",
                 "corrective_action": "Prolongar cozedura em incrementos de 4 min até atingir >= +82,0°C.",
-                "verification_record": "Registo de Fornadas Cake Studio (`InsightBake`).",
+                "verification_record": "Registo de Fornadas 3D Food Studio (`CulinaForma`).",
             },
             {
                 "pcc_id": "PCC-2",
@@ -1234,8 +1234,11 @@ def build_bake_asae_ficha_tecnica(result_res: Dict[str, Any]) -> ASAEFichaTecnic
         suggested_unit_gross_price_eur=float(pricing["recommended_client_total_gross_eur"]),
         iva_rate_pct=float(pricing["iva_rate_pct"]),
         chronicle_book_id=f"BAKE-{design_hash}",
-        source_creator="SetMiddle Insight™ · Bake 3D Studio",
+        source_creator="CulinaForma™ 3D Food Design Studio",
     )
+
+
+build_culina_forma_asae_ficha_tecnica = build_bake_asae_ficha_tecnica
 
 
 def render_cake_asae_ficha_html(
@@ -1251,7 +1254,7 @@ def render_cake_asae_ficha_html(
     return render_printable_asae_ficha_html(
         ficha,
         establishment=establishment,
-        pdf_download_url=pdf_download_url or "/api/bake/ficha-asae/pdf",
+        pdf_download_url=pdf_download_url or "/api/culinaforma/ficha-asae/pdf",
     )
 
 
@@ -1261,18 +1264,18 @@ def render_cake_asae_ficha_pdf_bytes(
 ) -> bytes:
     """
     Renders a native Vector A4 Portrait PDF (`MOD-FT-ASAE-DGAV-ACIP-v2.0`) for any 3D Cake
-    or Arrhenius Q10 Sourdough Batch in `InsightBake`.
+    or Arrhenius Q10 Sourdough Batch in `CulinaForma`.
     """
     ficha = build_bake_asae_ficha_tecnica(design_res)
     return render_asae_ficha_pdf_bytes(ficha, establishment=establishment)
 
 
-class InsightBakeEngine:
-    MEMBER_ID = "InsightBake"
-    CLIENT_BRAND = "SetMiddle Insight™ · Bake"
+class CulinaFormaEngine:
+    MEMBER_ID = "CulinaForma"
+    CLIENT_BRAND = "CulinaForma"
     INTERNAL_ENGINE = "InsightCore"
     DEFAULT_PORT = 4030
-    API_PREFIX = "/api/bake"
+    API_PREFIX = "/api/culinaforma"
 
     def __init__(self, storage_dir: Optional[Path] = None) -> None:
         base_dir = Path(storage_dir) if storage_dir else (Path(__file__).resolve().parent.parent / "pipeline_data")
@@ -1377,7 +1380,7 @@ class InsightBakeEngine:
         self.asae_fichas_dir.mkdir(parents=True, exist_ok=True)
         for ficha in self.registered_fichas.values():
             (self.asae_fichas_dir / f"{ficha.ficha_id}.html").write_text(
-                render_printable_asae_ficha_html(ficha, establishment=prof, pdf_download_url="/api/bake/ficha-asae/pdf"),
+                render_printable_asae_ficha_html(ficha, establishment=prof, pdf_download_url="/api/culinaforma/ficha-asae/pdf"),
                 encoding="utf-8",
             )
             (self.asae_fichas_dir / f"{ficha.ficha_id}.pdf").write_bytes(
@@ -1392,7 +1395,7 @@ class InsightBakeEngine:
             "product": self.CLIENT_BRAND,
             "member_id": self.MEMBER_ID,
             "internal_engine": self.INTERNAL_ENGINE,
-            "version": "1.8.0",
+            "version": "1.9.0",
             "port": self.DEFAULT_PORT,
             "api_prefix": self.API_PREFIX,
             "asae_normative_template": ASAE_NORMATIVE_TEMPLATE_BASIS["template_code"],
@@ -1572,8 +1575,8 @@ class InsightBakeEngine:
     <FiscalYear>{now_dt.year}</FiscalYear>
     <CurrencyCode>{html.escape(currency_code)}</CurrencyCode>
     <DateCreated>{date_str}</DateCreated>
-    <ProductID>SetMiddle InsightBake/InsightCore</ProductID>
-    <ProductVersion>1.7.0</ProductVersion>
+    <ProductID>SetMiddle CulinaForma/InsightCore</ProductID>
+    <ProductVersion>1.9.0</ProductVersion>
   </Header>
   <MasterFiles>
     <Customer>
@@ -1596,14 +1599,14 @@ class InsightBakeEngine:
         <DocumentStatus>
           <InvoiceStatus>N</InvoiceStatus>
           <InvoiceStatusDate>{sys_entry}</InvoiceStatusDate>
-          <SourceID>INSIGHTBAKE</SourceID>
+          <SourceID>CULINAFORMA</SourceID>
           <SourceBilling>P</SourceBilling>
         </DocumentStatus>
         <Hash>{doc_hash}</Hash>
         <HashControl>1</HashControl>
         <InvoiceDate>{date_str}</InvoiceDate>
         <InvoiceType>FT</InvoiceType>
-        <SourceID>INSIGHTBAKE</SourceID>
+        <SourceID>CULINAFORMA</SourceID>
         <SystemEntryDate>{sys_entry}</SystemEntryDate>
         <CustomerID>CLI-{customer_tax_id[:4]}</CustomerID>
         <Line>
@@ -1652,7 +1655,7 @@ class InsightBakeEngine:
     def submit_comfyui_render_job(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """
         Non-blocking asynchronous `ComfyUI` ControlNet Depth/Canny render job queue (`RULE-10` & `EU AI Act Art. 14`).
-        Enforces `CAS URI` storage (`cas://insight-bake/...`) and rejects raw inline base64 binary blobs.
+        Enforces `CAS URI` storage (`cas://culina-forma/...`) and rejects raw inline base64 binary blobs.
         """
         ok_storage, violations = assert_no_binary_blob_in_db_row(payload or {})
         if not ok_storage:
@@ -1669,7 +1672,7 @@ class InsightBakeEngine:
         resolved_z_uri = z_uri or design["comfyui_controlnet_render"]["z_depth_cas_uri"]
         job_id = f"RND-BAKE-{uuid.uuid4().hex[:8].upper()}"
         render_hash = hashlib.sha256(f"{job_id}:{design['design_sha256']}".encode("utf-8")).hexdigest()
-        output_cas_uri = f"cas://insight-bake/renders/{render_hash[:24]}.webp"
+        output_cas_uri = f"cas://culina-forma/renders/{render_hash[:24]}.webp"
         simulate_delay_ms = max(0, min(2000, int((payload or {}).get("simulate_delay_ms", 40))))
         now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -1883,7 +1886,7 @@ class InsightBakeEngine:
         html_str = render_printable_asae_ficha_html(
             ficha,
             establishment=est,
-            pdf_download_url="/api/bake/ficha-asae/pdf",
+            pdf_download_url="/api/culinaforma/ficha-asae/pdf",
         )
         pdf_bytes = render_asae_ficha_pdf_bytes(ficha, establishment=est)
         html_path = self.asae_fichas_dir / f"{ficha.ficha_id}.html"
@@ -1902,7 +1905,7 @@ class InsightBakeEngine:
 
     def render_counter_allergen_matrix_pdf(self) -> bytes:
         """
-        Generates the A4 Landscape Counter Allergen Matrix PDF (`DL n.º 26/2016`) for `InsightBake`'s
+        Generates the A4 Landscape Counter Allergen Matrix PDF (`DL n.º 26/2016`) for `CulinaForma`'s
         signature 3D Cake & Sourdough lines plus all custom cakes designed in the active studio.
         """
         est = load_establishment_profile(self.establishment_profile_path)
@@ -2211,7 +2214,7 @@ class InsightBakeEngine:
         pricing = design["pricing_and_at_invoicing"]
         quote_rec = {
             "quote_token": quote_token,
-            "share_path": f"/api/bake/quotes/{quote_token}",
+            "share_path": f"/api/culinaforma/quotes/{quote_token}",
             "status": "PENDING_CLIENT_APPROVAL",
             "event_title": _normalize_scrubbed_text(str((payload or {}).get("event_title") or design["threejs_3d_scene"]["topper_text"]))[:64],
             "design_sha256": design["design_sha256"],
@@ -2937,3 +2940,8 @@ class InsightBakeEngine:
             country_code=str(data.get("country_code") or self.locale_fiscal_config.get("country_code", "PT")),
             custom_overrides=data.get("custom_overrides") or self.locale_fiscal_config.get("custom_overrides"),
         )
+
+
+# Backward-compatible alias for InsightBakeEngine -> CulinaFormaEngine
+InsightBakeEngine = CulinaFormaEngine
+

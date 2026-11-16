@@ -1,5 +1,5 @@
-//! `insight_bake_rs` — Memory-safe Rust Structural, Dowel Load, Arrhenius Q10,
-//! Nutritional Atwater (`Reg. UE 1169/2011 Art. 30`) & Multibanco Deposit Kernel (`:4030`).
+//! `culina_forma_rs` (`insight_bake_rs` compat) — Memory-safe Rust Structural, Dowel Load, Arrhenius Q10,
+//! Nutritional Atwater (`Reg. UE 1169/2011 Art. 30`) & Multibanco Deposit Kernel (`:4030 /api/culinaforma`).
 
 pub const EU_14_ALLERGEN_CODES: [&str; 14] = [
     "GLUTEN",

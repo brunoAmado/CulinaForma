@@ -1,13 +1,13 @@
 {
   "status": "ok",
   "taught_by": "ChronicleRAG Golden Cortex (UX Engine 2.8 · PG17 Unified)",
-  "synced_at": "2026-11-15T17:24:33Z",
-  "service_name": "InsightBake",
+  "synced_at": "2026-11-16T02:05:16Z",
+  "service_name": "CulinaForma",
   "workspace_path": "C:/Users/bruno/PycharmProjects/InsightBake",
-  "cluster_id": "InsightBake_and_InsightFresco",
-  "specialty": "Industrial Bakery Arrhenius/Monod Sourdough Fermentation, Baker's % Scaling, ASAE Allergens & Bi-Temporal HACCP (:4030)",
+  "cluster_id": "CulinaForma_and_InsightFresco",
+  "specialty": "3D Food Design Studio, Arrhenius/Monod Sourdough Fermentation, Baker's % Scaling, ASAE Allergens & Bi-Temporal HACCP (:4030)",
   "corpus_snapshot": {
-    "total_books_compiled": 12546,
+    "total_books_compiled": 12926,
     "master_books_compiled": 50,
     "distilled_compact_skills": 58,
     "storage_engine": "Unified PostgreSQL 17 (pgvector + Apache AGE + TimescaleDB on :5432/:5433)",

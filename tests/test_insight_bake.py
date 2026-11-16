@@ -1,6 +1,6 @@
 """
 Unit, Unhappy-Path, Arrhenius Q10, ASAE Ficha & Cross-Workspace Bridge Regression Tests
-for `SetMiddle Insight™ · Bake` (`InsightBake` / `insight_bake`).
+for `CulinaForma™` (`culina_forma` / `:4030 /api/culinaforma`, backward-compatible `insight_bake` / `/api/bake`).
 """
 
 from __future__ import annotations
@@ -14,35 +14,45 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from fastapi.testclient import TestClient
+from culina_forma import CulinaFormaEngine
+from culina_forma.server import app as culina_app
 from insight_bake.engine import InsightBakeEngine, validate_portuguese_nif_modulo11
 from insight_bake.server import app
 
 
 class TestInsightBake(unittest.TestCase):
     def setUp(self) -> None:
-        self.engine = InsightBakeEngine()
+        self.engine = CulinaFormaEngine()
         self.client = TestClient(app)
 
     def test_01_health_status_3d_studio_and_widget_js(self) -> None:
         r_health = self.client.get("/health")
         self.assertEqual(r_health.status_code, 200)
-        self.assertEqual(r_health.json()["service"], "InsightBake")
+        self.assertEqual(r_health.json()["service"], "CulinaForma")
+        self.assertEqual(r_health.json()["legacy_alias"], "InsightBake")
+        self.assertEqual(r_health.json()["api_prefix"], "/api/culinaforma")
+        self.assertEqual(r_health.json()["legacy_api_prefix"], "/api/bake")
         self.assertEqual(r_health.json()["port"], 4030)
 
-        r_status = self.client.get("/api/bake/status")
-        self.assertEqual(r_status.status_code, 200)
-        st = r_status.json()
-        self.assertTrue(st["ok"])
-        self.assertEqual(st["eu_14_allergens_supported"], 14)
-        self.assertIn("HEART", st["available_shapes"])
+        for status_route in ("/api/culinaforma/status", "/api/bake/status"):
+            r_status = self.client.get(status_route)
+            self.assertEqual(r_status.status_code, 200)
+            st = r_status.json()
+            self.assertTrue(st["ok"])
+            self.assertEqual(st["member_id"], "CulinaForma")
+            self.assertEqual(st["product"], "CulinaForma")
+            self.assertEqual(st["eu_14_allergens_supported"], 14)
+            self.assertIn("HEART", st["available_shapes"])
 
-        r_studio = self.client.get("/api/bake/studio")
-        self.assertEqual(r_studio.status_code, 200)
-        self.assertIn("SetMiddle Insight™ · Bake", r_studio.text)
-        self.assertNotIn("radial-gradient", r_studio.text)
+        for studio_route in ("/api/culinaforma/studio", "/api/bake/studio"):
+            r_studio = self.client.get(studio_route)
+            self.assertEqual(r_studio.status_code, 200)
+            self.assertIn("CulinaForma™", r_studio.text)
+            self.assertNotIn("radial-gradient", r_studio.text)
 
-        r_widget = self.client.get("/api/bake/widget.js")
+        r_widget = self.client.get("/api/culinaforma/widget.js")
         self.assertEqual(r_widget.status_code, 200)
+        self.assertIn("customElements.define('culina-forma'", r_widget.text)
         self.assertIn("customElements.define('insight-bake'", r_widget.text)
 
     def test_02_design_3d_shapes_heart_vs_round_allergens_and_iva_regimes(self) -> None:
@@ -319,7 +329,7 @@ class TestInsightBake(unittest.TestCase):
                 break
             time.sleep(0.03)
         self.assertEqual(cur["status"], "COMPLETED")
-        self.assertTrue(cur["output_render_cas_uri"].startswith("cas://insight-bake/renders/"))
+        self.assertTrue(cur["output_render_cas_uri"].startswith("cas://culina-forma/renders/"))
 
         # 3. EU AI Act Art. 14 abortable render job
         r_slow = self.client.post("/api/bake/render-jobs", json={"simulate_delay_ms": 400})
@@ -578,14 +588,14 @@ class TestInsightBake(unittest.TestCase):
         self.assertEqual(r_sim.json()["recommendation"], "STAY_EXEMPT")
 
     def test_15_insight_fresco_bridge_and_status_v1_8_0(self) -> None:
-        r_st = self.client.get("/api/bake/status")
+        r_st = self.client.get("/api/culinaforma/status")
         self.assertEqual(r_st.status_code, 200)
         st_json = r_st.json()
-        self.assertEqual(st_json["version"], "1.8.0")
+        self.assertEqual(st_json["version"], "1.9.0")
         self.assertIn("SetMiddle Insight™ · Fresco", " ".join(st_json["ecosystem_synergy"]))
 
         r_res = self.client.post(
-            "/api/bake/reserve-fresco",
+            "/api/culinaforma/reserve-fresco",
             json={
                 "pastelaria_base_url": "http://127.0.0.1:49999",
                 "customer_name": "Atelier Fresco Demo",
@@ -626,14 +636,35 @@ class TestInsightBake(unittest.TestCase):
             {"shape": "HEART", "sponge_key": "amendoa_sem_gluten", "filling_key": "curd_limao_frutos_vermelhos", "topper_text": "Amêndoa Sem Glúten"},
             {"action": "fermentation", "flour_mass_g": 5000.0, "dough_temp_c": 26.0, "hydration_pct": 72.0, "starter_pct": 20.0},
         ):
-            r_docx = self.client.post("/api/bake/ficha-asae/docx", json=payload)
+            r_docx = self.client.post("/api/culinaforma/ficha-asae/docx", json=payload)
             self.assertEqual(r_docx.status_code, 200)
             self.assertIn("wordprocessingml.document", r_docx.headers.get("content-type", ""))
             audit = audit_docx_human_readability_and_whitelabel(r_docx.content)
-            self.assertTrue(audit["ok"], f"Bake .docx human-readability failure: {audit['issues']}")
+            self.assertTrue(audit["ok"], f"CulinaForma .docx human-readability failure: {audit['issues']}")
             self.assertGreaterEqual(audit["metrics"]["min_font_size_pt"], 8.5)
             self.assertGreaterEqual(audit["metrics"]["min_wcag_contrast_ratio"], 7.5)
             self.assertLessEqual(audit["metrics"]["max_table_width_cm"], audit["metrics"]["printable_width_cm"] + 0.05)
+
+    def test_17_culina_forma_package_parity_and_backward_compatibility(self) -> None:
+        self.assertIs(InsightBakeEngine, CulinaFormaEngine)
+        self.assertIs(culina_app, app)
+        r_cf = self.client.post(
+            "/api/culinaforma/design",
+            json={"shape": "HEXAGON", "tiers": [{"diameter_cm": 22.0, "height_cm": 12.0}], "topper_text": "CulinaForma"},
+        )
+        self.assertEqual(r_cf.status_code, 200)
+        cf_body = r_cf.json()
+        self.assertEqual(cf_body["member"], "CulinaForma")
+        self.assertIn("CulinaForma", cf_body["client_brand"])
+        self.assertTrue(cf_body["comfyui_controlnet_render"]["z_depth_cas_uri"].startswith("cas://culina-forma/zdepth/"))
+
+        # Unhappy path on canonical /api/culinaforma/design
+        r_bad = self.client.post(
+            "/api/culinaforma/design",
+            json={"tiers": [{"diameter_cm": 14.0, "height_cm": 12.0}, {"diameter_cm": 28.0, "height_cm": 12.0}]},
+        )
+        self.assertEqual(r_bad.status_code, 400)
+        self.assertIn("INVERTED_UNSTABLE_TIER", r_bad.json()["error"])
 
 
 if __name__ == "__main__":

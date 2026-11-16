@@ -1,6 +1,7 @@
 """
-FastAPI `APIRouter` Plugin for `SetMiddle Insight™ · Bake` (`insight_bake.router`).
-Can be mounted standalone (`:4030`) or inside `ChronicleRAG` (`:8765`).
+FastAPI `APIRouter` Plugin for `CulinaForma™` (`culina_forma.router` / `insight_bake.router`).
+Can be mounted standalone (`:4030 /api/culinaforma`) or inside `ChronicleRAG` (`:8765`),
+maintaining backward-compatible `/api/bake` aliases.
 Enforces UX Engine 2.8, WCAG 2.2 AA/AAA & Portugal Decreto-Lei n.º 82/2022.
 """
 
@@ -13,6 +14,7 @@ from fastapi import APIRouter, Body, FastAPI, Query
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from insight_bake.engine import (
+    CulinaFormaEngine,
     InsightBakeEngine,
     build_bake_asae_ficha_tecnica,
     compute_arrhenius_fermentation_and_bakers_pct,
@@ -27,7 +29,7 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090d16">
-<title>SetMiddle Insight™ · Bake — Estúdio 3D Cake Design, Fermentação Arrhenius &amp; Ficha ASAE</title>
+<title>CulinaForma™ — Estúdio 3D Food Design, Fermentação Arrhenius &amp; Ficha ASAE</title>
 <style>
   :root {
     --canvas: #090d16;
@@ -159,13 +161,13 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
 <header class="topbar" role="banner">
   <div class="topbar-inner">
     <div>
-      <span style="font-size:11px;color:#a5b4fc;font-weight:600;letter-spacing:0.05em;">SETMIDDLE INSIGHT™ · BAKE · PORTA 4030</span>
-      <h1>🎂 SetMiddle Insight™ · Bake — Estúdio 3D Cake Design, Fermentação Arrhenius &amp; ASAE</h1>
+      <span style="font-size:11px;color:#a5b4fc;font-weight:600;letter-spacing:0.05em;">CULINAFORMA™ · 3D FOOD DESIGN STUDIO · PORTA 4030</span>
+      <h1>🎂 CulinaForma™ — Estúdio 3D Food Design, Fermentação Arrhenius &amp; ASAE</h1>
     </div>
     <button type="button" class="secondary drawer-toggle" id="mobile-menu-btn" aria-expanded="false" aria-controls="main-tablist" onclick="toggleMobileDrawer()">
       ☰ Modos
     </button>
-    <div id="main-tablist" class="tablist" role="tablist" aria-label="Modos do Estúdio InsightBake" onkeydown="onTabKeydown(event)">
+    <div id="main-tablist" class="tablist" role="tablist" aria-label="Modos do Estúdio CulinaForma" onkeydown="onTabKeydown(event)">
       <button id="tab-cake" class="tab-btn" role="tab" aria-selected="true" aria-controls="view-cake" tabindex="0" onclick="switchMode('cake')">
         🎂 Estúdio 3D Multi-Andar
       </button>
@@ -425,7 +427,7 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
       <input id="estab-contacto" type="text" value="" />
 
       <div id="estab-feedback" class="tile" style="margin-top:14px;font-size:12px;color:#94a3b8;" aria-live="polite">
-        Partilhado com InsightPastelaria (:4029) — carimbado automaticamente nos PDFs A4 de Bolos 3D, Fermentação Natural e Quadro dos 14 Alergénios.
+        Partilhado com InsightFresco (:4029) — carimbado automaticamente nos PDFs A4 de Bolos 3D, Fermentação Natural e Quadro dos 14 Alergénios.
       </div>
     </section>
   </div>
@@ -433,6 +435,9 @@ INTERACTIVE_3D_CAKE_STUDIO_HTML = """<!DOCTYPE html>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer onerror="window.__threeOffline=true"></script>
 <script>
+const API_BASE = (typeof window !== 'undefined' && window.location && window.location.pathname.startsWith('/api/bake'))
+  ? '/api/bake'
+  : '/api/culinaforma';
 let tiersState = [
   { diameter_cm: 25, height_cm: 12, sponge_key: '', filling_key: '' },
   { diameter_cm: 20, height_cm: 12, sponge_key: '', filling_key: '' },
@@ -767,7 +772,7 @@ async function recalcCake() {
   btn.disabled = true;
 
   try {
-    const r = await fetch('/api/bake/design', {
+    const r = await fetch(API_BASE + '/design', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(collectCakePayload())
@@ -866,7 +871,7 @@ async function runSemanticRecipeSearch() {
   const box = document.getElementById('recipe-search-results');
   box.textContent = 'A pesquisar combinações seguras (Zero ChromaDB · Reg. UE 1169/2011)...';
   try {
-    const r = await fetch('/api/bake/search-recipes', {
+    const r = await fetch(API_BASE + '/search-recipes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: q, limit: 3 })
@@ -909,7 +914,7 @@ async function enqueueAsyncComfyRender() {
   fb.textContent = 'A agendar tarefa assíncrona ControlNet Depth (RULE-10)...';
   try {
     const payload = Object.assign({}, collectCakePayload(), { simulate_delay_ms: 180 });
-    const r = await fetch('/api/bake/render-jobs', {
+    const r = await fetch(API_BASE + '/render-jobs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -920,7 +925,7 @@ async function enqueueAsyncComfyRender() {
     cancelBtn.classList.remove('hidden');
     for (let i = 0; i < 15; i++) {
       await new Promise(res => setTimeout(res, 120));
-      const jr = await fetch('/api/bake/render-jobs/' + encodeURIComponent(activeRenderJobId));
+      const jr = await fetch(API_BASE + '/render-jobs/' + encodeURIComponent(activeRenderJobId));
       const jd = await jr.json();
       if (!jd.ok) break;
       fb.textContent = `[${jd.job.progress_pct}%] ${jd.job.stage_pt}`;
@@ -939,7 +944,7 @@ async function enqueueAsyncComfyRender() {
 
 async function cancelActiveRenderJob() {
   if (!activeRenderJobId) return;
-  await fetch('/api/bake/render-jobs/' + encodeURIComponent(activeRenderJobId) + '/cancel', { method: 'POST' });
+  await fetch(API_BASE + '/render-jobs/' + encodeURIComponent(activeRenderJobId) + '/cancel', { method: 'POST' });
 }
 
 async function generateDepositMultibanco() {
@@ -949,8 +954,8 @@ async function generateDepositMultibanco() {
   try {
     const payload = Object.assign({}, collectCakePayload(), { payment_method: 'MULTIBANCO' });
     const [rDep, rSaft] = await Promise.all([
-      fetch('/api/bake/deposit-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }),
-      fetch('/api/bake/saft-pt-preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      fetch(API_BASE + '/deposit-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }),
+      fetch(API_BASE + '/saft-pt-preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     ]);
     const dep = await rDep.json();
     const saft = await rSaft.json();
@@ -974,7 +979,7 @@ function openPrintableASAE() {
     topper_text: p.topper_text,
     consumption_mode: p.consumption_mode
   });
-  window.open('/api/bake/ficha-asae/print?' + qs.toString(), '_blank', 'noopener');
+  window.open(API_BASE + '/ficha-asae/print?' + qs.toString(), '_blank', 'noopener');
 }
 
 async function downloadBakeAsaePdf() {
@@ -982,7 +987,7 @@ async function downloadBakeAsaePdf() {
   fb.style.color = '#a5b4fc';
   fb.textContent = 'A gerar PDF A4 Oficial ASAE (MOD-FT-ASAE-DGAV-ACIP-v2.0)...';
   try {
-    const r = await fetch('/api/bake/ficha-asae/pdf', {
+    const r = await fetch(API_BASE + '/ficha-asae/pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(collectCakePayload())
@@ -1008,13 +1013,13 @@ function openFermentationASAE(isPdf) {
     hydration_pct: String(document.getElementById('ferm-hyd').value || 72),
     starter_pct: String(document.getElementById('ferm-starter').value || 20)
   });
-  const base = isPdf ? '/api/bake/ficha-asae/pdf?' : '/api/bake/ficha-asae/print?';
+  const base = API_BASE + (isPdf ? '/ficha-asae/pdf?' : '/ficha-asae/print?');
   window.open(base + qs.toString(), '_blank', 'noopener');
 }
 
 async function loadEstablishmentBake() {
   try {
-    const r = await fetch('/api/bake/estabelecimento');
+    const r = await fetch(API_BASE + '/estabelecimento');
     const d = await r.json();
     if (!r.ok || !d.establishment) return;
     const e = d.establishment;
@@ -1034,7 +1039,7 @@ async function saveEstablishmentBake() {
   fb.style.color = '#a5b4fc';
   fb.textContent = 'A validar NIF Módulo-11 e a carimbar dossier ASAE...';
   try {
-    const r = await fetch('/api/bake/estabelecimento', {
+    const r = await fetch(API_BASE + '/estabelecimento', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1065,7 +1070,7 @@ async function sendToPastelaria24h() {
   fb.style.color = '#a5b4fc';
   fb.textContent = 'A enviar encomenda 24h e Ficha ASAE para InsightFresco (:4029 /api/fresco)...';
   try {
-    const r = await fetch('/api/bake/reserve-fresco', {
+    const r = await fetch(API_BASE + '/reserve-fresco', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(collectCakePayload())
@@ -1089,7 +1094,7 @@ async function calcFermentation() {
   const out = document.getElementById('ferment-output');
   out.innerHTML = '<div class="skeleton"></div>';
   try {
-    const r = await fetch('/api/bake/fermentation', {
+    const r = await fetch(API_BASE + '/fermentation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1127,7 +1132,7 @@ async function calcFermentation() {
 async function createClientQuotePortal() {
   const fb = document.getElementById('bridge-feedback');
   try {
-    const r = await fetch('/api/bake/quotes', {
+    const r = await fetch(API_BASE + '/quotes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(collectCakePayload())
@@ -1145,7 +1150,7 @@ async function createClientQuotePortal() {
 async function dispatchFleetColdChain() {
   const fb = document.getElementById('bridge-feedback');
   try {
-    const r = await fetch('/api/bake/fleet-dispatch', {
+    const r = await fetch(API_BASE + '/fleet-dispatch', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...collectCakePayload(), vehicle_plate: 'AA-42-BB', van_temp_c: 3.2, max_expected_lateral_g: 0.22 })
@@ -1164,7 +1169,7 @@ async function downloadCateringCuttingPdf() {
   const fb = document.getElementById('bridge-feedback');
   fb.textContent = 'A gerar PDF Guia de Corte para Catering & Extração de Cavilhas…';
   try {
-    const r = await fetch('/api/bake/catering-cutting-guide/pdf', {
+    const r = await fetch(API_BASE + '/catering-cutting-guide/pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...collectCakePayload(), cake_cutting_time_hhmm: '22:30', drive_minutes_to_venue: 45 })
@@ -1185,7 +1190,7 @@ async function runDietarySafeReformulation() {
   const fb = document.getElementById('bridge-feedback');
   fb.textContent = 'A validar reformulação Sem Glúten (<=20 ppm Reg. UE 828/2014) & Sem Lactose…';
   try {
-    const r = await fetch('/api/bake/dietary-reformulate', {
+    const r = await fetch(API_BASE + '/dietary-reformulate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...collectCakePayload(), dietary_modes: ['GLUTEN_FREE_APC_20PPM', 'LACTOSE_FREE'] })
@@ -1207,9 +1212,12 @@ recalcCake();
 </html>"""
 
 
-def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
-    engine = InsightBakeEngine(storage_dir=storage_dir)
-    router = APIRouter(tags=["InsightBake"])
+def create_culina_forma_router(
+    storage_dir: Optional[Path] = None,
+    api_prefix: str = "/api/culinaforma",
+) -> APIRouter:
+    engine = CulinaFormaEngine(storage_dir=storage_dir)
+    router = APIRouter(tags=["CulinaForma"])
 
     @router.get("/status")
     def get_status() -> Dict[str, Any]:
@@ -1301,7 +1309,7 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
             content=render_cake_asae_ficha_html(
                 res,
                 establishment=est,
-                pdf_download_url=f"/api/bake/ficha-asae/pdf?{qs}",
+                pdf_download_url=f"{api_prefix}/ficha-asae/pdf?{qs}",
             )
         )
 
@@ -1498,7 +1506,7 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
             content=pdf_bytes,
             media_type="application/pdf",
             headers={
-                "Content-Disposition": 'inline; filename="Guia_Corte_Catering_Cavilhas_InsightBake.pdf"',
+                "Content-Disposition": 'inline; filename="Guia_Corte_Catering_Cavilhas_CulinaForma.pdf"',
                 "Cache-Control": "no-store",
             },
         )
@@ -1573,14 +1581,14 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
     def get_web_component_js() -> Response:
         js = """
 (function() {
-  if (typeof window === 'undefined' || customElements.get('insight-bake')) return;
-  class InsightBakeWidget extends HTMLElement {
+  if (typeof window === 'undefined') return;
+  class CulinaFormaWidget extends HTMLElement {
     connectedCallback() {
-      const apiBase = this.getAttribute('api-base') || '/api/bake';
+      const apiBase = this.getAttribute('api-base') || '/api/culinaforma';
       this.innerHTML = `
-        <section role="region" aria-label="SetMiddle Insight™ · Bake" style="background:#0f172a;color:#f8fafc;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;font-family:Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;">
+        <section role="region" aria-label="CulinaForma™ — 3D Food Design Studio" style="background:#0f172a;color:#f8fafc;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;font-family:Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
-            <h3 style="margin:0;font-size:15px;font-weight:600;">SetMiddle Insight™ · Bake (3D Cake Studio &amp; Arrhenius Q10)</h3>
+            <h3 style="margin:0;font-size:15px;font-weight:600;">CulinaForma™ (3D Food Design Studio &amp; Arrhenius Q10)</h3>
             <a href="${apiBase}/studio" target="_blank" rel="noopener" style="color:#818cf8;font-size:12px;font-weight:600;text-decoration:none;">Abrir Estúdio 3D ↗</a>
           </div>
           <div data-bake-status aria-live="polite" style="font-size:12px;color:#94a3b8;margin-top:6px;">A sincronizar estado em ${apiBase}/status…</div>
@@ -1596,7 +1604,13 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
         });
     }
   }
-  customElements.define('insight-bake', InsightBakeWidget);
+  if (!customElements.get('culina-forma')) {
+    customElements.define('culina-forma', CulinaFormaWidget);
+  }
+  if (!customElements.get('insight-bake')) {
+    class InsightBakeWidget extends CulinaFormaWidget {}
+    customElements.define('insight-bake', InsightBakeWidget);
+  }
 })();
 """.strip()
         return Response(content=js, media_type="application/javascript")
@@ -1604,10 +1618,25 @@ def create_insight_bake_router(storage_dir: Optional[Path] = None) -> APIRouter:
     return router
 
 
+def mount_culina_forma_plugin(
+    app: FastAPI,
+    prefix: str = "/api/culinaforma",
+    storage_dir: Optional[Path] = None,
+) -> bool:
+    app.include_router(
+        create_culina_forma_router(storage_dir=storage_dir, api_prefix=prefix),
+        prefix=prefix,
+    )
+    return True
+
+
+# Backward-compatible aliases for legacy InsightBake callers
+create_insight_bake_router = create_culina_forma_router
+
+
 def mount_insight_bake_plugin(
     app: FastAPI,
     prefix: str = "/api/bake",
     storage_dir: Optional[Path] = None,
 ) -> bool:
-    app.include_router(create_insight_bake_router(storage_dir=storage_dir), prefix=prefix)
-    return True
+    return mount_culina_forma_plugin(app, prefix=prefix, storage_dir=storage_dir)

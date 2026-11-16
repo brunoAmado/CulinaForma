@@ -1,14 +1,14 @@
 /**
- * `InsightBake™` — Standards-Based Interactive TypeScript Web Component (`<insight-bake>`)
+ * `CulinaForma™` — Standards-Based Interactive TypeScript Web Component (`<culina-forma>` & `<insight-bake>`)
  * Enforces ChronicleRAG UX Engine 2.8, WCAG 2.2 AA & Portugal Decreto-Lei n.º 82/2022:
  * - Anti-AI-Slop Tinted Dark Slate (`#090d16` -> `#0f172a` -> `#172033`), zero `#000000`, zero decorative gradients
- * - Supports BOTH 3D Multi-Tier Cake Design (`/api/bake/design`) AND Arrhenius Q10 Fermentation (`/api/bake/fermentation`)
+ * - Supports BOTH 3D Multi-Tier Food/Cake Design (`/api/culinaforma/design`) AND Arrhenius Q10 Fermentation (`/api/culinaforma/fermentation`)
  * - Persistent `<label for="...">` above every `<input>` and `<select>` ("Validate on Blur, Forgive on Keystroke")
  * - 4-State Completeness: Loading Skeleton, Empty State, Error + `↻ Retry`, and `aria-live="polite"`
  */
 
-export class InsightBakeElement extends HTMLElement {
-  private apiBase: string = "/api/bake";
+export class CulinaFormaElement extends HTMLElement {
+  private apiBase: string = "/api/culinaforma";
   private activeMode: "cake" | "fermentation" = "cake";
 
   static get observedAttributes(): string[] {
@@ -16,7 +16,7 @@ export class InsightBakeElement extends HTMLElement {
   }
 
   connectedCallback(): void {
-    this.apiBase = this.getAttribute("api-base") || "/api/bake";
+    this.apiBase = this.getAttribute("api-base") || "/api/culinaforma";
     const attrMode = this.getAttribute("mode");
     if (attrMode === "fermentation") {
       this.activeMode = "fermentation";
@@ -28,18 +28,18 @@ export class InsightBakeElement extends HTMLElement {
 
   private renderShell(): void {
     this.innerHTML = `
-      <section class="insight-bake-panel" role="region" aria-label="SetMiddle Insight™ · Bake — 3D Cake Studio & Arrhenius Q10 Lab"
+      <section class="insight-bake-panel" role="region" aria-label="CulinaForma™ — 3D Food Design Studio & Arrhenius Q10 Lab"
         style="background:#0f172a;color:#f8fafc;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px;font-family:Inter,system-ui,-apple-system,sans-serif;font-variant-numeric:tabular-nums;">
         <header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;border-bottom:1px solid #1e293b;padding-bottom:12px;">
           <div>
             <div style="font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#94a3b8;">
-              SETMIDDLE INSIGHT™ · BAKE · PORT 4030
+              CULINAFORMA™ · 3D FOOD DESIGN STUDIO · PORT 4030
             </div>
             <h3 style="margin:4px 0 0;font-size:18px;font-weight:600;letter-spacing:-0.02em;line-height:1.15;color:#f8fafc;">
-              InsightBake™ — 3D Multi-Tier Cake Studio, Arrhenius Q10 &amp; ASAE HACCP
+              CulinaForma™ — 3D Multi-Tier Food &amp; Cake Studio, Arrhenius Q10 &amp; ASAE HACCP
             </h3>
             <p style="margin:4px 0 0;font-size:13px;color:#cbd5e1;max-width:68ch;line-height:1.55;">
-              Parametric 3D cake structural engineering, full 14 EU Reg. 1169/2011 allergens, AT IVA (13%/23%), and Q10 sourdough fermentation kinetics.
+              Parametric 3D culinary structural engineering, full 14 EU Reg. 1169/2011 allergens, multi-locale fiscal rules, and Q10 sourdough fermentation kinetics.
             </p>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
@@ -53,7 +53,7 @@ export class InsightBakeElement extends HTMLElement {
           </div>
         </header>
 
-        <div role="tablist" aria-label="InsightBake Mode" style="display:inline-flex;gap:6px;background:#090d16;padding:4px;border-radius:8px;margin-bottom:14px;">
+        <div role="tablist" aria-label="CulinaForma Mode" style="display:inline-flex;gap:6px;background:#090d16;padding:4px;border-radius:8px;margin-bottom:14px;">
           <button type="button" id="ibake-mode-cake" role="tab" aria-selected="${this.activeMode === "cake"}"
             style="background:${this.activeMode === "cake" ? "#4f46e5" : "transparent"};color:#f8fafc;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">
             🎂 3D Cake BOM &amp; Dowels
@@ -153,8 +153,8 @@ export class InsightBakeElement extends HTMLElement {
       const resp = await fetch(`${this.apiBase}/status`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
-      if (badgeEl) badgeEl.textContent = `ONLINE · v${data.version || "1.2.0"}`;
-      statusEl.textContent = `Connected to ${data.product || "InsightBake"} (${this.apiBase}/status).`;
+      if (badgeEl) badgeEl.textContent = `ONLINE · v${data.version || "1.9.0"}`;
+      statusEl.textContent = `Connected to ${data.product || "CulinaForma"} (${this.apiBase}/status).`;
     } catch (_) {
       statusEl.textContent = `Standby on ${this.apiBase} — submit form to execute action.`;
     }
@@ -263,6 +263,13 @@ export class InsightBakeElement extends HTMLElement {
   }
 }
 
-if (typeof window !== "undefined" && !customElements.get("insight-bake")) {
-  customElements.define("insight-bake", InsightBakeElement);
+export class InsightBakeElement extends CulinaFormaElement {}
+
+if (typeof window !== "undefined") {
+  if (!customElements.get("culina-forma")) {
+    customElements.define("culina-forma", CulinaFormaElement);
+  }
+  if (!customElements.get("insight-bake")) {
+    customElements.define("insight-bake", InsightBakeElement);
+  }
 }

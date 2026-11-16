@@ -1,6 +1,6 @@
 """
-Standalone FastAPI Server for `SetMiddle Insight™ · Bake` (`python -m insight_bake.server`).
-Runs on port 4030 by default.
+Standalone FastAPI Server for `CulinaForma™` (`python -m culina_forma.server` / `python -m insight_bake.server`).
+Runs on port 4030 by default, exposing canonical `/api/culinaforma` and backward-compatible `/api/bake`.
 """
 
 import os
@@ -11,11 +11,11 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from insight_bake.router import INTERACTIVE_3D_CAKE_STUDIO_HTML, mount_insight_bake_plugin
+from insight_bake.router import INTERACTIVE_3D_CAKE_STUDIO_HTML, mount_culina_forma_plugin
 
 app = FastAPI(
-    title="SetMiddle Insight™ · Bake (InsightBake) — Three.js 3D Multi-Tier Cake Configurator, ComfyUI ControlNet Studio, Recipe BOM & HACCP Cold-Chain Logistics (Powered by InsightCore)",
-    version="1.0.0",
+    title="CulinaForma™ — Three.js 3D Multi-Tier Food & Cake Studio, ComfyUI ControlNet Lock, Recipe BOM & HACCP Cold-Chain Logistics (Powered by InsightCore)",
+    version="1.9.0",
 )
 
 app.add_middleware(
@@ -26,19 +26,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-mount_insight_bake_plugin(app, prefix="/api/bake")
+mount_culina_forma_plugin(app, prefix="/api/culinaforma")
+mount_culina_forma_plugin(app, prefix="/api/bake")
 
 
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def standalone_project_dashboard() -> HTMLResponse:
-    """Serves the standalone UX Engine 2.8 & WCAG 2.2 AA/AAA webpage & interactive 3D Cake Studio."""
+    """Serves the standalone UX Engine 2.8 & WCAG 2.2 AA/AAA webpage & interactive 3D Food Design Studio."""
     ic_dir = "C:/Users/bruno/PycharmProjects/InsightCore"
     if Path(ic_dir).exists() and ic_dir not in sys.path:
         sys.path.insert(0, ic_dir)
     try:
         from insight_core.dashboard_ui import render_standalone_project_dashboard_html
-        return HTMLResponse(content=render_standalone_project_dashboard_html("InsightBake", host_mode="STANDALONE"))
+        return HTMLResponse(content=render_standalone_project_dashboard_html("CulinaForma", host_mode="STANDALONE"))
     except Exception:
         return HTMLResponse(content=INTERACTIVE_3D_CAKE_STUDIO_HTML)
 
@@ -47,12 +48,14 @@ def standalone_project_dashboard() -> HTMLResponse:
 def health_check():
     return {
         "status": "ok",
-        "service": "InsightBake",
-        "client_brand": "SetMiddle Insight™ · Bake",
+        "service": "CulinaForma",
+        "legacy_alias": "InsightBake",
+        "client_brand": "CulinaForma",
         "internal_engine": "InsightCore",
         "port": 4030,
-        "api_prefix": "/api/bake",
-        "version": "1.0.0",
+        "api_prefix": "/api/culinaforma",
+        "legacy_api_prefix": "/api/bake",
+        "version": "1.9.0",
     }
 
 

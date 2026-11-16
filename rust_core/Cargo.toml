@@ -1,13 +1,13 @@
 [package]
-name = "insight_bake_rs"
-version = "1.2.0"
+name = "culina_forma_rs"
+version = "1.9.0"
 edition = "2021"
-description = "Memory-safe Rust structural dowel load, slenderness stability & Arrhenius Q10 fermentation kernel for SetMiddle Insight™ · Bake (:4030)"
+description = "Memory-safe Rust structural dowel load, slenderness stability & Arrhenius Q10 fermentation kernel for CulinaForma™ (:4030 /api/culinaforma)"
 
 [lib]
 name = "insight_bake_rs"
 path = "src/lib.rs"
 
 [[bin]]
-name = "insight_bake_cli"
+name = "culina_forma_cli"
 path = "src/main.rs"
